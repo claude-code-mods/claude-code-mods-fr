@@ -8,14 +8,14 @@
 
 <p align="center">
   <a href="https://github.com/chipfighter/context-attachment-manager/releases"><img src="https://img.shields.io/github/v/release/chipfighter/context-attachment-manager?include_prereleases" alt="Release"></a>
-  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey" alt="Platform: Windows, macOS, Linux">
+  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey" alt="Plateformes : Windows, macOS, Linux">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT"></a>
 </p>
 
 <p align="center"><b>English</b> · <a href="README_CN.md">简体中文</a> · <a href="README_JA.md">日本語</a> · <a href="README_KO.md">한국어</a> · <a href="README_ES.md">Español</a> · <a href="README_PT_BR.md">Português (Brasil)</a> · <a href="README_FR.md">Français</a> · <a href="README_DE.md">Deutsch</a></p>
 
 <p align="center">
-  <img src="docs/images/loop.gif" alt="The panel on a task with fifteen keyframes. With auto-select on, earlier images turn grey and the next request drops from 7.5 MB to 1.7 MB." width="100%">
+  <img src="docs/images/loop.gif" alt="Le panneau sur une tâche comportant quinze images clés. Avec la sélection automatique, les images précédentes passent en gris et la requête suivante passe de 7,5 Mo à 1,7 Mo." width="100%">
 </p>
 
 ## Ce que fait ce plugin
@@ -42,7 +42,7 @@ Redémarrez ensuite l'agent (dans Claude Desktop, démarrez une nouvelle session
 ## Le panneau, quand vous voulez contrôler
 
 <p align="center">
-  <img src="docs/images/hero.png" alt="The panel: automatically manage earlier images, search by what you remember, and preview an image." width="100%">
+  <img src="docs/images/hero.png" alt="Le panneau : gérer automatiquement les images précédentes, rechercher selon vos souvenirs et prévisualiser une image." width="100%">
 </p>
 
 - **Trouver une image** par un détail ou un commentaire dont vous vous souvenez, comme « nuit pluvieuse » ou « meilleur visage ».
@@ -66,7 +66,7 @@ Les services de modèle mettent en cache le début d'une conversation. Quand une
 Toute méthode pour réduire une longue conversation doit changer quelque chose. Le plugin effectue sa modification le plus tard possible dans la conversation :
 
 <p align="center">
-  <img src="docs/images/cache-compare.svg" alt="Four ways to handle a long chat with images, each drawn as the next request. Sending everything keeps the cache but sends every image again. Shrinking the images or dropping early history makes nearly the whole chat be processed again. With the plugin's placeholders, only the rest of the previous turn is processed again." width="100%">
+  <img src="docs/images/cache-compare.svg" alt="Quatre façons de gérer une longue conversation avec des images, chacune dessinée comme requête suivante. Tout envoyer garde le cache mais renvoie chaque image. Réduire les images ou supprimer l'historique ancien fait retraiter presque toute la conversation. Avec les espaces réservés du plugin, seul la suite du tour précédent est retraitée." width="100%">
 </p>
 
 - **L'espace réservé est écrit une fois** : une image devient un espace réservé dès le tour suivant son apparition, donc seul le reste de ce tour est retraité. Ensuite l'espace réservé reste identique de requête en requête.
@@ -74,10 +74,10 @@ Toute méthode pour réduire une longue conversation doit changer quelque chose.
 - **Le modèle récupère l'original** : pas une copie réduite, ni un résumé.
 
 <p align="center">
-  <img src="docs/images/cache-fetch.svg" alt="When the model fetches IMG-001, the original is attached at the end of the current turn and the placeholder in turn 1 stays as it is, so every earlier turn is read from the cache. In the next turn the fetched copy becomes a one-line note, and only what came after it is processed again." width="100%">
+  <img src="docs/images/cache-fetch.svg" alt="Quand le modèle récupère IMG-001, l'original est joint à la fin du tour courant et l'espace réservé du tour 1 reste inchangé, donc tous les tours précédents sont lus depuis le cache. Au tour suivant, la copie récupérée devient une note d'une ligne et seul ce qui suit est retraité." width="100%">
 </p>
 
-Ce n'est pas gratuit. Après un tour avec des images, le reste de ce tour est retraité une fois, et le modèle écrit une courte ligne pour chaque nouvelle image. Modifier une ancienne image dans le panneau (la décocher, la recocher, **Send every turn**) modifie la conversation au niveau de cette image, donc ce qui suit est retraité une fois. Dans notre [long-task comparison in Claude Code](eval/long-task/README.md), 87 % de l'entrée était lue depuis le cache avec le plugin et 91 % sans lui.
+Ce n'est pas gratuit. Après un tour avec des images, le reste de ce tour est retraité une fois, et le modèle écrit une courte ligne pour chaque nouvelle image. Modifier une ancienne image dans le panneau (la décocher, la recocher, **Send every turn**) modifie la conversation au niveau de cette image, donc ce qui suit est retraité une fois. Dans notre [comparaison sur une longue tâche dans Claude Code](eval/long-task/README.md), 87 % de l'entrée était lue depuis le cache avec le plugin et 91 % sans lui.
 
 La troisième ligne de la première figure correspond aussi à ce que fait la compaction propre à un agent, ou à l'effacement des anciens résultats d'outils côté API (comme l'édition de contexte d'Anthropic) : le contenu ancien est retiré et ce qui suit est retraité.
 

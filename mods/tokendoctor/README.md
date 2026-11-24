@@ -27,7 +27,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/demo.gif" alt="tokendoctor in a real Claude Code session: /tokendoctor:sessions, then the daily trend" width="880">
+  <img src="docs/demo.gif" alt="tokendoctor dans une vraie session Claude Code : /tokendoctor:sessions, puis la tendance quotidienne" width="880">
 </p>
 
 **Ce sont vos sessions passées qui décident, pas le benchmark de quelqu'un d'autre.** Ce qu'un paramètre économise dépend de votre façon de
@@ -80,7 +80,7 @@ Tous les tests ont réussi à chaque exécution. Les conseils seuls n'ont pas é
 [bench/HISTORY.md](bench/HISTORY.md).
 
 <p align="center">
-  <img src="docs/dashboard.png" alt="The author's tokendoctor dashboard: 57% of the spend was Claude re-reading the conversation" width="880"><br>
+  <img src="docs/dashboard.png" alt="Le tableau de bord tokendoctor de l'auteur : 57 % de la dépense venait de Claude relisant la conversation" width="880"><br>
   <sub><code>/tokendoctor:dashboard</code> : où sont passés tous les jetons, par jour, modèle, sous-agent et projet. Un seul fichier local ; celui-ci est le mien.</sub>
 </p>
 

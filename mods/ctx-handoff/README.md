@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.svg">
-    <img src="docs/assets/banner-light.svg" width="900" alt="ctx-handoff: the long-session toolkit for Claude Code">
+    <img src="docs/assets/banner-light.svg" width="900" alt="ctx-handoff : la boîte à outils des longues sessions pour Claude Code">
   </picture>
 </p>
 
@@ -12,7 +12,7 @@
 <p align="center">
   <a href="https://github.com/cablate/ctx-handoff-mod/releases"><img src="https://img.shields.io/github/v/release/cablate/ctx-handoff-mod?include_prereleases&display_name=release&label=release&color=7dd3fc" alt="Latest release"></a>
   <a href="https://github.com/cablate/ctx-handoff-mod/actions/workflows/check.yml"><img src="https://github.com/cablate/ctx-handoff-mod/actions/workflows/check.yml/badge.svg" alt="CI"></a>
-  <img src="https://img.shields.io/badge/Claude_Code-2.1.287%2B-a78bfa" alt="Claude Code 2.1.287 or later">
+  <img src="https://img.shields.io/badge/Claude_Code-2.1.287%2B-a78bfa" alt="Claude Code 2.1.287 ou ultérieur">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
 </p>
 
@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/assets/handoff.svg" width="900" alt="Animation: a long session fills its context to the threshold; ctx-handoff writes a summary of verified work, failed attempts, your limits and the next step, clears, and a fresh session continues from it">
+  <img src="docs/assets/handoff.svg" width="900" alt="Animation : une longue session remplit son contexte jusqu'au seuil ; ctx-handoff rédige un résumé du travail vérifié, des tentatives échouées, de vos limites et de la prochaine étape, efface la conversation, et une nouvelle session reprend à partir de ce résumé">
 </p>
 
 ## Pourquoi
@@ -71,11 +71,11 @@ Après environ 50 minutes d'inactivité, il envoie une minuscule requête pour q
 
 Pour mettre en pause les rafraîchissements et résumés d'absence pour cette seule conversation, cliquez sur le bouton en haut du panneau ou lancez `/handoff away pause` (`resume` redémarre le minuteur). Les mises à jour de notes continuent et les autres conversations ne sont pas affectées. Le panneau et `/handoff` affichent aussi l'activité d'arrière-plan en direct et l'usage de jetons d'arrière-plan rapporté par la session depuis cette mise à jour (pas une facture ; les requêtes déjà envoyées ne peuvent pas être annulées).
 
-<img src="docs/assets/cache.svg" width="900" alt="Animation: after you leave, the cache is refreshed at 55, 110 and 165 minutes; after that a summary is saved, and when you return you choose to resume or continue">
+<img src="docs/assets/cache.svg" width="900" alt="Animation : après votre départ, le cache est rafraîchi à 55, 110 et 165 minutes ; ensuite un résumé est enregistré, et à votre retour vous choisissez de reprendre ou de continuer">
 
 ### Apprend votre projet, puis le transmet à votre dépôt
 
-<img src="docs/assets/memory.svg" width="900" alt="Animation: the same instruction on three days becomes a project rule, then a line in CLAUDE.md for you to review">
+<img src="docs/assets/memory.svg" width="900" alt="Animation : la même instruction sur trois jours devient une règle de projet, puis une ligne dans CLAUDE.md à revoir">
 
 Les préférences, corrections et faits deviennent un fichier de notes Markdown par projet, chargé dans chaque nouvelle conversation. Les routines répétées deviennent des compétences de projet. Seule la partie nouvelle de la conversation est lue, par Sonnet 5.5 à effort faible.
 
@@ -83,17 +83,17 @@ Si une mise à jour de notes échoue ou donne une sortie inutilisable, ce morcea
 
 ### Se souvient de l'endroit où vous vous êtes arrêté
 
-<img src="docs/assets/resume.svg" width="900" alt="Animation: after /clear, the next conversation is told the last task, its state and the next step">
+<img src="docs/assets/resume.svg" width="900" alt="Animation : après /clear, la conversation suivante reçoit la dernière tâche, son état et la prochaine étape">
 
 ### Repère les erreurs habituelles
 
-<img src="docs/assets/nudges.svg" width="900" alt="Animation: nudges for the same failure twice, for saying done without checking, and for drifting out of your language">
+<img src="docs/assets/nudges.svg" width="900" alt="Animation : rappels après deux échecs identiques, après avoir dit « terminé » sans vérifier, et après avoir quitté votre langue">
 
 ### Les gardes que vous approuvez, un panneau pour tout
 
 Quand une règle est déjà écrite mais continue d'être enfreinte, ctx-handoff rédige un garde : une vérification sur les appels d'outil qui rappelle ou bloque Claude. Claude vous en parle dans la conversation suivante et rien ne s'applique avant que vous disiez oui. `/handoff panel` ouvre un panneau au-dessus du prompt pour les gardes, les mémoires, les règles, la dernière mise à jour de notes et tous les paramètres.
 
-<img src="docs/assets/guard.svg" width="900" alt="Animation: a rule in CLAUDE.md that keeps getting broken is drafted into a guard; Claude asks whether to turn it on, you say yes, and the next git push gets a reminder. Beside it, the panel above the prompt steps through its tabs: guards, memory, rules, the last update and settings">
+<img src="docs/assets/guard.svg" width="900" alt="Animation : une règle de CLAUDE.md régulièrement enfreinte devient un brouillon de garde ; Claude demande si vous voulez l'activer, vous dites oui, et le prochain git push reçoit un rappel. À côté, le panneau au-dessus de l'invite parcourt ses onglets : gardes, mémoire, règles, dernière mise à jour et paramètres">
 
 ## Paramètres
 

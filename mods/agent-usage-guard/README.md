@@ -8,13 +8,13 @@
   <a href="https://www.producthunt.com/products/agent-usage-guard?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-agent-usage-guard" target="_blank" rel="noopener noreferrer">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1289693&amp;theme=dark">
-      <img alt="agent-usage-guard on Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1289693&amp;theme=light">
+      <img alt="agent-usage-guard sur Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1289693&amp;theme=light">
     </picture>
   </a>
 </p>
 
 <p align="center">
-  <img src="https://github.com/rbartoli/agent-usage-guard/releases/download/agent-usage-guard--v1.0.0/agent-usage-guard.gif" alt="Four scenes in Claude Code's interactive UI. The guard asks before a prompt re-writes the expired cache of a 486k-token session resumed after two hours, before a fifth parallel agent starts against a limit of four, before a twenty-first tool call at 433k context, and before a new agent once subagents have processed 10.9M tokens." width="900">
+  <img src="https://github.com/rbartoli/agent-usage-guard/releases/download/agent-usage-guard--v1.0.0/agent-usage-guard.gif" alt="Quatre scènes de l'interface interactive de Claude Code. Le garde demande avant qu'une invite ne récrive le cache expiré d'une session de 486 k jetons resumed after two hours, avant qu'un cinquième agent parallèle ne démarre alors que la limite est de quatre, avant le vingt-et-unième appel d'outil à 433 k de contexte, and avant un nouvel agent une fois que les sous-agents ont traité 10,9 M jetons." width="900">
 </p>
 
 <p align="center">
@@ -86,13 +86,13 @@ Agents couvre les sous-agents, les coéquipiers de l'équipe d'agents, les agent
 ## Commandes
 
 ```text
-/agent-guard [status]                          what the guard sees right now
-/agent-guard allow [agents|context] [minutes]  lift its limits for this session (default: all, 10 min)
-/agent-guard pause [minutes]                   the same as allow, for every limit
-/agent-guard resume                            end an allow early, lift the agent pause, and let declined questions ask again
-/agent-guard report [days]                     what it did on this machine (default: 7 days)
-/agent-guard simulate <rule>                   show what a rule does, with nothing held or spent
-/agent-guard help                              these commands
+/agent-guard [status]                          ce que le garde voit maintenant
+/agent-guard allow [agents|context] [minutes]  lever ses limites pour cette session (par défaut : tout, 10 min)
+/agent-guard pause [minutes]                   comme allow, pour toutes les limites
+/agent-guard resume                            terminer une autorisation, lever la pause des agents et autoriser à nouveau les questions refusées
+/agent-guard report [days]                     ce qu'il a fait sur cette machine (par défaut : 7 jours)
+/agent-guard simulate <rule>                   montre ce que fait une règle, sans rien retenir ni dépenser
+/agent-guard help                              ces commandes
 ```
 
 `/agent-guard` s'exécute en même temps, même à mi-tour, et ne démarre jamais un tour de modèle, donc Claude ne voit jamais de dérogation et ne peut pas en prendre une comme autorisation. Vous seul pouvez lever les limites : lorsqu'un autre plugin exécute `/agent-guard allow` ou `pause`, le gardien refuse et le dit dans la transcription. L'envoi de `[allow-usage-guard]` ou `[allow-agent-burst]` seuls comme invite, les marqueurs des versions antérieures, fait la même chose que `/agent-guard allow` ou `allow agents`.

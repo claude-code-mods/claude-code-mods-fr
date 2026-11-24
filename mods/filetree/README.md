@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Claude_Code-%E2%89%A5_2.1.306-D97757?logo=claude&logoColor=fff" alt="Claude Code 2.1.306 or newer">
+  <img src="https://img.shields.io/badge/Claude_Code-%E2%89%A5_2.1.306-D97757?logo=claude&logoColor=fff" alt="Claude Code 2.1.306 ou ultérieur">
   <img src="https://img.shields.io/badge/version-0.8.5-blue" alt="Version">
   <img src="https://img.shields.io/badge/type-mod-6f42c1" alt="Claude Code mod">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
@@ -15,7 +15,7 @@
 <summary><b>CLI Claude Code</b></summary>
 
 <p align="center">
-  <img src="media/filetree-shimmer.gif" alt="filetree shimmering the file Claude is editing" width="900">
+  <img src="media/filetree-shimmer.gif" alt="filetree mettant en évidence le fichier que Claude modifie" width="900">
 </p>
 
 </details>
@@ -24,7 +24,7 @@
 <summary><b>Claude Code dans l'application de bureau</b></summary>
 
 <p align="center">
-  <img src="media/0.8.2/desktop-light.png" alt="The file tree in the Desktop app in light mode, with the header buttons including the Clawd shimmer button, the branch row, search row and folders" width="600">
+  <img src="media/0.8.2/desktop-light.png" alt="L'arborescence dans l'application Desktop en mode clair, avec les boutons d'en-tête dont le bouton de mise en évidence Clawd, la ligne de branche, la recherche et les dossiers" width="600">
 </p>
 
 </details>
@@ -90,9 +90,9 @@ Sur Claude Code antérieur à 2.1.287, l'installation échoue avec `Unrecognized
 - Pilotage au clavier : déplacements style vim, superposition des raccourcis, et alt+l / alt+h dans le terminal ([keys](docs/keys.md))
 - Commandes `/filetree` et emplacement du panneau dans le terminal et l'application de bureau ([sidebar](docs/sidebar.md))
 
-<img src="media/filetree-git.gif" alt="A committed file shimmers green and the footer shows the commit" width="800">
+<img src="media/filetree-git.gif" alt="Un fichier validé brille en vert et le pied de page affiche le commit" width="800">
 
-<img src="docs/media/preview-media.gif" alt="An image, a video, a PDF turned to page 2 and a Word document in the preview" width="800">
+<img src="docs/media/preview-media.gif" alt="Une image, une vidéo, un PDF ouvert à la page 2 et un document Word dans l'aperçu" width="800">
 
 ## Paramètres
 
@@ -139,7 +139,7 @@ Open at start s'applique à chaque nouvelle session, `/clear` compris. Quand vou
 ## Prérequis
 
 ```yaml
-required:  Claude Code 2.1.306 or newer, git
+required:  Claude Code 2.1.306 ou ultérieur, git
 optional:
   inotifywait:            live updates on Linux (inotify-tools)
   magick or ffmpeg:       images other than PNG, video frames
