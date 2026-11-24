@@ -23,7 +23,7 @@
     "server": {
       "type": "string",
       "title": "Serveur de partage",
-      "description": "Leave empty to share through the public server. To use your own, its https address (README: \"Host a server\"). Joining a link always uses the server in that link."
+      "description": "Laissez vide pour partager via le serveur public. Pour utiliser le vôtre, indiquez son adresse https (README : « Host a server »). Rejoindre un lien utilise toujours le serveur indiqué dans ce lien."
     }
   },
   "mcpServers": {

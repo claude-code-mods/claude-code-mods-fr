@@ -21,13 +21,13 @@
     "slide": {
       "type": "boolean",
       "title": "Faire glisser la fenêtre au lieu de compacter",
-      "description": "Where Claude Code would summarize the conversation, elide old tool outputs instead (they can be read again): no summary request, every prompt and answer kept word for word. /compact still summarizes.",
+      "description": "Là où Claude Code résumerait la conversation, masque plutôt les anciennes sorties d'outils (elles peuvent être relues) : aucune demande de résumé, chaque prompt et chaque réponse conservés mot pour mot. /compact résume toujours.",
       "default": false
     },
     "slideTo": {
       "type": "number",
       "title": "Descendre jusqu'à (% du point de compactage de Claude Code)",
-      "description": "How far a slide frees the context, as a percent of the point where Claude Code compacts (20 to 90). Lower leaves less behind and more turns before the next slide.",
+      "description": "Quelle part du contexte un glissement libère, en pourcentage du point où Claude Code compacte (20 à 90). Une valeur plus basse laisse moins de contexte et donne plus de tours avant le glissement suivant.",
       "default": 25
     }
   }

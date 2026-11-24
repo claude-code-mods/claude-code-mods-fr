@@ -26,7 +26,7 @@
     "usageBand": {
       "type": "boolean",
       "title": "Bande d'utilisation",
-      "description": "Show usage above the prompt: the shunt pool's, refreshed every minute and after each turn, or the session's own rate limits off shunt. Off, the mod polls nothing and /shunt:usage still answers.",
+      "description": "Affiche l'utilisation au-dessus du prompt : celle du pool shunt, actualisée chaque minute et après chaque tour, ou les limites propres de la session hors shunt. Désactivé, le mod n'interroge rien et /shunt:usage répond toujours.",
       "default": true
     }
   }

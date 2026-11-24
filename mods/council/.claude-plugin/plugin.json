@@ -61,49 +61,49 @@
     "heads_up": {
       "type": "boolean",
       "title": "Avertissement de vérification latérale",
-      "description": "Turn the heads-up side-check on in every project: while Claude works a long turn, one council seat, codex by default, rereads the last five turns, the last eight tool results and the text Claude wrote with Write or Edit, and may show one line above the prompt. Nothing asks before a send; that material leaves the machine on every check. A project's .claude/council-heads-up.json overrides this for that project and picks the seat and cadence.",
+      "description": "Active la vérification latérale heads-up dans chaque projet : pendant qu'un long tour de Claude est en cours, un siège du council, codex par défaut, relit les cinq derniers tours, les huit derniers résultats d'outils et le texte écrit par Claude avec Write ou Edit, et peut afficher une ligne au-dessus du prompt. Rien ne demande confirmation avant un envoi ; ces données quittent la machine à chaque vérification. Le fichier .claude/council-heads-up.json d'un projet remplace ce réglage pour ce projet et choisit le siège et la cadence.",
       "default": false
     },
     "gemini_api_key": {
       "type": "string",
       "title": "Clé API Gemini",
-      "description": "The key the gemini seat uses, kept in Claude Code's secure storage. The council's mod sets GEMINI_API_KEY from it for every command in the session, over a shell export.",
+      "description": "La clé utilisée par le siège gemini, conservée dans le stockage sécurisé de Claude Code. Le mod council définit GEMINI_API_KEY à partir de cette clé pour chaque commande de la session, via un export shell.",
       "sensitive": true
     },
     "openai_api_key": {
       "type": "string",
       "title": "Clé API OpenAI",
-      "description": "The key the openai seat uses, kept in Claude Code's secure storage. The council's mod sets OPENAI_API_KEY from it for every command in the session, over a shell export.",
+      "description": "La clé utilisée par le siège openai, conservée dans le stockage sécurisé de Claude Code. Le mod council définit OPENAI_API_KEY à partir de cette clé pour chaque commande de la session, via un export shell.",
       "sensitive": true
     },
     "xai_api_key": {
       "type": "string",
       "title": "Clé API xAI (Grok)",
-      "description": "The key the grok seat uses, kept in Claude Code's secure storage. The council's mod sets XAI_API_KEY from it for every command in the session, over a shell export.",
+      "description": "La clé utilisée par le siège grok, conservée dans le stockage sécurisé de Claude Code. Le mod council définit XAI_API_KEY à partir de cette clé pour chaque commande de la session, via un export shell.",
       "sensitive": true
     },
     "perplexity_api_key": {
       "type": "string",
       "title": "Clé API Perplexity",
-      "description": "The key the perplexity seat uses, kept in Claude Code's secure storage. The council's mod sets PERPLEXITY_API_KEY from it for every command in the session, over a shell export.",
+      "description": "La clé utilisée par le siège perplexity, conservée dans le stockage sécurisé de Claude Code. Le mod council définit PERPLEXITY_API_KEY à partir de cette clé pour chaque commande de la session, via un export shell.",
       "sensitive": true
     },
     "kimi_api_key": {
       "type": "string",
       "title": "Clé API Kimi",
-      "description": "The key the kimi seat uses, kept in Claude Code's secure storage. The council's mod sets KIMI_API_KEY from it for every command in the session, over a shell export.",
+      "description": "La clé utilisée par le siège kimi, conservée dans le stockage sécurisé de Claude Code. Le mod council définit KIMI_API_KEY à partir de cette clé pour chaque commande de la session, via un export shell.",
       "sensitive": true
     },
     "openrouter_api_key": {
       "type": "string",
       "title": "Clé API OpenRouter",
-      "description": "The key every OpenRouter seat uses, kept in Claude Code's secure storage. The council's mod sets OPENROUTER_API_KEY from it for every command in the session, over a shell export.",
+      "description": "La clé utilisée par tous les sièges OpenRouter, conservée dans le stockage sécurisé de Claude Code. Le mod council définit OPENROUTER_API_KEY à partir de cette clé pour chaque commande de la session, via un export shell.",
       "sensitive": true
     },
     "openrouter_models": {
       "type": "string",
       "title": "Modèles OpenRouter",
-      "description": "Model ids from openrouter.ai/models, separated by commas or spaces, such as deepseek/deepseek-v3.2,z-ai/glm-5.3. Each id becomes its own seat, openrouter-1, openrouter-2 and so on, all on the one OpenRouter key. The council's mod sets OPENROUTER_MODELS from it for every command in the session, over a shell export. Left empty, a shell export still applies; with neither, one openrouter seat runs the default model."
+      "description": "Identifiants de modèles issus de openrouter.ai/models, séparés par des virgules ou des espaces, par exemple deepseek/deepseek-v3.2,z-ai/glm-5.3. Chaque identifiant devient son propre siège, openrouter-1, openrouter-2 et ainsi de suite, tous avec la même clé OpenRouter. Le mod council définit OPENROUTER_MODELS à partir de cette valeur pour chaque commande de la session, via un export shell. Si le champ est vide, un export shell s'applique tout de même ; sans aucun des deux, un siège openrouter utilise le modèle par défaut."
     }
   }
 }

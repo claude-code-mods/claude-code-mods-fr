@@ -23,7 +23,7 @@
   "userConfig": {
     "architectPattern": {
       "title": "Motif de l'architecte",
-      "description": "Regular expression (case-insensitive) for the agent types and server tools that count as the on-call architect, e.g. advisor|architect|reviewer",
+      "description": "Expression régulière (insensible à la casse) pour les types d'agents et les outils serveur comptés comme l'architecte de garde, par exemple advisor|architect|reviewer",
       "type": "string",
       "default": "advisor|architect"
     },
@@ -41,7 +41,7 @@
     },
     "panels": {
       "title": "Panneaux",
-      "description": "Comma-separated panels in display order: main, architect, gate, agents, loops, receipt, log. Leave one out to hide it.",
+      "description": "Panneaux séparés par des virgules, dans l'ordre d'affichage : main, architect, gate, agents, loops, receipt, log. Omettez-en un pour le masquer.",
       "type": "string",
       "default": "main,architect,gate,agents,loops,receipt,log"
     },
@@ -57,31 +57,31 @@
     },
     "moments": {
       "title": "Moments de l'architecte",
-      "description": "Show the inferred moment of each consult (before a plan, error repeats, before done)",
+      "description": "Afficher le moment déduit de chaque consultation (avant un plan, répétitions d'erreur, avant la fin)",
       "type": "boolean",
       "default": true
     },
     "matchDescriptions": {
       "title": "Faire correspondre les descriptions d'agents",
-      "description": "Also count an agent type as the architect when its description (not just its name) matches the pattern",
+      "description": "Compte aussi un type d'agent comme architecte quand sa description (pas seulement son nom) correspond au motif",
       "type": "boolean",
       "default": false
     },
     "maxCards": {
       "title": "Cartes avant couloirs",
-      "description": "Agent cards drawn side by side; more agents than this switch to swimlanes (1-6)",
+      "description": "Cartes d'agents dessinées côte à côte ; au-delà de ce nombre d'agents, passage aux couloirs (1-6)",
       "type": "number",
       "default": 3
     },
     "paneColumns": {
       "title": "Largeur du volet",
-      "description": "Columns the pane asks for when docked beside a fullscreen transcript, 40 or more. Claude Code caps the dock at 45% of the terminal, and a width you dragged it to wins.",
+      "description": "Colonnes demandées par le volet quand il est ancré à côté d'une transcription plein écran, 40 ou plus. Claude Code limite l'ancrage à 45 % du terminal, et une largeur que vous avez ajustée à la souris prévaut.",
       "type": "number",
       "default": 66
     },
     "layout": {
       "title": "Disposition",
-      "description": "auto: a summary of at most 8 rows when the pane sits inline above the prompt, two columns from 110 columns when docked, one column otherwise",
+      "description": "auto : un résumé d'au plus 8 lignes quand le volet est en ligne au-dessus du prompt, deux colonnes à partir de 110 colonnes quand il est ancré, une colonne sinon",
       "type": "string",
       "options": [
         "auto",
@@ -93,7 +93,7 @@
     },
     "palette": {
       "title": "Palette",
-      "description": "theme follows your Claude Code theme (light, dark, colour-blind); pastel is fixed colours tuned for dark terminals",
+      "description": "theme suit le thème de Claude Code (clair, sombre, daltonien) ; pastel est un jeu de couleurs fixes réglé pour les terminaux sombres",
       "type": "string",
       "options": [
         "theme",

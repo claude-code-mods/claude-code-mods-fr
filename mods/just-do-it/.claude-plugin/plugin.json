@@ -7,7 +7,7 @@
     "fleetConfigPath": {
       "type": "file",
       "title": "Configuration de la flotte",
-      "description": "Optional absolute path to a private fleet configuration. Empty disables fleet inspection.",
+      "description": "Chemin absolu facultatif vers une configuration privée de la flotte. Vide, l'inspection de la flotte est désactivée.",
       "required": false,
       "default": ""
     }

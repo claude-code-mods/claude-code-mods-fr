@@ -39,7 +39,7 @@
     "glyphs": {
       "type": "string",
       "title": "Glyphes",
-      "description": "Icon set: auto uses Nerd Font icons when Nerd Fonts 3.2 or newer is installed here, except in the desktop app, and plain Unicode otherwise; plain uses Unicode only; text is plain with the header buttons as words (up, cwd, sync, dots, size, fold, split, clear), falling back to plain glyphs when the pane is too narrow",
+      "description": "Jeu d’icônes : auto utilise les icônes Nerd Font si Nerd Fonts 3.2 ou plus récent est installé ici, sauf dans l’application de bureau, et sinon Unicode simple ; plain n’utilise que Unicode ; text est simple avec les boutons d’en-tête en mots (up, cwd, sync, dots, size, fold, split, clear), avec repli vers les glyphes simples quand le volet est trop étroit",
       "default": "auto",
       "options": [
         "auto",
@@ -61,7 +61,7 @@
     "jump": {
       "type": "string",
       "title": "Le saut déplace Claude",
-      "description": "tree and Claude: picking a folder with z re-roots the tree and moves the session there with /cd, which asks first for a folder this session has not trusted. tree: z re-roots only the tree and Claude stays where it is.",
+      "description": "tree and Claude : choisir un dossier avec z recentre l’arbre et déplace la session avec /cd, qui demande d’abord confirmation pour un dossier non approuvé par cette session. tree : z ne recentre que l’arbre et Claude reste où il est.",
       "default": "tree and Claude",
       "options": [
         "tree and Claude",
@@ -71,7 +71,7 @@
     "copy": {
       "type": "string",
       "title": "Le clic droit copie",
-      "description": "relative: a right-click on an entry copies its path from the tree's root. absolute: it copies the full path. Shift+right-click copies the other one. y and Y keep copying the relative and the absolute path.",
+      "description": "relative : un clic droit sur une entrée copie son chemin depuis la racine de l’arbre. absolute : il copie le chemin complet. Maj+clic droit copie l’autre. y et Y copient respectivement le chemin relatif et le chemin absolu.",
       "default": "relative",
       "options": [
         "relative",
@@ -81,7 +81,7 @@
     "work": {
       "type": "string",
       "title": "Suivre le travail",
-      "description": "on: when Claude or its subagents keep reading and writing in another git repo for a few minutes, the session moves there with /cd at the end of a turn (or while idle) and the tree follows; at most once every two minutes, never while several repos are equally busy, and never into temp folders, ~/.claude, ~/.config or the agents vault. off: the session stays where you put it. With Jump moves Claude set to tree, only the tree moves.",
+      "description": "on : quand Claude ou ses sous-agents lisent et écrivent dans un autre dépôt git pendant quelques minutes, la session s’y déplace avec /cd à la fin d’un tour (ou pendant l’inactivité) et l’arbre suit ; au plus une fois toutes les deux minutes, jamais quand plusieurs dépôts sont également actifs, et jamais dans les dossiers temporaires, ~/.claude, ~/.config ni le coffre des agents. off : la session reste où vous l’avez mise. Avec Jump moves Claude réglé sur tree, seul l’arbre se déplace.",
       "default": "on",
       "options": [
         "on",
@@ -101,7 +101,7 @@
     "focus": {
       "type": "string",
       "title": "Focus à l'ouverture",
-      "description": "on: /filetree moves the keyboard into the tree when it opens it. off: the keyboard stays in the prompt, so the same command, or a key bound to it, hides the tree again; /filetree open, /filetree <path> and a tree hidden behind another tab still take the focus.",
+      "description": "on : /filetree place le clavier dans l’arbre quand il l’ouvre. off : le clavier reste dans le prompt, donc la même commande, ou une touche qui y est liée, cache à nouveau l’arbre ; /filetree open, /filetree <path> et un arbre caché derrière un autre onglet prennent tout de même le focus.",
       "default": "on",
       "options": [
         "on",
@@ -111,7 +111,7 @@
     "column": {
       "type": "string",
       "title": "Colonne de droite",
-      "description": "What the right column shows by default: date (last modified), age (time since last modified, short: now, 12m, 3h, 5d, then Oct 9 past a week and the year past a year), size (files in bytes, folders as disk usage computed in the background) loc (non-blank lines in every text file, folders as the sum and 0 when they hold no text, counted in the background; binaries show nothing) or files (the number of files under each folder, counted in the background). The header button cycles the date or age, size, loc and files; in loc the treemap sizes boxes by lines.",
+      "description": "Ce que montre la colonne de droite par défaut : date (dernière modification), age (temps écoulé depuis la dernière modification, en abrégé : now, 12m, 3h, 5d, puis Oct 9 au-delà d’une semaine et l’année au-delà d’un an), size (fichiers en octets, dossiers selon l’espace disque calculé en arrière-plan), loc (lignes non vides de chaque fichier texte, dossiers comme somme et 0 s’ils ne contiennent pas de texte, comptées en arrière-plan ; les binaires n’affichent rien) ou files (nombre de fichiers sous chaque dossier, compté en arrière-plan). Le bouton d’en-tête fait défiler date ou age, size, loc et files ; en loc, le treemap dimensionne les boîtes selon les lignes.",
       "default": "date",
       "options": [
         "date",
@@ -124,7 +124,7 @@
     "dates": {
       "type": "string",
       "title": "Format de date",
-      "description": "How the date column writes a day: year-month-day (2026-11-04 15:40), day-month (04-11 15:40) or month-day (11-04 15:40). day-month and month-day leave out the year. The age column is unchanged.",
+      "description": "Comment la colonne de date écrit un jour : year-month-day (2026-11-04 15:40), day-month (04-11 15:40) ou month-day (11-04 15:40). day-month et month-day omettent l’année. La colonne age reste inchangée.",
       "default": "year-month-day",
       "options": [
         "year-month-day",
@@ -145,13 +145,13 @@
     "long": {
       "type": "string",
       "title": "Fichier long",
-      "description": "In the loc column, a file with more lines than this number shows its line count in red. off: never. Default 500.",
+      "description": "Dans la colonne loc, un fichier avec plus de lignes que ce nombre affiche son nombre de lignes en rouge. off : jamais. Valeur par défaut : 500.",
       "default": "500"
     },
     "remote": {
       "type": "string",
       "title": "Branche distante",
-      "description": "on: the branch row shows the upstream branch next to the ahead and behind counts. off: only the counts show.",
+      "description": "on : la ligne de branche affiche la branche amont à côté des compteurs d’avance et de retard. off : seuls les compteurs s’affichent.",
       "default": "off",
       "options": [
         "on",
@@ -161,7 +161,7 @@
     "hints": {
       "type": "string",
       "title": "Indices",
-      "description": "on: outside a git repo, a line under the header says git status starts after git init. off: the line is hidden and the tree gets the row.",
+      "description": "on : hors d’un dépôt git, une ligne sous l’en-tête indique que git status commence après git init. off : la ligne est masquée et l’arbre récupère la ligne.",
       "default": "on",
       "options": [
         "on",
@@ -171,7 +171,7 @@
     "collapse": {
       "type": "string",
       "title": "Repli automatique",
-      "description": "on: folders the tree opened to show Claude's reads and writes close again 10 seconds after Claude last touched them, unless you opened or moved into them; turning it on also closes the ones opened while it was off. off: they stay open. The toolbar toggle and the a key flip it.",
+      "description": "on : les dossiers ouverts par l’arbre pour montrer les lectures et écritures de Claude se referment 10 secondes après le dernier accès de Claude, sauf si vous les avez ouverts ou y êtes entré ; les activer referme aussi ceux ouverts pendant qu’ils étaient désactivés. off : ils restent ouverts. Le bouton de la barre d’outils et la touche a inversent le réglage.",
       "default": "off",
       "options": [
         "on",
@@ -181,7 +181,7 @@
     "headers": {
       "type": "string",
       "title": "En-têtes de colonne",
-      "description": "on: a Name, Git and value header row under the search bar; click one to sort desc, asc, then off. off: hide it.",
+      "description": "on : une ligne d’en-tête Nom, Git et valeur sous la barre de recherche ; cliquez sur l’une d’elles pour trier en descendant, puis en montant, puis plus du tout. off : la masquer.",
       "default": "on",
       "options": [
         "on",
@@ -191,7 +191,7 @@
     "spacing": {
       "type": "string",
       "title": "Espacement de recherche",
-      "description": "on: a blank line above and below the search bar. off: the search bar sits right under the header and the tree gets the two rows.",
+      "description": "on : une ligne vide au-dessus et en dessous de la barre de recherche. off : la barre est juste sous l’en-tête et l’arbre récupère les deux lignes.",
       "default": "on",
       "options": [
         "on",
@@ -201,7 +201,7 @@
     "shortcuts": {
       "type": "string",
       "title": "Raccourcis",
-      "description": "? in the tree shows every key, grouped, in place of the tree; j, k, the arrows, f, b and the page keys scroll it; ? again or any other key that acts closes it, and the key still acts. auto: the footer shows a ?: shortcuts hint. always: the list opens with the pane. off: no hint. ? works in every mode with the tree focused; typed in the search field it is just a character.",
+      "description": "? dans l’arbre affiche toutes les touches, groupées, à la place de l’arbre ; j, k, les flèches, f, b et les touches de page le font défiler ; ? à nouveau ou toute autre touche agissante le ferme, et la touche agit quand même. auto : le pied de page affiche une aide ?: shortcuts. always : la liste s’ouvre avec le volet. off : aucune aide. ? fonctionne dans tous les modes quand l’arbre a le focus ; saisi dans le champ de recherche, ce n’est qu’un caractère.",
       "default": "auto",
       "options": [
         "auto",
@@ -212,13 +212,13 @@
     "open": {
       "type": "string",
       "title": "Ouvrir avec",
-      "description": "What a double-click or Enter does with a file. Empty: the default app, also inside tmux. editor: use $VISUAL, then $EDITOR, then vi in tmux or a herdr pane (Linux/macOS only; otherwise shows a notice). preview: show it in the pane (left goes back; ↗ always opens the default app). Anything else is a command run instead: {path} is the file and {dir} its folder; without {path} the path goes last. Words split on spaces, quotes keep a word whole, and no shell runs it. It should start the viewer and return; on Linux it runs detached.",
+      "description": "Ce que fait un double-clic ou Entrée sur un fichier. Vide : l’application par défaut, y compris dans tmux. editor : utiliser $VISUAL, puis $EDITOR, puis vi dans tmux ou un volet herdr (Linux/macOS seulement ; sinon un avis s’affiche). preview : l’afficher dans le volet (left revient en arrière ; ↗ ouvre toujours l’application par défaut). Toute autre valeur est une commande exécutée à la place : {path} est le fichier et {dir} son dossier ; sans {path}, le chemin est ajouté en fin. Les mots se séparent sur les espaces, les guillemets maintiennent un mot entier, et aucun shell ne l’exécute. La commande doit lancer le visualiseur et revenir ; sous Linux, elle s’exécute détachée.",
       "default": ""
     },
     "binaries": {
       "type": "string",
       "title": "Fichiers binaires",
-      "description": "What a double-click or Enter does with an image, audio, video, PDF, office document, archive, font or compiled file when Open with names an editor or command. Open with: hand it to the editor or command like any other file. default app: open it in the default app for its type, as if Open with were empty, so a code editor in Open with gets code and the system gets images. The file type comes from its extension; preview is unaffected.",
+      "description": "Ce que fait un double-clic ou Entrée sur une image, un fichier audio ou vidéo, un PDF, un document office, une archive, une police ou un fichier compilé quand Open with désigne un éditeur ou une commande. Open with : le lui confier comme tout autre fichier. default app : l’ouvrir dans l’application par défaut de son type, comme si Open with était vide, afin qu’un éditeur de code dans Open with reçoive le code et le système les images. Le type du fichier vient de son extension ; preview n’est pas affecté.",
       "default": "Open with",
       "options": [
         "Open with",
@@ -228,19 +228,19 @@
     "edit": {
       "type": "string",
       "title": "Modifier avec",
-      "description": "What e does in the preview: open the file at the top line shown. Empty: $VISUAL, then $EDITOR, then vi in tmux or a herdr pane with +line (Linux/macOS only; the e button is hidden elsewhere). Anything else is a command like Open with, where {line} is that line, for example code -g {path}:{line} or zed {path}:{line}.",
+      "description": "Ce que fait e dans l’aperçu : ouvrir le fichier à la première ligne affichée. Vide : $VISUAL, puis $EDITOR, puis vi dans tmux ou un volet herdr avec +line (Linux/macOS seulement ; le bouton e est masqué ailleurs). Toute autre valeur est une commande comme pour Open with, où {line} est cette ligne, par exemple code -g {path}:{line} ou zed {path}:{line}.",
       "default": ""
     },
     "diff": {
       "type": "string",
       "title": "Comparer avec",
-      "description": "What d does on a changed file, in the tree or the preview. Empty: show its diff against HEAD in the pane, drawn by Claude Code's own diff view (an untracked file shows as all added; d again goes back to the file). Anything else is a terminal command, run on the file in a tmux window, a herdr pane or, on Linux, a new terminal window through xdg-terminal-exec, the file path going last. Examples: hunk diff --, lazygit -f, git difftool -y --, nvim -c Gvdiffsplit.",
+      "description": "Ce que fait d sur un fichier modifié, dans l’arbre ou l’aperçu. Vide : afficher son diff par rapport à HEAD dans le volet, dessiné par la vue diff propre à Claude Code (un fichier non suivi apparaît comme entièrement ajouté ; appuyer à nouveau sur d revient au fichier). Toute autre valeur est une commande de terminal, exécutée sur le fichier dans une fenêtre tmux, un volet herdr ou, sous Linux, une nouvelle fenêtre de terminal via xdg-terminal-exec, le chemin du fichier venant en fin. Exemples : hunk diff --, lazygit -f, git difftool -y --, nvim -c Gvdiffsplit.",
       "default": ""
     },
     "groups": {
       "type": "string",
       "title": "Groupes de diff",
-      "description": "How d on a folder orders its changed files. folder: grouped by folder, with test, build and generated files (lockfiles, dist, build and out folders, *.min.*, snapshots, test folders, *.test.* and *_test.* files) in their own group last. kind: the other files first, then that test, build and generated group. off: one list in git's order.",
+      "description": "Comment d sur un dossier ordonne ses fichiers modifiés. folder : regroupés par dossier, avec les fichiers de test, de build et générés (lockfiles, dossiers dist, build et out, *.min.*, snapshots, dossiers de test, fichiers *.test.* et *_test.*) dans leur propre groupe en dernier. kind : les autres fichiers d’abord, puis ce groupe de test, build et fichiers générés. off : une seule liste dans l’ordre de git.",
       "default": "folder",
       "options": [
         "folder",
@@ -251,7 +251,7 @@
     "target": {
       "type": "string",
       "title": "Cible du terminal",
-      "description": "Where Open with: editor, e in the preview and a Diff with command start their terminal program inside tmux or herdr. auto: a new tmux window, or a herdr pane split to the right. pane right and pane below split the current pane; tab opens a tmux window or a herdr tab; workspace opens a new tmux session and switches to it, or a new herdr workspace. In tmux, nvim already running in the session is reused wherever it is.",
+      "description": "Où Open with : editor, e dans l’aperçu et un Diff avec commande lancent leur programme de terminal dans tmux ou herdr. auto : une nouvelle fenêtre tmux, ou un volet herdr divisé à droite. pane right et pane below divisent le volet courant ; tab ouvre une fenêtre tmux ou un onglet herdr ; workspace ouvre une nouvelle session tmux et s’y connecte, ou un nouvel espace de travail herdr. Dans tmux, un nvim déjà lancé dans la session est réutilisé où qu’il se trouve.",
       "default": "auto",
       "options": [
         "auto",
@@ -264,13 +264,13 @@
     "ignore": {
       "type": "string",
       "title": "Ignorer",
-      "description": "File and folder names to leave out of the tree, its search and its shimmer, separated by spaces or commas. Names match exactly, without wildcards, at any depth, like the built-in .git and node_modules. Example: .cache .tmp",
+      "description": "Noms de fichiers et de dossiers à exclure de l’arbre, de sa recherche et de son scintillement, séparés par des espaces ou des virgules. Les noms doivent correspondre exactement, sans jokers, à n’importe quelle profondeur, comme .git et node_modules intégrés. Exemple : .cache .tmp",
       "default": ""
     },
     "split": {
       "type": "string",
       "title": "Volet d'aperçu",
-      "description": "Where the split preview of the file under the cursor sits when the header button or p shows it: bottom (under the tree, above the status line) or top (under the header). It starts hidden; text scrolls with the wheel over it, f/b or Page Up/Down, images, video poster frames and PDF or office document pages draw through the kitty graphics protocol in terminals that support it, and [ and ] turn a document's pages.",
+      "description": "Où se place l’aperçu divisé du fichier sous le curseur quand le bouton d’en-tête ou p l’affiche : bottom (sous l’arbre, au-dessus de la ligne d’état) ou top (sous l’en-tête). Il démarre masqué ; le texte défile avec la molette au-dessus, avec f/b ou Page Up/Down ; les images, images-clés de vidéo et pages de PDF ou de document office se dessinent via le protocole graphique kitty dans les terminaux qui le prennent en charge, et [ et ] changent les pages d’un document.",
       "default": "bottom",
       "options": [
         "bottom",
@@ -280,7 +280,7 @@
     "treemap": {
       "type": "string",
       "title": "Treemap",
-      "description": "What the split preview shows on a folder. auto: a pixel-accurate treemap through the kitty graphics protocol in Ghostty and kitty, outside tmux and herdr, and the cell treemap everywhere else. image: try the pixel treemap in any terminal, falling back to cells where it cannot show, as inside tmux. cells: always the cell treemap. off: no treemap and no disk usage scans.",
+      "description": "Ce que l’aperçu divisé montre pour un dossier. auto : un treemap pixel parfait via le protocole graphique kitty dans Ghostty et kitty, hors tmux et herdr, et le treemap en cellules partout ailleurs. image : essayer le treemap pixel dans tout terminal, avec repli en cellules là où il ne peut pas s’afficher, comme dans tmux. cells : toujours le treemap en cellules. off : aucun treemap et aucune analyse d’espace disque.",
       "default": "auto",
       "options": [
         "auto",
@@ -292,7 +292,7 @@
     "palette": {
       "type": "string",
       "title": "Palette",
-      "description": "Your own colors, laid over the Omarchy, light or default theme: key=#hex pairs separated by spaces. Keys: fg, bg, accent (folders, links), muted (dates, sizes), urgent (deleted, conflicts), selection (selected row), hover (hovered row), jump (folders in z jump mode), added, modified, renamed (git status), add and del (line counts). A key you leave out keeps the theme's color. Example (Gruvbox Dark Hard): fg=#ebdbb2 bg=#1d2021 accent=#83a598 muted=#928374 urgent=#fb4934 selection=#3c3836 added=#b8bb26 modified=#fabd2f renamed=#83a598 add=#b8bb26 del=#fb4934",
+      "description": "Vos propres couleurs, appliquées par-dessus le thème Omarchy, clair ou par défaut : paires clé=#hex séparées par des espaces. Clés : fg, bg, accent (dossiers, liens), muted (dates, tailles), urgent (suppressions, conflits), selection (ligne sélectionnée), hover (ligne survolée), jump (dossiers en mode saut z), added, modified, renamed (statut git), add et del (nombre de lignes). Une clé omise conserve la couleur du thème. Exemple (Gruvbox Dark Hard) : fg=#ebdbb2 bg=#1d2021 accent=#83a598 muted=#928374 urgent=#fb4934 selection=#3c3836 added=#b8bb26 modified=#fabd2f renamed=#83a598 add=#b8bb26 del=#fb4934",
       "default": ""
     }
   },

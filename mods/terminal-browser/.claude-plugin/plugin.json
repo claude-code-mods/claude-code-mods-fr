@@ -16,8 +16,8 @@
   "userConfig": {
     "agentTool": {
       "type": "boolean",
-      "title": "Give the agent a tool to open/close terminal-browser inside claude code",
-      "description": "Adds an open/close tool the model can call to show a page in the browser pane. Off by default.",
+      "title": "Donner à l'agent un outil pour ouvrir/fermer terminal-browser dans Claude Code",
+      "description": "Ajoute un outil d'ouverture/fermeture que le modèle peut appeler pour afficher une page dans le volet du navigateur. Désactivé par défaut.",
       "default": false
     }
   }

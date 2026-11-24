@@ -24,25 +24,25 @@
       "title": "Tableau de bord du registre",
       "type": "boolean",
       "default": true,
-      "description": "Draw the .story/ ledger in a pane beside the transcript. On by default; turn it off with /plugin configure storybloq. Projects with no .story/ directory show nothing either way (T-508, T-516)."
+      "description": "Dessine le registre .story/ dans un volet à côté de la transcription. Activé par défaut ; désactivez-le avec /plugin configure storybloq. Les projets sans dossier .story/ n'affichent rien dans tous les cas (T-508, T-516)."
     },
     "startupLogo": {
       "title": "Logo de démarrage Storyfield",
       "type": "boolean",
       "default": true,
-      "description": "Show a brief copper dot-wave logo before the dashboard. Turn off to show the board immediately."
+      "description": "Affiche un bref logo cuivré en onde de points avant le tableau de bord. Désactivez cette option pour afficher le tableau immédiatement."
     },
     "motion": {
       "title": "Animation du tableau de bord",
       "type": "boolean",
       "default": true,
-      "description": "Animate startup, phase progress, story updates, activity, and the context meter. Turn off for a static dashboard that still shows current status and activity."
+      "description": "Anime le démarrage, la progression des phases, les mises à jour d'histoires, l'activité et la jauge de contexte. Désactivez cette option pour un tableau statique qui affiche quand même l'état et l'activité actuels."
     },
     "changeHighlights": {
       "title": "Surlignages du statut d'histoire",
       "type": "boolean",
       "default": true,
-      "description": "Briefly highlight changed stories and destination counts, and show Ready when a blocker clears. Requires Dashboard motion."
+      "description": "Surligne brièvement les histoires modifiées et les nombres de destinations, et affiche Ready quand un bloquant est levé. Nécessite l'animation du tableau de bord."
     }
   },
   "metadata": {
