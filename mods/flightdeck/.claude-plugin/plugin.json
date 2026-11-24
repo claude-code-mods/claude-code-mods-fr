@@ -22,32 +22,32 @@
   "types": "./types/index.d.ts",
   "userConfig": {
     "architectPattern": {
-      "title": "Architect pattern",
+      "title": "Motif de l'architecte",
       "description": "Regular expression (case-insensitive) for the agent types and server tools that count as the on-call architect, e.g. advisor|architect|reviewer",
       "type": "string",
       "default": "advisor|architect"
     },
     "architectLabel": {
-      "title": "Architect label",
-      "description": "Name shown for the architect role",
+      "title": "Étiquette de l'architecte",
+      "description": "Nom affiché pour le rôle d'architecte",
       "type": "string",
       "default": "ARCHITECT"
     },
     "gateLabel": {
-      "title": "Gate label",
-      "description": "Name shown for the permission panel",
+      "title": "Étiquette de la porte",
+      "description": "Nom affiché pour le panneau de permission",
       "type": "string",
       "default": "GATE"
     },
     "panels": {
-      "title": "Panels",
+      "title": "Panneaux",
       "description": "Comma-separated panels in display order: main, architect, gate, agents, loops, receipt, log. Leave one out to hide it.",
       "type": "string",
       "default": "main,architect,gate,agents,loops,receipt,log"
     },
     "motion": {
-      "title": "Motion",
-      "description": "Animate the connectors while real work flows, or keep them still",
+      "title": "Animation",
+      "description": "Anime les connecteurs pendant le travail réel, ou les laisse immobiles",
       "type": "string",
       "options": [
         "while-active",
@@ -56,31 +56,31 @@
       "default": "while-active"
     },
     "moments": {
-      "title": "Architect moments",
+      "title": "Moments de l'architecte",
       "description": "Show the inferred moment of each consult (before a plan, error repeats, before done)",
       "type": "boolean",
       "default": true
     },
     "matchDescriptions": {
-      "title": "Match agent descriptions",
+      "title": "Faire correspondre les descriptions d'agents",
       "description": "Also count an agent type as the architect when its description (not just its name) matches the pattern",
       "type": "boolean",
       "default": false
     },
     "maxCards": {
-      "title": "Cards before swimlanes",
+      "title": "Cartes avant couloirs",
       "description": "Agent cards drawn side by side; more agents than this switch to swimlanes (1-6)",
       "type": "number",
       "default": 3
     },
     "paneColumns": {
-      "title": "Pane width",
+      "title": "Largeur du volet",
       "description": "Columns the pane asks for when docked beside a fullscreen transcript, 40 or more. Claude Code caps the dock at 45% of the terminal, and a width you dragged it to wins.",
       "type": "number",
       "default": 66
     },
     "layout": {
-      "title": "Layout",
+      "title": "Disposition",
       "description": "auto: a summary of at most 8 rows when the pane sits inline above the prompt, two columns from 110 columns when docked, one column otherwise",
       "type": "string",
       "options": [
@@ -102,14 +102,14 @@
       "default": "theme"
     },
     "openOnStart": {
-      "title": "Open on start",
-      "description": "Open the pane when a session starts",
+      "title": "Ouvrir au démarrage",
+      "description": "Ouvrir le volet au démarrage d'une session",
       "type": "boolean",
       "default": true
     },
     "statusLine": {
-      "title": "Status line",
-      "description": "Show context, agents, consults and denials in the status line",
+      "title": "Ligne d'état",
+      "description": "Afficher le contexte, les agents, les consultations et les refus dans la ligne d'état",
       "type": "boolean",
       "default": true
     }

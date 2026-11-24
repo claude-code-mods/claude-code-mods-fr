@@ -22,7 +22,7 @@
   "userConfig": {
     "server": {
       "type": "string",
-      "title": "Share server",
+      "title": "Serveur de partage",
       "description": "Leave empty to share through the public server. To use your own, its https address (README: \"Host a server\"). Joining a link always uses the server in that link."
     }
   },

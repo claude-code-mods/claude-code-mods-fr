@@ -33,19 +33,19 @@
   "userConfig": {
     "abrirPainel": {
       "type": "boolean",
-      "title": "Abrir o painel ao iniciar",
+      "title": "Ouvrir le volet au démarrage",
       "description": "Abre o painel do MazyOS (memória, foco e atalhos) quando a sessão começa numa pasta do MazyOS e o terminal é largo o bastante. /mazyos abre a qualquer hora.",
       "default": true
     },
     "linhaDeStatus": {
       "type": "boolean",
-      "title": "Linha de status",
+      "title": "Ligne d'état",
       "description": "Mostra 'MazyOS · negócio · foco' embaixo do prompt enquanto você trabalha numa pasta do MazyOS.",
       "default": true
     },
     "protegerGit": {
       "type": "boolean",
-      "title": "Freio no git",
+      "title": "Frein sur git",
       "description": "Pede confirmação antes de git push --force, git reset --hard e outros comandos git que apagam trabalho, dentro de uma pasta do MazyOS.",
       "default": true
     }

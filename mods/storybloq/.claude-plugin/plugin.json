@@ -21,25 +21,25 @@
   "hooks": "./hooks/hooks.json",
   "userConfig": {
     "sidebar": {
-      "title": "Ledger dashboard",
+      "title": "Tableau de bord du registre",
       "type": "boolean",
       "default": true,
       "description": "Draw the .story/ ledger in a pane beside the transcript. On by default; turn it off with /plugin configure storybloq. Projects with no .story/ directory show nothing either way (T-508, T-516)."
     },
     "startupLogo": {
-      "title": "Storyfield startup logo",
+      "title": "Logo de démarrage Storyfield",
       "type": "boolean",
       "default": true,
       "description": "Show a brief copper dot-wave logo before the dashboard. Turn off to show the board immediately."
     },
     "motion": {
-      "title": "Dashboard motion",
+      "title": "Animation du tableau de bord",
       "type": "boolean",
       "default": true,
       "description": "Animate startup, phase progress, story updates, activity, and the context meter. Turn off for a static dashboard that still shows current status and activity."
     },
     "changeHighlights": {
-      "title": "Story status highlights",
+      "title": "Surlignages du statut d'histoire",
       "type": "boolean",
       "default": true,
       "description": "Briefly highlight changed stories and destination counts, and show Ready when a blocker clears. Requires Dashboard motion."

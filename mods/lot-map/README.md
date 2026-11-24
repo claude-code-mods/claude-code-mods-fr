@@ -33,7 +33,7 @@ Dans l'application Desktop : cliquez sur **+** à côté de la boîte de prompt,
 
 Le volet s'ouvre de lui-même au démarrage d'une session ; avec `openAtStart` désactivé, il attend `/lot-map`. Dans un terminal, il lui faut au moins 144 colonnes, sinon tapez `/lot-map`, et il ne dessine que du texte sauf si vous demandez la carte, en image ou en points braille : voir [Dans un terminal](#in-a-terminal). Développé et testé sur Claude Code 2.1.321 sous macOS ; des utilisateurs signalent qu'il fonctionne aussi sur Windows et Linux.
 
-Avec une connexion Team ou Enterprise, la transcription peut recevoir des avis comme `lot-map: its classic.PreToolUse hook was skipped`. Désactivez `guardedHooks` et ils s'arrêtent ; [Options](#what-it-shows) indique ce que la carte perd alors.
+Avec une connexion Team ou Enterprise, la transcription peut recevoir des avis comme `lot-map: its classic.PreToolUse hook was skipped`. Désactivez `guardedHooks` et ils s'arrêtent ; [Options](#ce-quelle-montre-et-ce-quelle-conserve) indique ce que la carte perd alors.
 
 ## Mise à jour
 
@@ -187,7 +187,7 @@ Chacune d'elles avec une image de ses valeurs : [Comment les options s'affichent
 | `hookReasons` | `false` | afficher la première ligne du refus d'un hook, jusqu'à 72 caractères ; désactivé, la carte indique seulement quel outil a été arrêté |
 | `guardedHooks` | `true` | à désactiver sur une connexion Team ou Enterprise lorsque la transcription reçoit des avis comme `lot-map: its classic.PreToolUse hook was skipped`. La garde d'une organisation éloigne les mods de cinq événements là-bas, et avec ceci désactivé le mod n'ajoute aucun hook sur eux. La carte perd alors la station Hooks, les enregistrements ajoutés par un hook, la ligne d'une commande slash tapée et la marque d'une compaction ; un appel refusé par un hook reçoit quand même son `✕`, comme un appel échoué et non comme un appel bloqué |
 | `subagentNames` | `false` | l'étape de modèle d'un sous-agent indique quel sous-agent c'est, par les quelques mots avec lesquels il a été lancé, jusqu'à 40 caractères ; désactivé, elle indique seulement qu'il s'agit d'un sous-agent |
-| `contextCost` | `false` | chaque ligne indique approximativement de combien de jetons le contexte a grandi avec la réponse de son appel, et la carte ajoute la somme de chaque station à son compte. Une estimation, affichée avec une étape de retard ; voir [Ce que chaque appel ajoute au contexte](#what-each-call-adds-to-the-context) |
+| `contextCost` | `false` | chaque ligne indique approximativement de combien de jetons le contexte a grandi avec la réponse de son appel, et la carte ajoute la somme de chaque station à son compte. Une estimation, affichée avec une étape de retard ; voir [Ce que chaque appel ajoute au contexte](#ce-que-chaque-appel-ajoute-au-contexte) |
 | `contextWindow` | `model` | par rapport à quoi l'anneau et son pourcentage mesurent le contexte : `model`, la fenêtre entière du modèle, comme la ligne d'état ; ou `compaction`, la fenêtre de compaction automatique, telle que définie avec `autoCompactWindow`, lorsqu'elle est plus petite que celle du modèle. Sans une telle fenêtre, ou avec la compaction automatique désactivée, `compaction` affiche la même chose que `model`. La fenêtre est lue à la première étape de modèle d'une session, après une compaction et lors d'un changement de modèle ; avec `guardedHooks` désactivé, pas après une compaction |
 
 ### Mémoire et serveurs

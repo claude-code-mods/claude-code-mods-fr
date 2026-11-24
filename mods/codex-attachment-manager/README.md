@@ -130,6 +130,6 @@ Codex et Claude Code sont testés. WorkBuddy, OpenCode, Gemini CLI, pi, DeepSeek
 
 ### Comment installer Context Attachment Manager ? Ai-je besoin d'un terminal ?
 
-Non. Envoyez à votre agent la phrase unique de [Install](#install) ci-dessus : il identifie sa plateforme et effectue l'installation lui-même ; vous ne faites que redémarrer l'agent ensuite (dans Claude Desktop, démarrez une nouvelle session Code). Dans Codex vous pouvez aussi l'installer depuis la page Plugins en quelques clics. Si vous préférez le faire manuellement, cela demande une commande dans Codex et deux commandes `claude` dans Claude Desktop ; voir [INSTALL.md](INSTALL.md).
+Non. Envoyez à votre agent la phrase unique de [Install](#installation) ci-dessus : il identifie sa plateforme et effectue l'installation lui-même ; vous ne faites que redémarrer l'agent ensuite (dans Claude Desktop, démarrez une nouvelle session Code). Dans Codex vous pouvez aussi l'installer depuis la page Plugins en quelques clics. Si vous préférez le faire manuellement, cela demande une commande dans Codex et deux commandes `claude` dans Claude Desktop ; voir [INSTALL.md](INSTALL.md).
 
 <p align="center"><sub><a href="CHANGELOG.md">Journal des modifications</a> · <a href="CONTRIBUTING.md">Contribuer</a> · <a href="LICENSE">Licence MIT</a></sub></p>

@@ -1,6 +1,6 @@
 # Plugin terminal-browser pour Claude Code
 
-> Ce plugin est expérimental et présente des [known limitations](#caveats)
+> Ce plugin est expérimental et présente des [limitations connues](#limitations)
 
 
 
@@ -122,7 +122,7 @@ Même si votre terminal prend en charge la fonctionnalité graphique requise, le
 
 
 
-## Limitations :
+## Limitations
 - dépend de la prise en charge du [protocole graphique kitty] par votre terminal
 - la position de la souris sera parfois légèrement décalée, car Claude Code n'active pas le rapport de coordonnées pixel de la souris
 - le plugin doit effectuer des requêtes fetch vers un serveur HTTP local pour communiquer avec la CLI terminal-browser ; votre système d'exploitation peut afficher une invite indiquant que votre terminal souhaite accéder au réseau local

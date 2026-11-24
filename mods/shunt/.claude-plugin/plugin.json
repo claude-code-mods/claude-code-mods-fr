@@ -25,7 +25,7 @@
   "userConfig": {
     "usageBand": {
       "type": "boolean",
-      "title": "Usage band",
+      "title": "Bande d'utilisation",
       "description": "Show usage above the prompt: the shunt pool's, refreshed every minute and after each turn, or the session's own rate limits off shunt. Off, the mod polls nothing and /shunt:usage still answers.",
       "default": true
     }

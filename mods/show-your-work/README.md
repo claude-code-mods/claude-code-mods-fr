@@ -206,7 +206,7 @@ Il conserve ces fichiers :
 - Les images vidéo et les images converties vont dans un dossier temporaire (`$TMPDIR/claude-show-your-work-<votre identifiant>`), et tout ce qui a plus d'une semaine est nettoyé.
 - Une copie de chaque fichier que Claude vous montre va dans `.show-your-work/` dans votre projet, pour que vous puissiez parcourir les versions.
 - Save to Downloads place une copie dans `~/Downloads`.
-- Si votre profil shell contient la ligne ajoutée par le bouton Activer les images d'une ancienne version (voir [Terminaux](#terminals)), il supprime cette seule ligne.
+- Si votre profil shell contient la ligne ajoutée par le bouton Activer les images d'une ancienne version (voir [Terminaux](#terminaux)), il supprime cette seule ligne.
 - Avec `SHOW_YOUR_WORK_DEBUG=1`, il écrit un `debug.log` dans le dossier temporaire.
 
 Une fois par jour, il lit le dernier numéro de version du plugin depuis `raw.githubusercontent.com`.
@@ -220,7 +220,7 @@ Dans Claude Code, il utilise ces hooks :
 - `tool.call` gère les propres outils `show_image`, `show_video`, `show_html`, `show_audio` et `show_document` du plugin. Il ne touche jamais aux autres outils.
 - `command.run` exécute `/img`, `/page`, `/audio`, `/doc` et `/show-your-work`. Juste après l'installation, il exécute une fois `/show-your-work tour` pour vous faire visiter.
 - `ui.render` dessine le lecteur, les avis, les réglages et la présentation du plugin.
-- `session.start` et `session.end` configurent le dossier temporaire et le terminal au début, et envoient les comptages d'utilisation en attente à la fin. Dans tmux, ils démarrent et arrêtent aussi le passage des images pour le volet du plugin (voir [Terminaux](#terminals)).
+- `session.start` et `session.end` configurent le dossier temporaire et le terminal au début, et envoient les comptages d'utilisation en attente à la fin. Dans tmux, ils démarrent et arrêtent aussi le passage des images pour le volet du plugin (voir [Terminaux](#terminaux)).
 
 </details>
 

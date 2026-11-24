@@ -6,7 +6,7 @@
   "userConfig": {
     "fleetConfigPath": {
       "type": "file",
-      "title": "Fleet configuration",
+      "title": "Configuration de la flotte",
       "description": "Optional absolute path to a private fleet configuration. Empty disables fleet inspection.",
       "required": false,
       "default": ""

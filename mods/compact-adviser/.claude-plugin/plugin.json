@@ -19,7 +19,7 @@
     "mode": {
       "type": "string",
       "title": "Mode",
-      "description": "hint shows advice; auto compacts at eligible checkpoints after a first-use confirmation from /compact-adviser; off disables the adviser (Claude Code's own auto-compact is unaffected).",
+      "description": "hint affiche des conseils ; auto compacte aux points de contrôle possibles après une confirmation de première utilisation depuis /compact-adviser ; off désactive le conseiller (l'auto-compaction propre à Claude Code n'est pas affectée).",
       "options": [
         "hint",
         "auto",
@@ -29,40 +29,40 @@
     },
     "minContextTokens": {
       "type": "number",
-      "title": "Minimum context (tokens)",
-      "description": "A constant token count, not a percentage; no judgment below it.",
+      "title": "Contexte minimal (jetons)",
+      "description": "Un nombre de jetons constant, pas un pourcentage ; aucun jugement en dessous.",
       "default": 40000,
       "min": 1
     },
     "contextBudgetTokens": {
       "type": "number",
-      "title": "Context budget (tokens)",
-      "description": "Optional. The context size you want compacted by: the hint floor relaxes as the context approaches the smaller of it and Claude Code's auto-compact point (or the window). 0 turns it off.",
+      "title": "Budget de contexte (jetons)",
+      "description": "Facultatif. La taille de contexte que vous souhaitez compacter : le seuil de l'indice s'assouplit à mesure que le contexte approche le plus petit entre cette valeur et le point d'auto-compaction de Claude Code (ou la fenêtre). 0 désactive.",
       "default": 0,
       "min": 0
     },
     "logRequests": {
       "type": "boolean",
-      "title": "Log TypeSafe requests",
-      "description": "When on, each TypeSafe/Jev request and sanitized Jev outcome is appended to ~/.claude/compact-adviser-requests-<session-id>.jsonl. Off by default. Never logs the API key.",
+      "title": "Journaliser les requêtes TypeSafe",
+      "description": "Quand activé, chaque requête TypeSafe/Jev et le résultat Jev assaini sont ajoutés à ~/.claude/compact-adviser-requests-<session-id>.jsonl. Désactivé par défaut. Ne journalise jamais la clé API.",
       "default": false
     },
     "profile": {
       "type": "string",
-      "title": "Judge profile JSON",
-      "description": "Optional version-1 judge profile JSON. Empty uses shipped defaults. Invalid profiles disable advice. This does not grant auto consent.",
+      "title": "JSON du profil d'évaluation",
+      "description": "JSON facultatif de profil d'évaluation version 1. Vide utilise les valeurs par défaut fournies. Un profil invalide désactive les conseils. Cela n'accorde pas le consentement automatique.",
       "default": ""
     },
     "beforeCompactPrompt": {
       "type": "string",
-      "title": "Before-compact prompt",
-      "description": "Optional. Empty keeps automatic compaction immediate. In confirmed auto mode, a non-empty value runs as one turn, then compaction runs if that turn ends in a settled answer. A value that starts with / is a slash command (for example /stow); Claude Code does not expand slash commands or @file mentions in a plugin prompt, and it rejects a plugin prompt that starts with /. If you send your own prompt or run a command in between, or that turn is interrupted, errors, or does not finish within 5 minutes, nothing is compacted.",
+      "title": "Prompt avant compactage",
+      "description": "Facultatif. Vide garde la compaction automatique immédiate. En mode auto confirmé, une valeur non vide s'exécute comme un tour, puis la compaction a lieu si ce tour se termine par une réponse aboutie. Une valeur commençant par / est une commande slash (par exemple /stow) ; Claude Code ne développe ni les commandes slash ni les mentions @file dans un prompt de plugin, et refuse un prompt de plugin commençant par /. Si vous envoyez votre propre prompt ou exécutez une commande entre-temps, ou si ce tour est interrompu, échoue ou ne se termine pas dans les 5 minutes, rien n'est compacté.",
       "default": ""
     },
     "typesafeApiKey": {
       "type": "string",
-      "title": "TypeSafe API key",
-      "description": "Saved from /compact-adviser. Hidden in /config so the value is never shown. A non-empty TYPESAFE_API_KEY in the launch environment wins. Do not commit this value.",
+      "title": "Clé API TypeSafe",
+      "description": "Enregistrée depuis /compact-adviser. Masquée dans /config pour que la valeur ne soit jamais affichée. Un TYPESAFE_API_KEY non vide dans l'environnement de lancement prévaut. Ne commitez pas cette valeur.",
       "default": ""
     }
   }
