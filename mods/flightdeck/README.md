@@ -5,19 +5,19 @@
 [![Claude Code 2.1.289+](https://img.shields.io/badge/Claude%20Code-2.1.289%2B%20mod-d97757.svg)](https://claude.com/blog/claude-code-mods)
 [![Listed on statuslin.es](https://img.shields.io/badge/listed%20on-statuslin.es-c96442)](https://statuslin.es/mods/flightdeck)
 
-**A Claude Code mod that puts a live agent dashboard in your terminal**: context and cost, an advisor timeline, every permission check, and your subagents as cards or swimlanes. Every number comes from a real session event, and nothing leaves your machine.
+**Un mod Claude Code qui place un tableau de bord d'agents en direct dans votre terminal** : contexte et coût, chronologie des conseils, chaque vérification de permission, et vos sous-agents sous forme de cartes ou de couloirs. Chaque chiffre provient d'un événement réel de la session, et rien ne quitte votre machine.
 
 <p align="center">
-  <img src="docs/media/demo.gif" alt="Flightdeck during a live session: five audit subagents fan out as cards, switch to swimlanes and finish, while the permission gate fills with checks" width="520">
+  <img src="docs/media/demo.gif" alt="Flightdeck pendant une session réelle : cinq agents d'audit se déploient en cartes, passent en couloirs et se terminent, tandis que la porte de permission se remplit de vérifications" width="520">
 </p>
 
 <p align="center">
-  <a href="#install">Install</a> · <a href="#what-you-see">What you see</a> · <a href="#what-it-can-reach">What it can reach</a> · <a href="#configure">Configure</a> · <a href="#troubleshooting">Troubleshooting</a> · <a href="CHANGELOG.md">What's new</a>
+  <a href="#install">Installer</a> · <a href="#what-you-see">Ce que vous voyez</a> · <a href="#what-it-can-reach">Ce qu'il peut atteindre</a> · <a href="#configure">Configurer</a> · <a href="#troubleshooting">Dépannage</a> · <a href="CHANGELOG.md">Nouveautés</a>
 </p>
 
-## Install
+## Installer
 
-Inside Claude Code (2.1.289 or later):
+Dans Claude Code (2.1.289 ou version ultérieure) :
 
 ```
 /plugin marketplace add scasella/claude-flightdeck
@@ -27,14 +27,14 @@ Inside Claude Code (2.1.289 or later):
 ```
 
 <details>
-<summary><strong>From the terminal, or from a clone</strong></summary>
+<summary><strong>Depuis le terminal, ou depuis un clone</strong></summary>
 
 ```sh
 claude plugin marketplace add scasella/claude-flightdeck
 claude plugin install flightdeck@claude-flightdeck
 ```
 
-Or load it straight from a clone, for one session:
+Ou chargez-le directement depuis un clone, pour une session :
 
 ```sh
 git clone https://github.com/scasella/claude-flightdeck
@@ -43,159 +43,159 @@ claude --plugin-dir ./claude-flightdeck
 
 </details>
 
-The installer may say config options aren't set; the defaults are fine, and [`/config`](#configure) changes them.
+L'installateur peut indiquer que des options de configuration ne sont pas définies ; les valeurs par défaut conviennent, et [`/config`](#configure) permet de les modifier.
 
-Mods are an early-access Claude Code feature and their API can change between releases. If something breaks, see [Troubleshooting](#troubleshooting).
+Les mods sont une fonctionnalité Claude Code en accès anticipé et leur API peut changer entre les versions. Si quelque chose cesse de fonctionner, voir [Dépannage](#troubleshooting).
 
-## What you see
+## Ce que vous voyez
 
 https://github.com/user-attachments/assets/9ad0fcc3-c81c-427a-a743-f7b6c49f5885
 
 <p align="center">
-  <img src="docs/media/docked-session.png" alt="Claude Code in fullscreen with the Flightdeck pane docked beside the transcript" width="820">
+  <img src="docs/media/docked-session.png" alt="Claude Code en plein écran avec le volet Flightdeck ancré à côté de la transcription" width="820">
 </p>
 
-| Docked beside the transcript | Inline above the prompt |
+| Ancré à côté de la transcription | En ligne au-dessus du prompt |
 | --- | --- |
-| <img src="docs/media/docked-pane.png" alt="The docked pane: main model vitals, architect timeline, permission gate, five agents as swimlanes, last-turn receipt and session log" width="380"> | <img src="docs/media/inline-mini.png" alt="The inline mini layout: the model, context gauge, session cost and architect consults; the permission gate strip and totals; the last turn's duration, agents, edits, errors and cost" width="420"><br><br>On the main screen, without fullscreen, the pane is a summary of at most 8 rows; up to 3 agents join it when the session has subagents. |
+| <img src="docs/media/docked-pane.png" alt="Le volet ancré : signes vitaux du modèle principal, chronologie de l'architecte, porte de permission, cinq agents en couloirs, reçu du dernier tour et journal de session" width="380"> | <img src="docs/media/inline-mini.png" alt="La disposition compacte en ligne : le modèle, la jauge de contexte, le coût de la session et les consultations de l'architecte ; la bande de la porte et les totaux ; la durée, les agents, les modifications, les erreurs et le coût du dernier tour" width="420"><br><br>Sur l'écran principal, sans plein écran, le volet est un résumé de 8 lignes maximum ; jusqu'à 3 agents s'y ajoutent lorsque la session comporte des sous-agents. |
 
-| Panel | Shows | From |
+| Volet | Affiche | Source |
 | --- | --- | --- |
-| **main** | model, effort, permission mode, request count; a context gauge with compactions (⟲, or ⟲~ when [estimated](#what-is-inferred-not-measured)), measured against the compaction window when the session compacts in a smaller one than the model's (`autoCompactWindow`, or Claude Code's own); cost and the first two rate-limit windows when your plan reports them, with the time to each reset (↻) from 56 columns; the last main-loop request's time to first token | `turn.step`, `session.measure`, `session.compact`, `$.session.usage()` (at each main-loop request, and its local `summary` breakdown, once per model, for the compaction window); the permission mode from `classic.UserPromptSubmit` and `agent.spawn` |
-| **architect** | consults on a timeline, whether one is running, how long the last took; optionally the moment of each consult; the first line of a subagent architect's advice | a spawn of a matching agent type, or a matching server tool in the assistant's rows |
-| **gate** | one cell per permission check: green allowed without asking, blue decided by the auto-mode classifier or you and then run, amber pending, red ✗ denied, dim if made inside a subagent. Totals, and a drill-down per tool family with credentials masked | `tool.check`, settled by the `tool.call` around it |
-| **agents** | cards side by side while they fit: the task, type, live context and output tokens, steps, a running clock, `max_tokens` in red. Beyond that, swimlanes on one time axis | `agent.spawn`, `turn.step`, `tool.call`, `turn.complete` |
-| **loops** | model loops that match no card: workflow agents, compactions, memory forks | `turn.step` ids no card claims |
-| **receipt** | the running turn, or the last one: duration, agents, edits, errors, cost added | `turn.start`, `turn.complete` |
-| **log** | prompts, spawns, completions, consults, edits, errors and denials; filtered to one agent while you view its transcript | all of the above |
+| **main** | modèle, effort, mode de permission, nombre de requêtes ; une jauge de contexte avec les compactions (⟲, ou ⟲~ lorsqu'[estimé](#what-is-inferred-not-measured)), mesurée par rapport à la fenêtre de compaction lorsque la session compacte dans une fenêtre plus petite que celle du modèle (`autoCompactWindow`, ou celle de Claude Code) ; le coût et les deux premières fenêtres de limitation de débit lorsque votre forfait les signale, avec le délai avant chaque réinitialisation (↻) à partir de 56 colonnes ; le délai avant le premier jeton de la dernière requête de la boucle principale | `turn.step`, `session.measure`, `session.compact`, `$.session.usage()` (à chaque requête de la boucle principale, et sa répartition locale `summary`, une fois par modèle, pour la fenêtre de compaction) ; le mode de permission depuis `classic.UserPromptSubmit` et `agent.spawn` |
+| **architect** | consultations sur une chronologie, si l'une est en cours, la durée de la dernière ; éventuellement l'instant de chaque consultation ; la première ligne du conseil d'un sous-agent architecte | l'apparition d'un agent de type correspondant, ou un outil serveur correspondant dans les lignes de l'assistant |
+| **gate** | une cellule par vérification de permission : vert autorisé sans demande, bleu décidé par le classificateur du mode automatique ou par vous puis exécuté, amber en attente, rouge ✗ refusé, estompé si effectuée dans un sous-agent. Totaux, et détail par famille d'outils avec les identifiants masqués | `tool.check`, résolu par le `tool.call` qui l'entoure |
+| **agents** | cartes côte à côte tant qu'elles tiennent : la tâche, le type, le contexte et les jetons de sortie en direct, les étapes, une horloge en cours, `max_tokens` en rouge. Au-delà, des couloirs sur un axe temporel unique | `agent.spawn`, `turn.step`, `tool.call`, `turn.complete` |
+| **loops** | boucles de modèles qui ne correspondent à aucune carte : agents de workflow, compactions, forks de mémoire | identifiants `turn.step` non revendiqués par une carte |
+| **receipt** | le tour en cours, ou le dernier : durée, agents, modifications, erreurs, coût ajouté | `turn.start`, `turn.complete` |
+| **log** | prompts, apparitions, achèvements, consultations, modifications, erreurs et refus ; filtré sur un agent lorsque vous consultez sa transcription | tout ce qui précède |
 
-Connectors animate only while work flows: a turn is running, an agent is running, or a consult is open. Panels with nothing to show take no room, so a session without subagents shows just the main box and the log.
+Les connecteurs ne s'animent que lorsque le travail circule : un tour en cours, un agent en cours, ou une consultation ouverte. Les volets sans rien à afficher ne prennent aucune place, donc une session sans sous-agents ne montre que la boîte principale et le journal.
 
-## Use
+## Utilisation
 
-| Command | Does |
+| Commande | Action |
 | --- | --- |
-| `/flightdeck` | open the pane |
-| `/flightdeck close` | close it |
-| `/flightdeck reset` | clear agents, checks, consults, log and the turn (cost, rate limits and compactions stay) |
-| `/flightdeck layout auto\|compact\|wide\|mini` | override the layout for this session |
+| `/flightdeck` | ouvrir le volet |
+| `/flightdeck close` | le fermer |
+| `/flightdeck reset` | effacer agents, vérifications, consultations, journal et tour (le coût, les limitations de débit et les compactions restent) |
+| `/flightdeck layout auto\|compact\|wide\|mini` | remplacer la disposition pour cette session |
 
-Focus the pane with `ctrl+x tab`, then:
+Donnez le focus au volet avec `ctrl+x tab`, puis :
 
-| Key | Does |
+| Touche | Action |
 | --- | --- |
-| `1`, `2`, … | expand an agent card or lane: its full task, last 3 tool calls, start of its answer |
-| `f` `s` `o` | open the gate's file / shell / other drill-down: the last 5 checks and their verdicts |
+| `1`, `2`, … | déplier une carte ou un couloir d'agent : sa tâche complète, ses 3 derniers appels d'outils, le début de sa réponse |
+| `f` `s` `o` | ouvrir le détail de la porte : fichiers / shell / autres : les 5 dernières vérifications et leurs décisions |
 
-`/clear` resets the pane along with the conversation.
+`/clear` réinitialise le volet en même temps que la conversation.
 
-## Where it runs
+## Où il s'exécute
 
-- **Fullscreen terminal:** docked beside the transcript; two columns from 110 columns wide.
-- **Main-screen terminal:** inline above the prompt, as the 8-row summary.
-- **Desktop app, VS Code, mobile:** the same panels, plus the agents drawn as an SVG time axis. VS Code and mobile can't animate, so connectors and clocks are static there. (The VS Code extension may show no pane at all yet: see [Troubleshooting](#troubleshooting).)
+- **Terminal en plein écran :** ancré à côté de la transcription ; deux colonnes à partir de 110 colonnes de large.
+- **Terminal en écran principal :** en ligne au-dessus du prompt, sous forme de résumé de 8 lignes.
+- **Application Desktop, VS Code, mobile :** les mêmes volets, plus les agents dessinés comme un axe temporel SVG. VS Code et mobile ne peuvent pas animer, donc les connecteurs et les horloges y sont statiques. (L'extension VS Code peut ne montrer aucun volet pour l'instant : voir [Dépannage](#troubleshooting).)
 
-With `openOnStart`, the pane opens by itself when a session starts, in terminals at least 144 columns wide; below that, `/flightdeck` opens it. Colours come from your Claude Code theme, so light, dark and colour-blind themes all read.
+Avec `openOnStart`, le volet s'ouvre de lui-même au démarrage d'une session, dans les terminaux d'au moins 144 colonnes ; en dessous, `/flightdeck` l'ouvre. Les couleurs proviennent de votre thème Claude Code, donc les thèmes clair, sombre et daltonien sont tous lisibles.
 
-## What it can reach
+## Ce qu'il peut atteindre
 
-Flightdeck only watches. Every hook passes its event on unchanged: it never denies, rewrites or delays a tool call, a prompt or a subagent.
+Flightdeck observe seulement. Chaque hook transmet son événement sans le modifier : il ne refuse, ne réécrit ni ne retarde jamais un appel d'outil, un prompt ou un sous-agent.
 
-| It sees | Through |
+| Ce qu'il voit | Via |
 | --- | --- |
-| every tool call's name and input, and whether it failed | `tool.call` |
-| every permission verdict | `tool.check` |
-| subagent spawns, their model requests and token usage, and their final answers | `agent.spawn`, `turn.step`, `turn.complete` |
-| your prompts' first 70 characters, for the log | `turn.start` |
-| context, cost and rate-limit readings | `session.measure`, `$.session.usage()` |
-| the context breakdown `/context` shows (its categories, memory-file paths, MCP tools, agents and skills), estimated locally once per model; it keeps only the compaction window from it | `$.session.usage({ breakdown: 'summary' })` |
-| advisor tool calls in the assistant's responses (their content is encrypted) | `session.append` |
+| le nom et l'entrée de chaque appel d'outil, et s'il a échoué | `tool.call` |
+| chaque décision de permission | `tool.check` |
+| l'apparition des sous-agents, leurs requêtes de modèle et leur consommation de jetons, et leurs réponses finales | `agent.spawn`, `turn.step`, `turn.complete` |
+| les 70 premiers caractères de vos prompts, pour le journal | `turn.start` |
+| les lectures de contexte, de coût et de limitation de débit | `session.measure`, `$.session.usage()` |
+| la répartition du contexte que montre `/context` (ses catégories, chemins de fichiers mémoire, outils MCP, agents et compétences), estimée localement une fois par modèle ; il n'en conserve que la fenêtre de compaction | `$.session.usage({ breakdown: 'summary' })` |
+| les appels d'outils conseillers dans les réponses de l'assistant (leur contenu est chiffré) | `session.append` |
 
-What it keeps: short summaries (a tool name plus a path or command, the start of each prompt, an agent's task and answer, the architect's advice, all with credentials masked) in session state, which ends with the session. It makes **no** network requests, runs no processes, reads and writes no files, stores nothing across sessions, and calls no model. `claude plugin validate .` prints exactly what it hooks and calls.
+Ce qu'il conserve : de courts résumés (un nom d'outil plus un chemin ou une commande, le début de chaque prompt, la tâche et la réponse d'un agent, le conseil de l'architecte, le tout avec identifiants masqués) dans l'état de session, qui prend fin avec la session. Il n'effectue **aucune** requête réseau, ne lance aucun processus, ne lit ni n'écrit de fichiers, ne stocke rien entre les sessions et n'appelle aucun modèle. `claude plugin validate .` montre exactement ce qu'il intercepte et appelle.
 
-## What is inferred, not measured
+## Ce qui est déduit, et non mesuré
 
-- **Architect moments.** "Before a plan" means no edits yet this turn, "error repeats" means 2+ main-loop errors in a row, "before done" means edits were made. They are labelled `(inferred)`; turn them off with `moments: false`.
-- **Compactions under the built-in guard.** Where Claude Code's guard keeps `session.compact` from Flightdeck (see [Troubleshooting](#troubleshooting)), the count is estimated. Claude Code reports no context fill until the first response after a new session, a `/clear` or a compaction. So a main-loop request that finds no fill after a response came back counts as a compaction. The main box shows `⟲~1`, with `(estimated)` when there's room, and the log says `context compacted (estimated)`. A rewind to your first prompt reads the same way, so it counts too. Wherever `session.compact` runs, its count replaces the estimate.
-- **Server-side advice is encrypted.** For a server tool such as Claude Code's `advisor`, the pane counts and times the consult but cannot show what it said.
-- **Per-agent context is the latest request's whole input** (uncached + cache read + cache write). It is labelled `ctx`, not cost: the API has no per-agent cost.
-- **Other loops** can't tell a workflow agent from a compaction fork; both are model loops no card claims.
-- **A background agent's first step** can arrive before its card exists, so its usage may show one step late.
-- **Context against the compaction window.** When the session compacts in a smaller window than the model's, the gauge, `tokens/window` and the status line's `ctx N%` measure against that window, so they read higher than Claude Code's own status-line percentage (and claude-hud's), which measure against the model's window. Auto-compaction runs a little before 100%, at its threshold inside that window.
-- **Time to first token.** `ttft` is timed at Flightdeck's own `turn.step` hook, so it includes everything beneath it: other plugins' hooks, the engine, the network and any retry. When the model's thinking isn't streamed, the first piece arrives after it, so `ttft` includes the thinking. Measured, not inferred, but not the API's own figure. There is no output rate: the reported tokens include thinking, so a rate over the visible stream isn't a real speed.
+- **Instant des consultations de l'architecte.** « Avant un plan » signifie aucune modification ce tour-ci, « erreur répétée » signifie 2 erreurs ou plus de la boucle principale à la suite, « avant la fin » signifie des modifications ont été faites. Ils sont étiquetés `(inferred)` ; désactivez-les avec `moments: false`.
+- **Compactions sous la garde intégrée.** Lorsque la garde de Claude Code empêche Flightdeck de recevoir `session.compact` (voir [Dépannage](#troubleshooting)), le nombre est estimé. Claude Code ne signale aucun remplissage du contexte avant la première réponse après une nouvelle session, un `/clear` ou une compaction. Donc une requête de la boucle principale qui ne trouve aucun remplissage après le retour d'une réponse compte comme une compaction. La boîte principale affiche `⟲~1`, avec `(estimated)` s'il reste de la place, et le journal dit `context compacted (estimated)`. Un retour en arrière vers votre premier prompt se lit de la même façon, donc il compte aussi. Lorsque `session.compact` s'exécute, son compte remplace l'estimation.
+- **Le conseil côté serveur est chiffré.** Pour un outil serveur tel que `advisor` de Claude Code, le volet compte et chronomètre la consultation mais ne peut pas montrer ce qui a été dit.
+- **Le contexte par agent est l'entrée entière de la dernière requête** (non mise en cache + lecture de cache + écriture de cache). Il est étiqueté `ctx`, et non coût : l'API n'a pas de coût par agent.
+- **Les autres boucles** ne peuvent pas distinguer un agent de workflow d'un fork de compaction ; ce sont toutes deux des boucles de modèle non revendiquées par une carte.
+- **La première étape d'un agent en arrière-plan** peut arriver avant que sa carte existe, donc sa consommation peut s'afficher avec une étape de retard.
+- **Contexte par rapport à la fenêtre de compaction.** Lorsque la session compacte dans une fenêtre plus petite que celle du modèle, la jauge, `tokens/window` et le `ctx N%` de la ligne d'état mesurent par rapport à cette fenêtre, donc ils indiquent un pourcentage plus élevé que celui de la propre ligne d'état de Claude Code (et de claude-hud), qui mesurent par rapport à la fenêtre du modèle. La compaction automatique s'exécute un peu avant 100 %, à son seuil dans cette fenêtre.
+- **Délai avant le premier jeton.** `ttft` est chronométré par le propre hook `turn.step` de Flightdeck, donc il inclut tout ce qui est en dessous : les hooks des autres plugins, le moteur, le réseau et toute nouvelle tentative. Lorsque la réflexion du modèle n'est pas diffusée, le premier morceau arrive après elle, donc `ttft` inclut la réflexion. Mesuré, non déduit, mais ce n'est pas la propre valeur de l'API. Il n'y a pas de débit de sortie : les jetons signalés incluent la réflexion, donc un débit calculé sur le flux visible n'est pas une vitesse réelle.
 
-## Configure
+## Configurer
 
-In `/config`, or under `pluginConfigs[<id>].options` in your user `settings.json`, where `<id>` is how Claude Code loaded the plugin: `flightdeck@claude-flightdeck` when installed from the marketplace, `flightdeck` (or `flightdeck@inline`) with `--plugin-dir`. An entry under another key, or in project settings (`.claude/settings.json`), is ignored without a warning. From a terminal, `claude plugin configure flightdeck@claude-flightdeck` lists the options and which are unset, and saves them with `--values-stdin`.
+Dans `/config`, ou sous `pluginConfigs[<id>].options` dans votre `settings.json` utilisateur, où `<id>` est la façon dont Claude Code a chargé le plugin : `flightdeck@claude-flightdeck` lors d'une installation depuis le marketplace, `flightdeck` (ou `flightdeck@inline`) avec `--plugin-dir`. Une entrée sous une autre clé, ou dans les réglages du projet (`.claude/settings.json`), est ignorée sans avertissement. Depuis un terminal, `claude plugin configure flightdeck@claude-flightdeck` liste les options et celles qui ne sont pas définies, et les enregistre avec `--values-stdin`.
 
-| Option | Default | Meaning |
+| Option | Valeur par défaut | Signification |
 | --- | --- | --- |
-| `architectPattern` | `advisor\|architect` | case-insensitive regex for agent types and server tools that count as the architect |
-| `matchDescriptions` | `false` | also match agent descriptions, not just type names |
-| `architectLabel` | `ARCHITECT` | the architect's name in the pane |
-| `gateLabel` | `GATE` | the permission panel's name |
-| `panels` | `main,architect,gate,agents,loops,receipt,log` | which panels show, in order |
-| `layout` | `auto` | `mini`, `compact`, `wide`, or `auto` (mini inline, wide from 110 columns docked) |
-| `maxCards` | `3` | cards side by side before swimlanes (1–6); fewer if the pane is too narrow |
-| `paneColumns` | `66` | columns the docked pane asks for, 40 or more. Claude Code caps the dock at 45% of the terminal, and a width you dragged it to, in this session or an earlier one, wins. The wide layout starts at 110, so it needs a terminal of about 245 columns, or `layout: wide` |
-| `motion` | `while-active` | `off` keeps connectors still |
-| `moments` | `true` | show the inferred consult moments |
-| `palette` | `theme` | `pastel` uses fixed colours tuned for dark terminals |
-| `openOnStart` | `true` | ask to open the pane when a session starts |
-| `statusLine` | `true` | context, running agents, consults and denials in the status line |
+| `architectPattern` | `advisor\|architect` | expression régulière insensible à la casse pour les types d'agents et les outils serveur comptés comme architecte |
+| `matchDescriptions` | `false` | correspondre aussi aux descriptions d'agents, pas seulement aux noms de types |
+| `architectLabel` | `ARCHITECT` | le nom de l'architecte dans le volet |
+| `gateLabel` | `GATE` | le nom du volet de permission |
+| `panels` | `main,architect,gate,agents,loops,receipt,log` | quels volets afficher, et dans quel ordre |
+| `layout` | `auto` | `mini`, `compact`, `wide`, ou `auto` (mini en ligne, wide ancré à partir de 110 colonnes) |
+| `maxCards` | `3` | cartes côte à côte avant les couloirs (1–6) ; moins si le volet est trop étroit |
+| `paneColumns` | `66` | colonnes demandées pour le volet ancré, 40 ou plus. Claude Code limite l'ancrage à 45 % du terminal, et une largeur que vous avez redimensionnée, dans cette session ou une précédente, prévaut. La disposition large commence à 110, donc elle demande un terminal d'environ 245 colonnes, ou `layout: wide` |
+| `motion` | `while-active` | `off` garde les connecteurs immobiles |
+| `moments` | `true` | afficher les instants de consultation déduits |
+| `palette` | `theme` | `pastel` utilise des couleurs fixes adaptées aux terminaux sombres |
+| `openOnStart` | `true` | demander à ouvrir le volet au démarrage d'une session |
+| `statusLine` | `true` | contexte, agents en cours, consultations et refus dans la ligne d'état |
 
-## Troubleshooting
+## Dépannage
 
-**The pane doesn't appear.**
-- Check `claude --version` is 2.1.289 or later, then run `/reload-plugins` and `/flightdeck`. On an older version the transcript says `flightdeck: hooks module did not load: …`.
-- Below 144 columns, Claude Code won't seat a pane nobody asked for; `/flightdeck` opens it at any width.
-- Look in the transcript for a dim line starting `flightdeck:`. It names the hook that failed or the reason the pane was refused. Please [open an issue](https://github.com/scasella/claude-flightdeck/issues) with it.
-- If the pane shows only `draw failed (…)`, its drawing hook threw; include that line in the issue too.
+**Le volet n'apparaît pas.**
+- Vérifiez que `claude --version` est 2.1.289 ou ultérieur, puis exécutez `/reload-plugins` et `/flightdeck`. Sur une version plus ancienne, la transcription indique `flightdeck: hooks module did not load: …`.
+- En dessous de 144 colonnes, Claude Code n'installe pas un volet que personne n'a demandé ; `/flightdeck` l'ouvre à n'importe quelle largeur.
+- Cherchez dans la transcription une ligne estompée commençant par `flightdeck:`. Elle nomme le hook qui a échoué ou la raison du refus du volet. Merci d'[ouvrir un ticket](https://github.com/scasella/claude-flightdeck/issues) avec cette ligne.
+- Si le volet affiche seulement `draw failed (…)`, son hook de dessin a levé une erreur ; incluez aussi cette ligne dans le ticket.
 
-**Nothing shows in the VS Code extension.** In one report its 2.1.296 build ran Flightdeck's hooks but showed no pane, and none for another mod either ([#5](https://github.com/scasella/claude-flightdeck/issues/5)). Run `claude` in VS Code's integrated terminal instead, then `/flightdeck`: an integrated terminal is usually narrower than the 144 columns the pane needs to open by itself.
+**Rien ne s'affiche dans l'extension VS Code.** Selon un signalement, sa version 2.1.296 exécutait les hooks de Flightdeck mais n'affichait aucun volet, et aucun pour un autre mod non plus ([#5](https://github.com/scasella/claude-flightdeck/issues/5)). Exécutez plutôt `claude` dans le terminal intégré de VS Code, puis `/flightdeck` : un terminal intégré est généralement plus étroit que les 144 colonnes nécessaires à l'ouverture automatique du volet.
 
-**Under a Team or Enterprise login, the permission mode is missing or stale, and compactions are estimated.** On a machine with managed settings, or in a session on a Team or Enterprise `/login`, Claude Code loads a built-in guard, `cc-plugin-sec-default`, that never runs a user-installed plugin's hooks on `classic.*` events or `session.compact` (see "Know which hooks of a user's mod don't run" in [Manage mods for your organization](https://code.claude.com/docs/en/plugins/mods/admin)). No other event a user's plugin can hook carries the permission mode except a subagent's start. So the main box shows no mode until a subagent starts, and then the mode as it was at that start. Until then, in auto mode the gate credits the calls the classifier cleared to `you`. Compactions are counted from the context Claude Code reports at each request instead, so the main box marks them `⟲~` and the log says `context compacted (estimated)` (see [What is inferred, not measured](#what-is-inferred-not-measured)). On 2.1.299 or later, `/plugin` shows a note naming those two hooks. The rest of the pane works. An administrator can let the hooks run by installing Flightdeck as one of the organization's own mods ([#23](https://github.com/scasella/claude-flightdeck/issues/23)).
+**Avec une connexion Team ou Enterprise, le mode de permission manque ou est périmé, et les compactions sont estimées.** Sur une machine avec des réglages gérés, ou dans une session avec un `/login` Team ou Enterprise, Claude Code charge une garde intégrée, `cc-plugin-sec-default`, qui n'exécute jamais les hooks d'un plugin installé par l'utilisateur sur les événements `classic.*` ni sur `session.compact` (voir « Know which hooks of a user's mod don't run » dans [Manage mods for your organization](https://code.claude.com/docs/en/plugins/mods/admin)). Aucun autre événement qu'un plugin utilisateur peut intercepter ne porte le mode de permission, sauf le démarrage d'un sous-agent. La boîte principale n'affiche donc aucun mode jusqu'au démarrage d'un sous-agent, puis le mode tel qu'il était à cet instant. D'ici là, en mode automatique, la porte attribue à `you` les appels acceptés par le classificateur. Les compactions sont comptées à partir du contexte que Claude Code signale à chaque requête, donc la boîte principale les marque `⟲~` et le journal dit `context compacted (estimated)` (voir [Ce qui est déduit, et non mesuré](#what-is-inferred-not-measured)). Sur 2.1.299 ou version ultérieure, `/plugin` affiche une note nommant ces deux hooks. Le reste du volet fonctionne. Un administrateur peut autoriser les hooks en installant Flightdeck comme l'un des propres mods de l'organisation ([#23](https://github.com/scasella/claude-flightdeck/issues/23)).
 
-**Options seem ignored.** Check the key in your user `settings.json`: `pluginConfigs["flightdeck@claude-flightdeck"]` when installed, `pluginConfigs["flightdeck"]` with `--plugin-dir`. See [Configure](#configure).
+**Les options semblent ignorées.** Vérifiez la clé dans votre `settings.json` utilisateur : `pluginConfigs["flightdeck@claude-flightdeck"]` lors d'une installation, `pluginConfigs["flightdeck"]` avec `--plugin-dir`. Voir [Configurer](#configure).
 
-**Colours look wrong.** Set `palette` to `pastel` in `/config`.
+**Les couleurs semblent erronées.** Définissez `palette` sur `pastel` dans `/config`.
 
-**It's too much motion.** Set `motion` to `off`.
+**Il y a trop de mouvement.** Définissez `motion` sur `off`.
 
-**Counters look stale after an update.** Run `/flightdeck reset`.
+**Les compteurs semblent périmés après une mise à jour.** Exécutez `/flightdeck reset`.
 
-## How it works
+## Comment ça marche
 
-| File | Holds |
+| Fichier | Contenu |
 | --- | --- |
-| [`hooks/register.tsx`](hooks/register.tsx) | the event hooks, state access, and one function per panel |
-| [`hooks/core.ts`](hooks/core.ts) | every reducer, formatter and layout rule as pure functions, so behaviour is testable directly |
-| [`hooks/rail.tsx`](hooks/rail.tsx), [`hooks/elapsed.tsx`](hooks/elapsed.tsx) | surface modules: animated connectors and live clocks that redraw only themselves, on the surface's own frame clock |
-| [`types/index.d.ts`](types/index.d.ts) | the state contract |
-| [`tests/`](tests) | 65 tests: pure behaviour, plus drawings mounted on every surface at 24–120 columns, with every width from 24 to 40 checked for anything that spills past its box |
+| [`hooks/register.tsx`](hooks/register.tsx) | les hooks d'événements, l'accès à l'état, et une fonction par volet |
+| [`hooks/core.ts`](hooks/core.ts) | tous les réducteurs, formateurs et règles de disposition sous forme de fonctions pures, pour que le comportement soit testable directement |
+| [`hooks/rail.tsx`](hooks/rail.tsx), [`hooks/elapsed.tsx`](hooks/elapsed.tsx) | modules de surface : connecteurs animés et horloges en direct qui ne redessinent qu'eux-mêmes, sur l'horloge de trame propre à la surface |
+| [`types/index.d.ts`](types/index.d.ts) | le contrat d'état |
+| [`tests/`](tests) | 65 tests : comportement pur, plus des dessins montés sur chaque surface à 24–120 colonnes, avec vérification de toutes les largeurs de 24 à 40 pour tout débordement hors de sa boîte |
 
-State lives in `$.state` atoms. Every read is merged over defaults, so a missing or older field never breaks the pane; an update that changes the state's shape may still reset its counters once. New to mods? Start with [Claude Code mods](https://claude.com/blog/claude-code-mods) and [Getting started with Claude Code mods](https://claude.dev/blog/getting-started-with-claude-code-mods/).
+L'état réside dans des atomes `$.state`. Chaque lecture est fusionnée avec les valeurs par défaut, donc un champ manquant ou plus ancien ne casse jamais le volet ; une mise à jour qui change la forme de l'état peut tout de même réinitialiser ses compteurs une fois. Nouveau venu dans les mods ? Commencez par [Claude Code mods](https://claude.com/blog/claude-code-mods) et [Getting started with Claude Code mods](https://claude.dev/blog/getting-started-with-claude-code-mods/).
 
-## Related projects
+## Projets liés
 
-Flightdeck works alongside these, and owes ideas to them:
+Flightdeck fonctionne aux côtés de ces projets, et leur doit des idées :
 
-- [claude-hud](https://github.com/jarrodwatts/claude-hud): context, limits, tools and agents in your status line. Use both: that's the status line, this is the pane.
-- [zoetrope](https://github.com/furkankly/zoetrope): a Claude Code or Codex session as a live flow graph.
-- [ccusage](https://github.com/ccusage/ccusage): cost reports from your session logs.
-- [awesome-claude-code-mods](https://github.com/karanb192/awesome-claude-code-mods): the index of Claude Code mods.
+- [claude-hud](https://github.com/jarrodwatts/claude-hud) : contexte, limites, outils et agents dans votre ligne d'état. Utilisez les deux : ceci est le volet, cela la ligne d'état.
+- [zoetrope](https://github.com/furkankly/zoetrope) : une session Claude Code ou Codex sous forme de graphe de flux en direct.
+- [ccusage](https://github.com/ccusage/ccusage) : rapports de coût à partir de vos journaux de session.
+- [awesome-claude-code-mods](https://github.com/karanb192/awesome-claude-code-mods) : l'index des mods Claude Code.
 
-## Develop
+## Développement
 
 ```sh
-claude --plugin-dir .            # load it; edits hot-reload
+claude --plugin-dir .            # chargez-le ; les modifications sont rechargées à chaud
 claude plugin validate .
 claude plugin test .
-npx -p typescript tsc -p .       # after the first load, which writes .claude-plugin/types/
+npx -p typescript tsc -p .       # après le premier chargement, qui écrit .claude-plugin/types/
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Changes are listed in [CHANGELOG.md](CHANGELOG.md).
+Voir [CONTRIBUTING.md](CONTRIBUTING.md). Les changements sont listés dans [CHANGELOG.md](CHANGELOG.md).
 
-## License
+## Licence
 
 [MIT](LICENSE)
