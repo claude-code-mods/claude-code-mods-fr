@@ -2,7 +2,7 @@
 // 不放這裡：給模型的提示、經驗檔的格式與標記（NOTE_TAG、標題、做法／理由／根據、規則行）、store 的鍵——那些是資料，改了會讀不了舊檔。
 // 有參數的訊息寫成函式；zh-TW 是原文，en 的型別跟著它，少一條就編譯不過。
 
-export type Lang = 'en' | 'zh-TW'
+export type Lang = 'en' | 'zh-TW' | 'fr'
 
 let current: Lang = 'en'
 export const setLang = (lang: Lang) => { current = lang }
@@ -15,8 +15,16 @@ export const isChinese = (s: string) => /^zh|chinese|中文|繁體|繁体|台灣
 // 選介面語言：Claude Code 的 language 設定（使用者明確選的）優先，沒設就看系統語系。
 // 系統語系在 Linux／macOS 跟著 LANG，在 Windows 是作業系統的顯示語言；Git Bash 的 LANG 常是 en_US，不能拿來判斷
 export const pickLang = (setting: unknown, systemLocale: string | undefined): Lang => {
-  if (typeof setting === 'string' && setting.trim()) return isChinese(setting) ? 'zh-TW' : 'en'
-  return systemLocale && isChinese(systemLocale) ? 'zh-TW' : 'en'
+  const norm = (x: unknown) => (typeof x === 'string' ? x.trim().toLowerCase() : '')
+  const isTarget = (x: unknown) => /^fr|fran[cç]ais|french/i.test(norm(x))
+  if (typeof setting === 'string' && setting.trim()) {
+    if (isChinese(setting)) return 'zh-TW'
+    if (isTarget(setting)) return 'fr' as Lang
+    return 'en'
+  }
+  if (systemLocale && isChinese(systemLocale)) return 'zh-TW'
+  if (systemLocale && isTarget(systemLocale)) return 'fr' as Lang
+  return 'en'
 }
 
 const s = (n: number) => (n === 1 ? '' : 's')
@@ -829,4 +837,396 @@ const en: Messages = {
   },
 }
 
-const MSG: Record<Lang, Messages> = { 'zh-TW': zh, en }
+const fr: Messages = {
+  ind: ' ',
+  bullet: '- ',
+  list: ', ',
+  slashList: ' / ',
+  // 面板展開時，經驗檔裡的欄位標籤（做法／理由／根據）顯示成英文；檔案本身不變
+  fieldLabel: line => line.replace(/^做法：/, 'Comment : ').replace(/^理由：/, 'Why : ').replace(/^根據：/, 'Preuve : '),
+  guardMatch: (tool, match, unless) => `${tool} matches /${match}/${unless ? ` and not /${unless}/` : ''}`,
+
+  usage: (input, read, ratio, write, plain, output, sec) =>
+    `input ${input} (cache read ${read} = ${ratio}%, written ${write}, uncached ${plain}) · output ${output} · ${sec}s`,
+
+  fork: {
+    timeout: 'timeout : le fork ne repond pas a temps, abandon de l attente',
+    nothingToFork: 'nothing-to-fork : cette session vient d etre redemarree ou effacee, il n y a encore rien sur quoi continuer. Envoyez un message, attendez la reponse, puis reessayez',
+  },
+
+  handoff: {
+    failedLog: why => `échec du handoff: ${why}`,
+    failedToast: 'échec du handoff',
+    failGenerate: why => `generation échoué: ${why}`,
+    savedLog: (kind, usage) => `handoff (${kind}) ${usage}`,
+    dropped: reason => `ignoré: ${reason}`,
+    reasonClear: r => `clear échoué: ${r}`,
+    reasonSubmit: r => `submit échoué: ${r}`,
+    reasonException: r => `exception: ${r}`,
+    reasonStage: (stage, r) => `${stage} échoué: ${r}`,
+    resubmitFailed: r => `impossible de renvoyer les messages reçus pendant le handoff : ${r}`,
+    clearFailedLog: r => `/clear échoué: ${r}`,
+    submitFailedLog: r => `submit échoué: ${r}`,
+    submitFailedToast: 'Handoff cree mais non envoye. Executez /handoff resend pour le renvoyer',
+    failedAll: r => `échec du handoff: ${r}`,
+    failedCleanup: r => `nettoyage après le échoué handoff also échoué: ${r}`,
+    whyManual: 'l\'utilisateur ran /handoff now',
+    whyTokens: tokens => `contexte reached ${tokens} tokens`,
+    intro: why =>
+      `la conversation précédente was cleared automatically because ${why}. Here est le handoff: read it, tell me dans un few lines le current state et prochain step as you understand them, puis wait pour l'utilisateur's instructions. Do pas start working yet.`,
+    introHeld: why =>
+      `la conversation précédente was cleared automatically because ${why}. Here est le handoff et le messages l'utilisateur envoyé during le handoff: respond à l'utilisateur's last message below, using le handoff as contexte.`,
+    note: note => ` (${note})`,
+    heldHead: '---\\nMessages l\'utilisateur envoyé during le handoff:',
+  },
+
+  background: {
+    pause: 'Pause arrière-plan travail pour cette session',
+    resume: 'Resume arrière-plan travail pour cette session',
+    bound: (file, sid) => `espace de travail notes: ${file}; cette session ${sid}`,
+    away: (paused, next) => `arrière-plan travail ${paused ? 'paused' : 'enabled'}; ${next === undefined ? 'no timer scheduled' : `next ${new Date(next).toLocaleString()}`}`,
+    task: (label, sid, phase, at) => `${label}: ${phase} (source ${sid}, démarré ${new Date(at).toLocaleTimeString()})`,
+    distill: 'mise à jour des notes', handoff: 'handoff / refresh', idle: 'inactivité',
+    idleTask: label => `${label}: inactivité`,
+    phases: { refresh: 'refreshing cache', generating: 'generating summary', submitting: 'submitting handoff' },
+    collected: (at, usage, unknown) => `session background usage (collected since ${new Date(at).toLocaleString()} après ce update, pas un facture): ${usage}; ${unknown} requêtes avec inconnu usage`,
+    uncollected: 'aucun background usage collected pour cette session yet; antérieur coût est pas connu à be nul',
+    pending: sid => `Undelivered handoff source ${sid}; /handoff resend ${sid}`,
+    history: 'Recent records (diagnostic history est pas un recoverable summary)',
+  },
+  distill: {
+    why: {
+      idle: 'inactivité refresh',
+      away: 'arrière-plan',
+      before: 'avant handoff',
+      manual: 'manual',
+      every: n => `tous ${n} messages`,
+    },
+    failLog: (why, reason) => `mise à jour des notes échoué (${why}): ${reason}`,
+    timeout: min => `timeout: aucune réponse après ${min} minutes, abandon`,
+    edited: file => `le fichier de notes was edited during le update, ignoré ce temps: ${file}`,
+    skipLog: (why, reason) => `mise à jour des notes (${why}): ${reason}`,
+    waiting: why => `mise à jour des notes (${why}): another update est running, queued après it; ce part de le conversation est already captured`,
+    doneLog: (why, changes, rejected, file) =>
+      `mise à jour des notes (${why}): ${changes} change${s(changes)}${rejected ? `, dropped ${rejected} invalid line${s(rejected)}` : ''}${changes ? `; wrote ${file}` : ''}`,
+    queued: n => `${n} change${s(n)} queued pour your prochain message`,
+    toast: (n, queued, file) => `notes mis à jour: ${n} change${s(n)}${queued ? ', sent along with your next message' : ''}: ${file}`,
+    writeFailed: err => `impossible de write le fichier: ${err}`,
+    noUsableActions: 'aucun usable actions dans le notes output; le conversation est kept pour retry',
+    retryLost: 'le previous partiel update point de reprise est manquant; notes et progression were pas changed',
+    retryCleanup: err => `notes mis à jour, but retry point de reprise nettoyage échoué: ${err}`,
+  },
+
+  status: {
+    running: 'Updating notes…',
+    left: n => `${n} plus message${s(n)} until mise à jour des notes`,
+    short: 'Conversation est short, notes pas mis à jour yet',
+    next: 'mise à jour des notes après le prochain message',
+    deferred: parts => `handoff delayed: ${parts}`,
+  },
+
+  distillStatus: {
+    head: (on, every) => `notes en arrière-plan ${on} (inactivité refresh, arrière-plan, avant handoff, tous ${every} messages)`,
+    next: (left, idleMin) => `prochain: dans ${left} message${s(left)}, après ${idleMin} min inactivité, ou avant un handoff`,
+    last: (at, why, n) => `Dernier: ${at} · ${why} · ${n} change${s(n)}`,
+    lastNone: 'Dernier: aucun',
+    rejected: (n, samples) => `ignoré ${n} invalide ligne${s(n)}: ${samples}`,
+    failed: (at, why, reason) => `Dernier échec: ${at} · ${why} · ${reason}`,
+    notes: (file, memory, rules, injected) =>
+      `espace de travail notes: ${file} (${memory} memor${memory === 1 ? 'y' : 'ies'}, ${rules} règle${s(rules)}, ${injected} règle${s(injected)} transmis dans nouvelles conversations)`,
+    procedures: (n, inProject) => `espace de travail procédures: ${n} (${inProject} already dans un projet skill ou doc; procédures sont non transmis dans nouvelles conversations)`,
+    tiers: (full, titles, archived, days) =>
+      `Memories transmis dans: ${full} preference${s(full)} et correction${s(full)} en entier, ${titles} fact${s(titles)} et location${s(titles)} comme titres seulement, ${archived} archivé (pas confirmed pour over ${days} jours, non transmis dans)`,
+  },
+
+  idle: {
+    refreshSkipped: 'actualisation du cache ignoré: ce process has aucun request à fork; inactivité timing resumes après le prochain main conversation response',
+    refresh: (n, max, read, create) => `actualisation du cache ${n}/${max} cache_read=${read} cache_creation=${create}`,
+    refreshFailed: (n, max, reason) => `actualisation du cache ${n}/${max} échoué: ${reason}`,
+    awaySavedLog: tokens => `arrière-plan handoff saved (${tokens} tokens), will pas /clear automatically`,
+    awaySavedToast: 'arrière-plan handoff saved',
+    outdated: 'le conversation went sur, deleted le outdated arrière-plan handoff',
+  },
+
+  stop: {
+    tasks: n => `${n} background task${s(n)}`,
+    oneShot: n => `${n} one-désactivé programmation${s(n)}`,
+    agents: n => `${n} sous-agent${s(n)}`,
+    deferral: (parts, cap) => `${parts} still running, attente pour them à finish avant handoff (limite ${cap} tokens)`,
+    deferLog: (tokens, parts) => `contexte ${tokens} reached le seuil, but ${parts} still running; attente pour them à finish avant handoff`,
+    note: (parts, cap) => `${parts} still running à handoff; contexte reached le limite de ${cap}`,
+    capLog: (tokens, cap, parts) => `contexte ${tokens} reached le limite de ${cap}; pas attente pour ${parts} any longer, handing désactivé now`,
+    retryLog: tokens => `contexte ${tokens} reached le seuil, but le last échec du handoff recently; will try à nouveau later`,
+    stopFailed: err => `Stop vérification échoué: ${err}`,
+  },
+
+  loops: {
+    doneLog: 'Said terminé, but aucun test ou vérification ran après le modifications ce tour; invité Claude à vérifier d\'abord',
+    rewriteLog: 'le final reply was pas dans le réglé langue; invité Claude à rewrite it dès que',
+    status: (retry, done, reply) => `Nudges: repeated échec ${retry}, vérifier avant terminé ${done}, langue de réponse ${reply}`,
+  },
+
+  progress: {
+    status: (at, task, state, hintOff) => `dernier progression: ${at}, ${task} (${state})${hintOff ? ', not offered to new chats (resume_hint is off)' : ''}`,
+    states: { done: 'terminé', in_progress: 'dans progression', blocked: 'blocked' },
+  },
+
+  start: {
+    description: 'ctx-handoff: statut; panneau / now / dry / distill / resume / continue / resend / arrière-plan / guard / refresh',
+    taken: err => `/handoff est already taken (${err}), using /ctx-handoff instead`,
+    registerFailed: err => `impossible de register le command: ${err}`,
+    resumeFailed: err => `impossible de restore le inactivité timer: ${err}`,
+    pruneFailed: err => `impossible de tidy le store à startup: ${err}`,
+  },
+
+  submit: {
+    wait: (sec, max) => `${sec}s so far, usually terminé en un minute, jusqu'à à environ ${max} minutes`,
+    attach: 'images et other pièces jointes cannot be conservé. collez them à nouveau après le handoff.',
+    busy: (wait, attach) => `handoff dans progression (${wait}).${attach ? ` ${attach}` : ''}`,
+    dup: (wait, attach) => `handoff dans progression (${wait}). ce message est already conservé et will pas be envoyé deux fois.${attach ? ` ${attach}` : ''}`,
+    held: (wait, attach) => `handoff dans progression (${wait}). ce message est conservé et will be envoyé dans le nouvelle conversation.${attach ? ` ${attach}` : ''}`,
+    pendingToast: 'un handoff was pas livré. exécutez /handoff resend à send it à nouveau',
+    awayAttach: 'There est an arrière-plan handoff et le old conversation\\\'s cache has expiré. pièces jointes cannot be conservé: exécutez /handoff resume (nouvelle conversation) ou /handoff continue (rester dans le old one) d\'abord, puis collez à nouveau.',
+    awayHeld: hasAttach =>
+      'There est an arrière-plan handoff et le old conversation\\\'s cache has expiré. /handoff resume: continue dans un nouvelle conversation et inclure ce message; /handoff continue: send ce message dans le old conversation (ou simplement send it à nouveau).' +
+      (hasAttach ? 'There est an arrière-plan handoff et le old conversation\\\'s cache has expiré. /handoff resume: continue dans un nouvelle conversation et inclure ce message; /handoff continue: send ce message dans le old conversation (ou simplement send it à nouveau).' : 'There est an arrière-plan handoff et le old conversation\\\'s cache has expiré. /handoff resume: continue dans un nouvelle conversation et inclure ce message; /handoff continue: send ce message dans le old conversation (ou simplement send it à nouveau).'),
+  },
+
+  guard: {
+    state: { proposed: 'brouillon', on: 'sur', off: 'désactivé' },
+    mode: { deny: 'bloquer', remind: 'rappeler' },
+    checkFailed: err => `guard vérification échoué, letting le call through: ${err}`,
+    head: (id, rule, message) => `Guard #${id} (${rule}): ${message}`,
+    denyToast: (id, tool, rule) => `Guard #${id} blocked ${tool}: ${rule}`,
+    denyHint: id => `If l'utilisateur vraiment wants ce à exécuter tel quel, demandez them à exécutez /handoff guard désactivé ${id} d'abord.`,
+    noCandidates: min => `aucun règle sans un guard was corrected à nouveau après going dans le dépôt, ou came jusqu'à ${min}+ fois pendant kept out de it`,
+    suggestFailed: reason => `Guard suggestion échoué: ${reason}`,
+    autoFailed: reason => `Drafting guards échoué: ${reason}`,
+    autoDrafted: n => `créé ${n} guard${n === 1 ? '' : 's'}; le prochain conversation will have Claude demandez whether à use them`,
+    suggested: (rules, drafts) => `Looked à ${rules} règle${s(rules)} et créé ${drafts} guard${s(drafts)} (pas active yet; approuver avec /handoff guard sur N)`,
+    droppedLines: (n, list) => `ignoré ${n} ligne${s(n)}: ${list}`,
+    none: min => `guards: aucun (règles corrected à nouveau après going dans le dépôt, ou said ${min}+ fois pendant kept out de it, obtenir créé et Claude asks you; ou exécutez /handoff guard suggest)`,
+    listHead: 'guards:',
+    entry: (id, state, mode, rule, hits) => `#${id} [${state} · ${mode}] ${rule} (déclenché ${hits} temps${s(hits)})`,
+    example: (bad, good) => `Exemple: bloque "${bad}", autorise "${good}"`,
+    replay: (calls, hits) => `essai match sur ce conversation quand créé: ${hits} de ${calls} tool call${s(calls)}`,
+    recentHits: 'Recent déclenchements (vérification they should vraiment fire; if most sont faux positifs, affiner le guard ou tour it désactivé):',
+    usage: 'Usage: /handoff guard [suggest | sur N | désactivé N | mode N deny|rappeler | drop N]',
+    missing: id => `aucun guard #${id}`,
+    changed: (id, dropped) => `Guard #${id} ${dropped ? 'deleted' : 'updated'}`,
+    summary: (on, draft, off) => `guards: ${on} sur, ${draft} brouillon, ${off} désactivé`,
+    summaryMore: (n, min) => `; ${n} règle${s(n)} appeared ${min}+ fois sans un guard (/handoff guard suggest)`,
+    panelDone: (id, action) => `Guard #${id} ${action === 'on' ? 'approved' : action === 'off' ? 'turned off' : 'deleted'}`,
+    parse: {
+      noMarker: 'ACTIONS marker introuvable',
+      notCandidate: 'règle est pas un candidate',
+      badTool: 'bad tool format',
+      missingFields: 'manquant match / message / mode',
+      tooLong: 'regex too long',
+      missingExamples: 'manquant bad / good examples',
+      badNotBlocked: 'le bad example est pas blocked',
+      goodBlocked: 'le good example would be blocked too',
+      duplicate: 'same règle repeated',
+      wrap: (line, why) => `${line} (${why})`,
+    },
+  },
+
+  panelCmd: {
+    opened: 'panneau opened au-dessus de la saisie. cliquez le boutons, ou appuyez ctrl+x tab à use le clavier. exécutez /handoff panneau à nouveau à le fermer',
+    closed: 'panneau closed',
+    readFailed: err => `impossible de read panneau data: ${err}`,
+    failed: err => `échoué: ${err}`,
+    busyKeep: 'notes sont being mis à jour, try à nouveau dans un moment',
+    busyDrop: 'notes sont being mis à jour, try deleting à nouveau dans un moment',
+    notFound: 'impossible de find ce entry. le fichier de notes may have simplement been edited',
+    kept: title => `Conservé: ${title} (transmis dans nouvelles conversations à nouveau)`,
+    deleted: (kind, name, dir) =>
+      `Supprimé ${kind === 'm' ? 'the memory' : kind === 'r' ? `the rule "${name}"` : `the procedure "${name}"`} (original backed jusqu'à à ${dir}/.ctx-handoff-backup/)`,
+    settingSet: (name, value) => `${name}: ${value} (other sessions pick it jusqu'à sur their prochain message)`,
+    settingReset: (name, value) => `${name} back à réglages.json ou le par défaut: ${value}`,
+  },
+
+  change: {
+    addMemory: head => `Ajouté souvenir: ${head}`,
+    updateMemory: head => `mis à jour souvenir: ${head}`,
+    confirmMemory: head => `souvenir confirmed: ${head}`,
+    deleteMemory: head => `Supprimé souvenir: ${head}`,
+    addRule: (name, rule) => `New règle: ${name} (seen 1 temps): ${rule}`,
+    confirmRule: (name, count) => `règle confirmed: ${name} → seen ${count} fois`,
+    updateRule: name => `mis à jour règle: ${name}`,
+    deleteRule: name => `Supprimé règle: ${name}`,
+    addProcedure: (name, steps) => `New procédure: ${name} (${steps} étapes, seen 1 temps)`,
+    confirmProcedure: (name, count) => `procédure confirmed: ${name} → seen ${count} fois`,
+    updateProcedure: name => `mis à jour procédure: ${name}`,
+    deleteProcedure: name => `Supprimé procédure: ${name}`,
+    inProject: (name, where) => `Now dans le dépôt: ${name} → ${where}`,
+    notInProject: name => `pas moving à le dépôt (you said aucun): ${name}`,
+    guardApproved: (id, rule) => `Guard #${id} activé (you said oui): ${rule}`,
+    guardDeclined: (id, rule) => `Guard #${id} transformer down (you said aucun): ${rule}`,
+  },
+
+  reject: {
+    over: (k, max) => `${k} over ${max} caractères`,
+    overJoin: ', ',
+    idNot: kind => `id est pas ${kind}#`,
+    noId: id => `aucun such id ${id}`,
+    whereMissing: where => `${where} est pas dans le dépôt`,
+    buried: title => `"${title}" was deleted par l'utilisateur et aucun new citation depuis l'utilisateur brings it back`,
+    badType: type => `invalide type (${type})`,
+    missing: names => `manquant ${names}`,
+    quoteNotFound: 'citation est pas dans l\'utilisateur\\\'s messages',
+    quoteMissing: type => `${type} entries need un citation depuis l'utilisateur`,
+    badOp: op => `inconnu op (${op})`,
+    badSteps: (min, max) => `étapes must be ${min} à ${max} non-empty strings`,
+    noMarker: marker => `${marker} marker introuvable`,
+    badJson: msg => `invalide JSON (${msg})`,
+    notObject: 'pas un JSON object',
+    secret: 'semble être un secret',
+    badState: v => `invalide state (${v})`,
+    badFiles: 'files est n\'est pas une liste',
+    badList: field => `${field} est n'est pas une liste`,
+    tooMany: (k, max) => `${k} has plus than ${max} éléments`,
+    overTotal: max => `progression note over ${max} caractères dans total`,
+    noRecord: '(content pas recorded)',
+    sample: (why, line) => `${why}: ${line}`,
+  },
+
+  cmd: {
+    unknown: sub => `inconnu sous-commande "${sub}"`,
+    usageHead: 'Usage:',
+    usageLines: [
+      '  /handoff                  statut',
+      '  /handoff                  statut',
+      '  /handoff                  statut',
+      '  /handoff                  statut',
+      '  /handoff                  statut',
+      '  /handoff                  statut',
+      '  /handoff                  statut',
+      '  /handoff                  statut',
+      '  /handoff                  statut',
+      '  /handoff                  statut',
+      '  /handoff                  statut',
+      '  /handoff                  statut',
+    ],
+    context: (tokens, threshold, window) => `contexte ${tokens} / seuil ${threshold} (fenêtre ${window})`,
+    refresh: (on, n, max, timer) => `actualisation du cache ${on}, refreshed ${n}/${max} ce inactivité period, timer ${timer ? 'waiting' : 'not started'}`,
+    away: state => `arrière-plan handoff: ${state === 'none' ? 'none' : state === 'yes' ? 'yes' : 'yes (one message held)'}`,
+    latest: last => `dernier handoff: ${last ? `${last.at} ${last.kind}, context ${last.tokens}` : 'none'}`,
+    latestFailure: (at, kind, reason) => `dernier échec: ${at} ${kind}, ${reason}`,
+    undelivered: 'Undelivered handoff: oui (/handoff resend à send it à nouveau)',
+    deferred: deferral => `handoff delayed: ${deferral}`,
+    background: (tasks, oneShot, recurring) => `Background (last Stop): ${tasks} task${s(tasks)}, ${oneShot} one-désactivé programmation${s(oneShot)}, ${recurring} recurring programmation${s(recurring)}`,
+    busy: 'Another handoff est dans progression',
+    nowStarted: 'Creating le handoff, puis /clear et send it',
+    dryFailed: 'essai exécuter échoué, see le log above pour le raison',
+    dryDone: tokens => `essai exécuter terminé (aucun /clear), contexte ${tokens}`,
+    distillSet: arg => `notes en arrière-plan réglé à ${arg}`,
+    distillUsage: 'Usage: /handoff distill (update now) ou /handoff distill sur|désactivé',
+    distilling: 'Already updating notes',
+    distillNone: 'notes pas mis à jour: aucun new messages since le last update, ou it échoué',
+    distillDone: 'notes mis à jour',
+    refreshNow: on => `Currently ${on}. Usage: /handoff refresh sur|désactivé`,
+    refreshSet: (arg, minutes) => `actualisation du cache réglé à ${arg}${arg === 'off' ? ` (an away handoff is created after ${minutes} idle minutes)` : ''}`,
+    noAway: 'aucun arrière-plan handoff',
+    resumeIntro: 'la conversation précédente went inactivité et un handoff was created, so ce est un nouvelle conversation à continue it. Read le handoff, tell me dans un few lines le current state et prochain step as you understand them, puis wait pour l\'utilisateur\\\'s instructions.',
+    resumeIntroHeld: 'la conversation précédente went inactivité et un handoff was created, so ce est un nouvelle conversation à continue it. Respond à l\'utilisateur\\\'s message à le end, using le handoff as contexte.',
+    resumeHeld: '---\\nThe user\\\'s d\'abord message après coming back:',
+    resumeFailedLog: r => `/clear ou submit échoué: ${r}`,
+    resumeClearFailed: '/clear échoué. le arrière-plan handoff est kept, you can exécutez /handoff resume à nouveau',
+    resuming: 'environ à /clear et send le arrière-plan handoff',
+    resendIntro: 'Resending le previous handoff. Read it, tell me dans un few lines le current state et prochain step as you understand them, puis wait pour l\'utilisateur\\\'s instructions. Do pas start working yet.',
+    nothingToResend: 'aucun handoff à resend dans cette session',
+    pendingUnbound: 'ce ancien pending record has aucun espace de travail source et cannot be resent en toute sécurité; it est kept inchangé',
+    awayUsage: 'Usage: /handoff arrière-plan pause|resume (cette session seulement; notes updates garder running)',
+    commandFailed: err => `Command échoué; achèvement was pas reported: ${err}`,
+    awayChanged: paused => paused ? 'arrière-plan travail suspendu pour cette session. requêtes already envoyé cannot be cancelled et may still coût tokens; late results sont ignored. notes updates garder running' : 'arrière-plan travail suspendu pour cette session. requêtes already envoyé cannot be cancelled et may still coût tokens; late results sont ignored. notes updates garder running',
+    resendFailed: err => `resend échoué: ${err}`,
+    resending: 'Resending le handoff (aucun /clear)',
+    discarded: 'arrière-plan handoff discarded, staying dans le old conversation',
+    discardedSend: 'arrière-plan handoff discarded, sending your last message dans le old conversation',
+    sendHeldFailed: err => `impossible de send le conservé message: ${err}`,
+  },
+
+  panel: {
+    title: ' · projet notes et guards',
+    close: 'Fermer',
+    more: 'Plus',
+    less: 'Moins',
+    del: 'Supprimer',
+    confirmDel: 'Confirmer',
+    cancel: 'Annuler',
+    keep: 'Conserver',
+    off: 'tour désactivé',
+    approve: 'Approuver',
+    draftBtn: 'brouillon guards',
+    buttonsCells: 32,
+    tabGuard: n => `guards ${n}`,
+    tabMemory: n => `souvenir ${n}`,
+    tabRules: (r, p = 0) => (p > 0 ? `règles ${r} / Proc ${p}` : `règles ${r} / Proc ${p}`),
+    tabDistill: 'Dernier update',
+    tabSettings: 'réglages',
+    settingsHint: 'valeurs réglé here priment over réglages.json et s\'appliquent à tous les espaces de travail. appuyez Plus pour détails',
+    source: { panel: 'panneau', file: 'réglages.json', default: 'par défaut' },
+    on: 'sur',
+    offValue: 'désactivé',
+    toggleBtn: 'Basculer',
+    resetBtn: 'Réinitialiser',
+    minutes: n => `${n} min`,
+    settingName: {
+      auto_handoff: 'Hand désactivé à le seuil',
+      threshold: 'handoff seuil',
+      window_ratio: 'seuil ratio sur petit fenêtres',
+      refresh: 'Conserver le cache chaud pendant arrière-plan',
+      idle_minutes: 'temps d\'inactivité avant un refresh',
+      max_refresh: 'Refreshes par inactivité period',
+      away_handoff: 'arrière-plan handoff',
+      distill: 'projet notes (background)',
+      distill_every: 'messages entre notes updates',
+      min_tokens: 'Smallest conversation handled',
+      notes_model: 'modèle pour notes',
+      resume_hint: 'Tell new chats où you stopped',
+      retry_nudge: 'Repeated échec rappel',
+      done_check: 'vérification avant "terminé"',
+      reply_language: 'langue de réponse reminder',
+      language: 'message langue',
+    },
+    settingHelp: {
+      auto_handoff: '"quand désactivé, nothing happens à le seuil et Claude code\'s propre compact prend le relais"',
+      threshold: 'Hand désactivé à un nouvelle conversation quand le contexte atteint ce many tokens (needs automatic handoff sur)',
+      window_ratio: 'sur fenêtres smaller than le seuil, hand désactivé à ce part de le fenêtre',
+      refresh: 'pendant you sont arrière-plan, send un tiny request now et puis so le cache does pas expire',
+      idle_minutes: 'minutes après le cache was last used avant refreshing (le cache expires à 60)',
+      max_refresh: 'après ce many, write an arrière-plan handoff à reprendre depuis quand you retour',
+      away_handoff: 'quand refreshes épuisées ou sont désactivé, write an arrière-plan handoff et proposer /handoff resume ou continue sur retour; désactivé does nothing',
+      distill: 'Update le projet notes dans le background tous N messages, quand inactivité et avant un handoff',
+      distill_every: 'Update le notes après ce many de your messages; fewer est fresher but makes plus requêtes',
+      min_tokens: 'Smaller conversations sont peu coûteux à reconstruire: aucun refresh, notes ou arrière-plan handoff',
+      notes_model: 'modèle pour background notes (Sonnet 5.5 au moins); réglages.json can name another modèle',
+      resume_hint: 'un new chat dans le same folder en 7 jours est informée où le dernière stopped',
+      retry_nudge: 'quand un tool fails deux fois de suite pour le same raison, demandez Claude à change approche',
+      done_check: 'quand Claude says terminé après editing code avec aucun passing test ou vérification, demandez it à vérifier dès que',
+      reply_language: '"rappeler Claude dès que quand its explanation est pas dans ce langue; auto suit Claude code\'s langue"',
+      language: '"langue de le statut ligne, avis et panneau; auto suit Claude code\'s langue, puis le système"',
+    },
+    noGuards: 'aucun guards yet. dès que un règle apparaît 3+ fois you can demandez le modèle à brouillon one.',
+    guardMeta: (id, mode, hits) => `#${id} · ${mode} · ${hits} déclenchement${s(hits)}`,
+    blockLabel: 'bloque ',
+    allowLabel: 'autorise ',
+    replay: (calls, hits) => `essai match sur ce conversation: ${hits} de ${calls} tool call${s(calls)}`,
+    recentHits: 'Recent déclenchements (if most sont faux positifs, affiner ou tour désactivé):',
+    suggesting: 'Asking le modèle pour propositions…',
+    candidates: n => `${n} règle${s(n)} appeared 3+ fois sans un guard `,
+    memoryHint: (shown, total) => `dernier ${shown} de ${total} · préférences et corrections go dans nouvelles conversations en entier, faits et emplacements comme titres seulement`,
+    archived: (n, days) => `${n} archivé: pas confirmed pour over ${days} jours, non transmis dans nouvelles conversations`,
+    noRules: 'aucune règle yet',
+    ruleCount: n => `${n}x`,
+    proceduresHint: n => `${n} procédure${s(n)} · non transmis dans nouvelles conversations; à 3+ fois le AI est invité à tour them dans projet compétences`,
+    inProject: project => (project.startsWith('已在 ') ? `dans ${project.slice(3)}` : 'dans ${project.slice(3)}'),
+    distillLine: (at, why, n) => `${at} · ${why} · ${n} change${s(n)}`,
+    noDistill: 'aucun notes updates yet',
+    footer: file => `après ctrl+x tab, appuyez 1–5 à switch tabs · ${file}`,
+    typeLabel: { user: 'Préférence', feedback: 'Correction', project: 'Fait', reference: 'Emplacement' },
+  },
+}
+
+const MSG: Record<Lang, Messages> = { 'zh-TW': zh, en, 'fr': fr }
