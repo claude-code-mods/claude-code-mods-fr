@@ -1,0 +1,18 @@
+{
+  "name": "token-optimizer",
+  "description": "La barre d'état Token Optimizer seule, pour ses tests. Elle est incluse dans le plugin token-optimizer.",
+  "author": {
+    "name": "Alex Greenshpun",
+    "url": "https://linkedin.com/in/alexgreensh"
+  },
+  "homepage": "https://github.com/alexgreensh/token-optimizer",
+  "repository": "https://github.com/alexgreensh/token-optimizer",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "keywords": [
+    "token",
+    "optimization",
+    "desktop",
+    "status-bar"
+  ],
+  "types": "./types/index.d.ts"
+}

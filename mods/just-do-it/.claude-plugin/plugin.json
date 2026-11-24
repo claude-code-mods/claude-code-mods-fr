@@ -1,0 +1,15 @@
+{
+  "name": "just-do-it",
+  "version": "0.1.0",
+  "description": "Poursuit le travail autorisé jusqu'à la vérification et la livraison ; signale et répare les problèmes de configuration à traiter.",
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "fleetConfigPath": {
+      "type": "file",
+      "title": "Fleet configuration",
+      "description": "Optional absolute path to a private fleet configuration. Empty disables fleet inspection.",
+      "required": false,
+      "default": ""
+    }
+  }
+}

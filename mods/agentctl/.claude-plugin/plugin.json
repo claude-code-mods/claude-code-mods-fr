@@ -1,0 +1,8 @@
+{
+  "name": "agentctl",
+  "version": "0.3.1",
+  "description": "Plan de contrôle d'agent pour une session Claude Code : périmètre des tâches, preuves, passation. Un outil de contrôle et d'affichage, pas une frontière d'isolation.",
+  "author": {
+    "name": "sd0xdev"
+  }
+}

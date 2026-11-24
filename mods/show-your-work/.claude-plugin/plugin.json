@@ -1,0 +1,25 @@
+{
+  "name": "show-your-work",
+  "version": "1.1.0",
+  "description": "Claude montre son travail terminé directement dans votre terminal : captures d'écran, vidéos où il clique dans votre application et contrôles qualité avant/après synchronisés.",
+  "author": {
+    "name": "Umer Ansari",
+    "url": "https://github.com/iamumeransari"
+  },
+  "homepage": "https://github.com/iamumeransari/claude-show-your-work",
+  "repository": "https://github.com/iamumeransari/claude-show-your-work",
+  "license": "MIT",
+  "keywords": [
+    "screenshots",
+    "video",
+    "playwright",
+    "qa",
+    "kitty",
+    "ghostty",
+    "terminal"
+  ],
+  "types": "./types/index.d.ts",
+  "privacyPolicyUrl": "https://github.com/iamumeransari/claude-show-your-work/blob/main/PRIVACY.md",
+  "documentationUrl": "https://github.com/iamumeransari/claude-show-your-work#readme",
+  "termsOfServiceUrl": "https://github.com/iamumeransari/claude-show-your-work/blob/main/LICENSE"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "pebrel-prompt-suggestions",
+  "version": "0.1.0",
+  "author": {
+    "name": "Pebrel contributors"
+  },
+  "description": "Prédictions natives dans le champ de saisie vide, via le pont de session Pebrel."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "lcu-approve",
+  "version": "0.6.0",
+  "description": "Validation native par application pour l'utilisation de l'ordinateur LCU dans l'application Claude et Claude Code (Autoriser cette conversation, Toujours autoriser, Refuser), et le panneau /computer-use-apps des applications approuvées.",
+  "author": {
+    "name": "LCU"
+  },
+  "types": "./types/index.d.ts"
+}

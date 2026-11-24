@@ -1,0 +1,9 @@
+{
+  "name": "jev-auto-compact",
+  "version": "1.6.1",
+  "description": "Compaction mot pour mot propulsée par Jev : dès que le contexte atteint 60 %, élague les appels d'outils obsolètes sans génération. Ignore (sans jamais se replier sur le résumeur LLM) lorsqu'il n'y a rien à élaguer ; enregistre des preuves pour learning.db.",
+  "author": {
+    "name": "vexjoy-agent"
+  },
+  "license": "MIT"
+}

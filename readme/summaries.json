@@ -1,0 +1,122 @@
+{
+ "fm": {
+  "fr": "Animation du voilier au travail et transcription réservée à la conversation, avec une préférence de mode calme partagée entre les sessions."
+ },
+ "terminal-browser": {
+  "fr": "Un navigateur dans Claude Code : prévisualisez sites et HTML et laissez l'agent piloter le navigateur intégré."
+ },
+ "pebrel-prompt-suggestions": {
+  "fr": "Prédictions natives de prompt dans le champ vide, via le pont de session Pebrel."
+ },
+ "token-optimizer": {
+  "fr": "Une barre d'état qui montre où vont les tokens et comment en dépenser moins."
+ },
+ "lcu-approve": {
+  "fr": "Validation par application pour le contrôle de l'ordinateur : autoriser cette conversation, toujours autoriser ou refuser, avec un panneau des applications approuvées."
+ },
+ "fast-jev-compaction": {
+  "fr": "Compaction mot pour mot guidée par Jev pour les sessions Claude Code."
+ },
+ "lot-map": {
+  "fr": "Une carte en direct à côté du chat : mémoire, fichiers, shell, web, modèle, agents, skills et hooks s'illuminent lorsqu'ils sont utilisés."
+ },
+ "codex-attachment-manager": {
+  "fr": "Envoie les images précédentes sous forme de courtes alternatives et récupère les originaux par identifiant, pour préserver le cache de prompt lors des longues sessions d'images."
+ },
+ "storybloq": {
+  "fr": "Mémoire de projet : tickets, issues, passations et leçons conservés dans un dossier .story/ de votre dépôt."
+ },
+ "shared-session": {
+  "fr": "Partagez une session par lien ou avec votre équipe ; vos collègues rejoignent depuis leur propre Claude Code et suivent chaque tour en direct."
+ },
+ "just-do-it": {
+  "fr": "Poursuit le travail autorisé jusqu'à la vérification et la livraison, et signale les problèmes de configuration à corriger."
+ },
+ "prismantis": {
+  "fr": "Rendu coloré et personnalisable des réponses : tableaux, titres, code, nombres, chemins et liens."
+ },
+ "filetree": {
+  "fr": "Un arborescence de fichiers façon IDE qui montre ce que fait Claude et où il se trouve dans vos fichiers."
+ },
+ "jev-auto-compact": {
+  "fr": "À 60 % du contexte, élagage des appels d'outils obsolètes sans génération ; évite le repli vers un résumé LLM."
+ },
+ "cache-tax": {
+  "fr": "Maintient le cache de prompt d'une heure au chaud pendant les pauses, demande avant un envoi à froid et affiche le coût de réécriture."
+ },
+ "turbo": {
+  "fr": "Une usine logicielle agentique sous contrôle humain : vous décidez quoi construire et jugez le résultat, les skills construisent et livrent."
+ },
+ "agent-standup-band": {
+  "fr": "Une ligne au-dessus du champ de saisie lorsqu'une autre session locale a besoin de vous, et une notification lorsqu'elle se termine."
+ },
+ "flightdeck": {
+  "fr": "Un tableau de bord d'agent en direct : constantes du modèle, architecte de garde, vérifications des permissions, cartes de sous-agents et journal de session."
+ },
+ "caliber-jev-compaction": {
+  "fr": "Compaction mot pour mot guidée par Jev pour les sessions Claude Code."
+ },
+ "mazyos": {
+  "fr": "Un plugin de gestion d'entreprise en portugais : la mémoire de votre société dans chaque session, l'identité visuelle sur les productions et 17 skills marketing/SEO."
+ },
+ "start": {
+  "fr": "Commandes d'orchestration de flux de travail pour le développement logiciel agentique."
+ },
+ "shunt": {
+  "fr": "Une bande d'utilisation pour la passerelle shunt : dépenses et heure de réinitialisation de chaque fenêtre, avec un détail complet via /shunt:usage."
+ },
+ "operator": {
+  "fr": "Mémoire durable du projet et de l'utilisateur pour un développement piloté par des agents."
+ },
+ "agentctl": {
+  "fr": "Un plan de contrôle d'agent pour une session : périmètre des tâches, preuves et passation."
+ },
+ "multi-core": {
+  "fr": "Utilisez les modèles ChatGPT, Cursor, OpenCode et Antigravity dans une même session, avec bascule via /model."
+ },
+ "work-mode": {
+  "fr": "Modes de session : auto (sans questions en cours de tâche), out (délégation de travaux par lots) et wrap (converger et terminer)."
+ },
+ "tokendoctor": {
+  "fr": "Rejoue vos sessions passées pour montrer ce que chaque modification aurait économisé, puis n'applique que celles que vous choisissez."
+ },
+ "engineer": {
+  "fr": "Une méthodologie disciplinée d'ingénierie agentique : cadrage, découverte des critères d'acceptation, spécification, planification, implémentation, vérification et durcissement."
+ },
+ "skins": {
+  "fr": "Habillages et quinze thèmes pour la transcription, avec cartes riches et bande d'utilisation ; /skin les change à chaud."
+ },
+ "show-your-work": {
+  "fr": "Présente le travail terminé dans le terminal : captures d'écran, vidéos de navigation et comparaisons avant/après synchronisées."
+ },
+ "jevmem-pane": {
+  "fr": "Un panneau latéral montrant ce que jevmem a rappelé, ce que son garde-fou a décidé et ce que le dernier tour a enregistré."
+ },
+ "ctx-handoff": {
+  "fr": "Transforme ce que vous apprenez à Claude en notes de projet, repère les erreurs courantes, maintient le cache au chaud et reprend les longues sessions."
+ },
+ "inbox": {
+  "fr": "Rassemble les questions, tâches, découvertes et PR qui vous attendent dans une session."
+ },
+ "lane-stack": {
+  "fr": "Un convoyeur de chef de projet en solo : agents orchestrateurs, règles de voie, commandes d'accueil et de reprise."
+ },
+ "compact-adviser": {
+  "fr": "Suggère ou lance /compact à un point d'arrêt achevé, selon le jugement de TypeSafe Jev."
+ },
+ "ripple": {
+  "fr": "Choix du niveau de raisonnement par prompt et d'un travailleur par tâche déléguée, maintien du cache au chaud et suivi de la destination de chaque requête."
+ },
+ "tavernweave-agent-skills": {
+  "fr": "23 skills partagés pour les rolecards, le travail logiciel et les tâches cloud bornées, avec un interrupteur Soul au-dessus du champ de saisie."
+ },
+ "agent-usage-guard": {
+  "fr": "Retient les fan-outs de sous-agents, les prompts à contexte lourd et les boucles de nouvelles tentatives avant qu'ils ne consomment votre fenêtre d'utilisation."
+ },
+ "council": {
+  "fr": "Consultez plusieurs agents IA à la fois pour des perspectives variées, avec un panneau en flux continu et une vérification latérale facultative."
+ },
+ "carbon": {
+  "fr": "Suivez l'empreinte carbone de vos sessions Claude Code dans le terminal et l'application de bureau."
+ }
+}

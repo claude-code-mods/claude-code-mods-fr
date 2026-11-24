@@ -1,0 +1,25 @@
+{
+  "name": "agent-usage-guard",
+  "description": "Un mod Claude Code qui retient les fan-outs de sous-agents, les prompts à contexte lourd et les boucles de nouvelles tentatives avant qu'ils ne consomment votre fenêtre d'utilisation. Il lit l'utilisation de votre forfait, compte les agents sur toutes les sessions et demande confirmation dans la boîte de dialogue propre à Claude Code.",
+  "version": "1.2.1",
+  "author": {
+    "name": "Riccardo Bartoli"
+  },
+  "homepage": "https://github.com/rbartoli/agent-usage-guard",
+  "repository": "https://github.com/rbartoli/agent-usage-guard",
+  "license": "MIT",
+  "icon": "./.claude-plugin/icon.png",
+  "types": "./types/index.d.ts",
+  "documentationUrl": "https://github.com/rbartoli/agent-usage-guard#readme",
+  "supportUrl": "https://github.com/rbartoli/agent-usage-guard/issues",
+  "privacyPolicyUrl": "https://github.com/rbartoli/agent-usage-guard#security-and-privacy",
+  "keywords": [
+    "mod",
+    "usage",
+    "rate-limit",
+    "subagents",
+    "context",
+    "guardrails",
+    "cost"
+  ]
+}

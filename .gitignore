@@ -1,0 +1,8 @@
+# Written by the engine beside each mod once it loads
+*/.claude-plugin/types/
+node_modules/
+.velloc/
+claude-code-mods-zh/
+mods-lib/
+download-status.json
+claude-code-mods-zhtw/

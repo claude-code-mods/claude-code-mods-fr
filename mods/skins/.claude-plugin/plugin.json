@@ -1,0 +1,18 @@
+{
+  "name": "skins",
+  "version": "0.5.16",
+  "description": "Habillages pour Claude Code : lignes d'outils qui s'ouvrent sur leur entrée et leur réponse, code, diff, tableau, maths, Mermaid et cartes shell mis en évidence, liens, repli, bande d'utilisation, mode calme et quinze thèmes. /skin les change à chaud.",
+  "author": {
+    "name": "hellosverre",
+    "url": "https://github.com/hellosverre"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code-mods",
+    "claude-mods",
+    "function-hooks",
+    "theme",
+    "skin"
+  ],
+  "types": "./types/index.d.ts"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "ripple",
+  "displayName": "ClaudeRipple",
+  "version": "0.7.0",
+  "description": "Choisit le niveau de raisonnement pour chaque prompt et le travailleur pour chaque tâche déléguée, peut maintenir le cache de prompt au chaud et montre où ClaudeRipple a envoyé chaque requête.",
+  "author": {
+    "name": "ClaudeRipple"
+  },
+  "license": "GPL-3.0-only",
+  "types": "./types/index.d.ts"
+}

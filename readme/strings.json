@@ -1,0 +1,28 @@
+{
+ "fr": {
+  "label": "Français",
+  "file": "README.md",
+  "categories": {
+   "dashboards": "Tableaux de bord et utilisation",
+   "agents": "Agents et sous-agents",
+   "productivity": "Productivité et contexte",
+   "rendering": "Rendu et aperçus",
+   "safety": "Sécurité et garde-fous",
+   "git": "Git, PR et déploiements",
+   "fun": "Pendant que vous attendez"
+  },
+  "columns": [
+   "Mod",
+   "Fonction",
+   "Accès"
+  ],
+  "reach": {
+   "http": "réseau",
+   "process": "exécute des commandes",
+   "model": "appels au modèle",
+   "fs": "fichiers",
+   "mcp": "MCP"
+  },
+  "by": "par"
+ }
+}
