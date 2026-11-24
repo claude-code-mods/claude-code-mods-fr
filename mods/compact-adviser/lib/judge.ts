@@ -113,48 +113,48 @@ const TRANSIENT_JUDGE_KINDS: ReadonlySet<JudgeErrorKind> = new Set([
 ]);
 
 const JUDGE_KIND_CAUSE: Record<JudgeErrorKind, string> = {
-  timeout: "the request timed out",
-  network: "the request could not reach TypeSafe",
-  authentication: "TypeSafe rejected the API key",
-  billing: "TypeSafe requires payment (HTTP 402)",
-  "rate-limit": "TypeSafe rate-limited the request",
-  server: "TypeSafe returned a server error",
-  response: "TypeSafe's reply was not a usable judgment",
-  input: "this checkpoint is too large to send",
-  configuration: "TYPESAFE_BASE is not a valid https URL or loopback http URL",
+  timeout: "la requête a expiré",
+  network: "la requête n’a pas pu atteindre TypeSafe",
+  authentication: "TypeSafe a refusé la clé API",
+  billing: "TypeSafe exige un paiement (HTTP 402)",
+  "rate-limit": "TypeSafe a limité le débit de la requête",
+  server: "TypeSafe a renvoyé une erreur serveur",
+  response: "la réponse de TypeSafe n’était pas un jugement exploitable",
+  input: "ce point de contrôle est trop volumineux pour être envoyé",
+  configuration: "TYPESAFE_BASE n’est pas une URL https valide ni une URL http en boucle locale",
 };
 
 export function judgeErrorMessage(kind: JudgeErrorKind): string {
   const core =
-    `The compact adviser asked TypeSafe (Jev) but did not get a usable judgment (${JUDGE_KIND_CAUSE[kind]}). ` +
-    "Context was left unchanged on purpose so a compact or hint cannot come from a bad answer.";
+    `Compact adviser a interrogé TypeSafe (Jev) mais n’a pas obtenu de jugement exploitable (${JUDGE_KIND_CAUSE[kind]}). ` +
+    "Le contexte a été laissé inchangé pour qu’une compaction ou un conseil ne découle pas d’une mauvaise réponse.";
   if (kind === "authentication") {
-    return `${core} Check the TypeSafe key configuration; this is not a temporary glitch.`;
+    return `${core} Vérifiez la configuration de la clé TypeSafe ; ce n’est pas un incident temporaire.`;
   }
   if (kind === "billing") {
-    return `${core} Check TypeSafe billing and credits; this is not a temporary glitch.`;
+    return `${core} Vérifiez la facturation et les crédits TypeSafe ; ce n’est pas un incident temporaire.`;
   }
   if (kind === "configuration") {
-    return `${core} Fix or unset TYPESAFE_BASE; this is not a temporary glitch.`;
+    return `${core} Corrigez ou désactivez TYPESAFE_BASE ; ce n’est pas un incident temporaire.`;
   }
   if (kind === "input") {
-    return `${core} This is a size limit, not a temporary glitch.`;
+    return `${core} Il s’agit d’une limite de taille, pas d’un incident temporaire.`;
   }
   if (TRANSIENT_JUDGE_KINDS.has(kind)) {
-    return `${core} This can be temporary; the adviser will try again later. No action needed unless it keeps repeating.`;
+    return `${core} Cela peut être temporaire ; l’assistant réessayera plus tard. Aucune action nécessaire sauf si cela se répète.`;
   }
   return core;
 }
 
 export const JUDGE_UNAVAILABLE_MESSAGE =
-  "The compact adviser asked TypeSafe (Jev) but did not get a usable judgment. " +
-  "Context was left unchanged on purpose so a compact or hint cannot come from a bad answer. " +
+  "Compact adviser a interrogé TypeSafe (Jev) mais n’a pas obtenu de jugement exploitable. " +
+  "Le contexte a été laissé inchangé pour qu’une compaction ou un conseil ne découle pas d’une mauvaise réponse. " +
   "This can be temporary; the adviser will try again later. No action needed unless it keeps repeating.";
 
 export const JUDGE_DISABLED_NETWORK_MESSAGE =
-  "The compact adviser could not ask TypeSafe (Jev): Claude Code has nonessential network traffic disabled. " +
-  "Context was left unchanged on purpose so a compact or hint cannot run without a judgment. " +
-  "Enable nonessential network traffic if TypeSafe should run; this is a configuration setting, not a temporary glitch.";
+  "Compact adviser n’a pas pu interroger TypeSafe (Jev) : Claude Code a désactivé le trafic réseau non essentiel. " +
+  "Le contexte a été laissé inchangé pour qu’une compaction ou un conseil ne puisse pas s’exécuter sans jugement. " +
+  "Activez le trafic réseau non essentiel si TypeSafe doit fonctionner ; il s’agit d’un paramètre de configuration, pas d’un incident temporaire.";
 
 export class JudgeError extends Error {
   // A plain field assignment, not a constructor parameter property: the Codex adapter runs

@@ -675,7 +675,7 @@ export function snapshot(
     },
     compaction: {
       description:
-        "Lossy structured summary of older context (request, files, errors, pending tasks, current work, next step) plus a few recent messages. Exact tool output and long file contents are compressed away. Other compaction hooks may differ.",
+        "Résumé structuré et approximatif du contexte ancien (requête, fichiers, erreurs, tâches en attente, travail en cours, prochaine étape), ainsi que quelques messages récents. La sortie exacte des outils et le contenu long des fichiers sont compressés. D’autres hooks de compaction peuvent différer.",
     },
   };
   return {

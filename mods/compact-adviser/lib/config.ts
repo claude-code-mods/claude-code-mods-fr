@@ -51,7 +51,7 @@ export function parseMinimum(text: string): number {
   const value = text.trim();
   const number = Number(value);
   if (!/^\d+$/.test(value) || !Number.isSafeInteger(number) || number <= 0) {
-    throw new Error("Enter a positive whole number of tokens, for example 40000.");
+    throw new Error("Saisissez un nombre entier positif de jetons, par exemple 40000.");
   }
   return number;
 }
@@ -62,21 +62,21 @@ export function parseBudget(text: string): number {
   if (value === "off") return 0;
   const number = Number(value);
   if (!/^\d+$/.test(value) || !Number.isSafeInteger(number)) {
-    throw new Error("Enter a whole number of tokens, for example 450000, or off.");
+    throw new Error("Saisissez un nombre entier de jetons, par exemple 450000, ou off.");
   }
   return number;
 }
 
 export function parseSavedApiKey(text: string): string {
   const value = text.trim();
-  if (!value) throw new Error("Enter a TypeSafe API key, or cancel to leave it unchanged.");
+  if (!value) throw new Error("Saisissez une clé API TypeSafe, ou annulez pour ne pas la modifier.");
   if (value.length > MAX_SAVED_API_KEY_LENGTH) {
-    throw new Error("That value is too long to save as a TypeSafe API key.");
+    throw new Error("Cette valeur est trop longue pour être enregistrée comme clé API TypeSafe.");
   }
   for (let i = 0; i < value.length; i++) {
     const code = value.charCodeAt(i);
     if (code < 32 || code === 127) {
-      throw new Error("The key cannot contain control characters.");
+      throw new Error("La clé ne peut pas contenir de caractères de contrôle.");
     }
   }
   return value;
@@ -101,7 +101,7 @@ export function parseConsent(value: unknown): Consent {
     typeof c.autoAcknowledged !== "boolean"
   ) {
     throw new SettingsError(
-      "Invalid compact-adviser consent record; run /compact-adviser auto to restore it.",
+      "Enregistrement de consentement compact-adviser invalide ; exécutez /compact-adviser auto pour le restaurer.",
     );
   }
   return { version: 1, autoAcknowledged: c.autoAcknowledged };
@@ -134,26 +134,26 @@ export function readConfig(
   const logRequests = row(LOG_KEY, "logRequests");
   const beforeCompactPrompt = row(BEFORE_COMPACT_PROMPT_KEY, "beforeCompactPrompt") ?? "";
   if (typeof mode !== "string" || !MODES.includes(mode as Mode)) {
-    throw new SettingsError("Cannot read the compact-adviser mode setting; no action is taken.");
+    throw new SettingsError("Impossible de lire le paramètre de mode de compact-adviser ; aucune action n’est effectuée.");
   }
   if (typeof minimum !== "number" || !Number.isSafeInteger(minimum) || minimum <= 0) {
     throw new SettingsError(
-      "Cannot read the compact-adviser minimum context setting; no action is taken.",
+      "Impossible de lire le paramètre de contexte minimal de compact-adviser ; aucune action n’est effectuée.",
     );
   }
   if (typeof budget !== "number" || !Number.isSafeInteger(budget) || budget < 0) {
     throw new SettingsError(
-      "Cannot read the compact-adviser context budget setting; no action is taken.",
+      "Impossible de lire le paramètre de budget de contexte de compact-adviser ; aucune action n’est effectuée.",
     );
   }
   if (logRequests !== undefined && typeof logRequests !== "boolean") {
     throw new SettingsError(
-      "Cannot read the compact-adviser request-log setting; no action is taken.",
+      "Impossible de lire le paramètre de journalisation des requêtes de compact-adviser ; aucune action n’est effectuée.",
     );
   }
   if (typeof beforeCompactPrompt !== "string") {
     throw new SettingsError(
-      "Cannot read the compact-adviser before-compact prompt; no action is taken.",
+      "Impossible de lire l’invite avant compaction de compact-adviser ; aucune action n’est effectuée.",
     );
   }
   const profile = row(PROFILE_KEY, "profile");

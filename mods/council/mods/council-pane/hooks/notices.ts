@@ -10,9 +10,9 @@ export function finishNotice({ providers }: RunProgress, jobId = ''): string {
   const errors = count(providers, 'error')
   const cancelled = count(providers, 'cancelled')
   // The band draws the COUNCIL label ahead of this, so the text does not repeat the name.
-  const subject = jobId ? `job ${jobId} finished` : 'finished'
-  const answered = `${count(providers, ...ANSWERED_STATES)} of ${providers.length} answered`
-  return `${subject}: ${answered}${errors > 0 ? `, ${errors} error` : ''}${cancelled > 0 ? `, ${cancelled} cancelled` : ''}`
+  const subject = jobId ? `tâche ${jobId} terminée` : 'terminée'
+  const answered = `${count(providers, ...ANSWERED_STATES)} sur ${providers.length} ont répondu`
+  return `${subject} : ${answered}${errors > 0 ? `, ${errors} erreur${errors > 1 ? 's' : ''}` : ''}${cancelled > 0 ? `, ${cancelled} annulé${cancelled > 1 ? 's' : ''}` : ''}`
 }
 
 
@@ -40,14 +40,14 @@ export function progressBand(
   return {
     bar: bar({ kind: 'sweep', frame }, BAND_CELLS),
     ...(startedAtMs === undefined ? {} : { clock: runClock(startedAtMs, nowMs) }),
-    event: `${finished} of ${providers.length} done${latest ? ` \u00b7 ${latest}` : ''}`,
+    event: `${finished} sur ${providers.length} terminés${latest ? ` \u00b7 ${latest}` : ''}`,
   }
 }
 
 // A run whose process died without writing .done: what the band says instead.
 export function abandonedNotice({ providers }: RunProgress, jobId = ''): string {
-  const subject = jobId ? `job ${jobId} stopped` : 'stopped'
-  return `${subject} before it finished: ${count(providers, ...ANSWERED_STATES)} of ${providers.length} answered`
+  const subject = jobId ? `tâche ${jobId} arrêtée` : 'arrêtée'
+  return `${subject} avant la fin : ${count(providers, ...ANSWERED_STATES)} sur ${providers.length} ont répondu`
 }
 
 // The pid a run left in its watch dir, fit to hand to kill -0: digits, not zero.
@@ -58,13 +58,13 @@ export function runPid(text: string): string | undefined {
 
 export function wakePrompt(jobId: string): string | undefined {
   if (!jobId) return undefined
-  return `The background council job ${jobId} has finished. Fetch it with /claude-council:result ${jobId} and summarise it.`
+  return `La tâche de conseil en arrière-plan ${jobId} est terminée. Récupérez-la avec /claude-council:result ${jobId} et résumez-la.`
 }
 
 export function reopenReply(hasRun: boolean): string {
   return hasRun
-    ? 'Council pane reopened with the last run.'
-    : 'No council run in this session yet. Start one with /claude-council:ask.'
+    ? 'Panneau du conseil rouvert avec la dernière exécution.'
+    : 'Aucune exécution du conseil dans cette session. Lancez-en une avec /claude-council:ask.'
 }
 
 export type FinishNotice = { text: string; untilMs: number; isFailure?: boolean }

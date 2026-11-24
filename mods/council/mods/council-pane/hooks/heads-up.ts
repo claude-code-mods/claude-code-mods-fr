@@ -45,27 +45,27 @@ const EFFORT_SHAPE = /^[a-z]+$/
  */
 export function parseConfig(text: string | undefined, rowOn: boolean): HeadsUpConfig {
   if (text === undefined) return rowOn ? { enabled: true, seat: DEFAULT_SEAT, every: DEFAULT_EVERY } : { enabled: false }
-  const off = (why: string): HeadsUpConfig => ({ enabled: false, problem: `${CONFIG_FILE}${why}; heads-up is off` })
+  const off = (why: string): HeadsUpConfig => ({ enabled: false, problem: `${CONFIG_FILE}${why} ; la vérification heads-up est désactivée` })
   let raw: unknown
   try {
     raw = JSON.parse(text)
   } catch {
-    return off(' is not valid JSON')
+    return off(' n’est pas du JSON valide')
   }
-  if (!isRecord(raw)) return off(' must hold a JSON object')
-  if (raw.enabled !== undefined && typeof raw.enabled !== 'boolean') return off(': enabled must be true or false')
-  if (raw.seats !== undefined) return off(': seats is not a key; one seat goes under "seat"')
-  if (raw.models !== undefined) return off(': models is not a key; the seat\'s pick goes under "model"')
+  if (!isRecord(raw)) return off(' doit contenir un objet JSON')
+  if (raw.enabled !== undefined && typeof raw.enabled !== 'boolean') return off(': enabled doit être true ou false')
+  if (raw.seats !== undefined) return off(': seats n’est pas une clé ; un siège se met sous "seat"')
+  if (raw.models !== undefined) return off(': models n’est pas une clé ; le choix du siège se met sous "model"')
   const seat = raw.seat ?? DEFAULT_SEAT
-  if (typeof seat !== 'string' || !SEAT_SHAPE.test(seat)) return off(`: seat ${JSON.stringify(seat)} is not a plain lowercase word`)
+  if (typeof seat !== 'string' || !SEAT_SHAPE.test(seat)) return off(`: le siège ${JSON.stringify(seat)} n’est pas un simple mot en minuscules`)
   const every = raw.every ?? DEFAULT_EVERY
-  if (typeof every !== 'number' || !Number.isInteger(every) || every < 2) return off(`: every must be a whole number of at least 2, got ${JSON.stringify(every)}`)
+  if (typeof every !== 'number' || !Number.isInteger(every) || every < 2) return off(`: every doit être un nombre entier d’au moins 2, reçu ${JSON.stringify(every)}`)
   let model: SeatPick | undefined
   if (raw.model !== undefined) {
     const pick = raw.model
-    if (!isRecord(pick)) return off(': model must be an object of {model, effort}')
-    if (pick.model !== undefined && typeof pick.model !== 'string') return off(`: model for ${seat} must be a string, got ${JSON.stringify(pick.model)}`)
-    if (pick.effort !== undefined && (typeof pick.effort !== 'string' || !EFFORT_SHAPE.test(pick.effort))) return off(`: effort for ${seat} must be lowercase letters, got ${JSON.stringify(pick.effort)}`)
+    if (!isRecord(pick)) return off(': model doit être un objet {model, effort}')
+    if (pick.model !== undefined && typeof pick.model !== 'string') return off(`: le modèle pour ${seat} doit être une chaîne, reçu ${JSON.stringify(pick.model)}`)
+    if (pick.effort !== undefined && (typeof pick.effort !== 'string' || !EFFORT_SHAPE.test(pick.effort))) return off(`: l’effort pour ${seat} doit être en minuscules, reçu ${JSON.stringify(pick.effort)}`)
     if (pick.model !== undefined || pick.effort !== undefined) model = { ...(pick.model === undefined ? {} : { model: pick.model }), ...(pick.effort === undefined ? {} : { effort: pick.effort }) }
   }
   if (raw.enabled === false || (raw.enabled === undefined && !rowOn)) return { enabled: false }
@@ -107,12 +107,12 @@ export function bumped(c: Counts, ...keys: (keyof Counts)[]): Counts {
 
 /** "checks 13 · none 8 · notes 2 · repeats 1 · failed 1 · out of credits 1": checks is the outcomes added up, so it cannot drift from them. */
 export function countsLine(c: Counts): string {
-  return `checks ${c.none + c.notes + c.repeats + c.failed + c.quota} · none ${c.none} · notes ${c.notes} · repeats ${c.repeats} · failed ${c.failed} · out of credits ${c.quota}`
+  return `vérifications ${c.none + c.notes + c.repeats + c.failed + c.quota} · rien ${c.none} · notes ${c.notes} · répétitions ${c.repeats} · échecs ${c.failed} · crédits épuisés ${c.quota}`
 }
 
 /** "learn 2 · tell 1 · knew 0 · understood 1 · dismiss 1 · turned off 0 · typed past 3" */
 export function pressesLine(c: Counts): string {
-  return `learn ${c.learn} · tell ${c.tell} · knew ${c.knew} · understood ${c.understood} · dismiss ${c.dismiss} · turned off ${c.turnOff} · typed past ${c.typedPast}`
+  return `en savoir plus ${c.learn} · dire ${c.tell} · déjà su ${c.knew} · compris ${c.understood} · ignoré ${c.dismiss} · désactivé ${c.turnOff} · ignoré en tapant ${c.typedPast}`
 }
 
 /**
@@ -179,9 +179,9 @@ export function tokenCount(n: number): string {
  */
 export function tokensLine(t: Tokens): string {
   const counted = t.checks + t.unreported
-  if (counted === 0) return 'none since this version'
+  if (counted === 0) return 'aucune depuis cette version'
   const checks = `${counted} ${counted === 1 ? 'check' : 'checks'}`
-  const parts = [t.unreported === 0 ? `${checks} since this version` : `${t.checks} of ${checks} reported since this version`]
+  const parts = [t.unreported === 0 ? `${checks} depuis cette version` : `${t.checks} sur ${checks} signalés depuis cette version`]
   if (t.checks > 0) {
     const split = (amount: number, gave: number, name: string) => (gave === 0 ? '' : `, ${tokenCount(amount)} ${name}${gave < t.checks ? ` on ${gave} of ${t.checks}` : ''}`)
     parts.push(
@@ -208,13 +208,13 @@ export type HeadsUpCommand =
 export function headsUpCommand(args: string): HeadsUpCommand {
   const [word = '', ...rest] = args.trim().toLowerCase().split(/[\s,]+/).filter(part => part !== '')
   if (word === '' || word === 'status') return { action: 'status' }
-  if (word === 'off') return rest.length === 0 ? { action: 'off' } : { action: 'unknown', why: 'off takes no words' }
-  if (word === 'setup') return rest.length === 0 ? { action: 'setup' } : { action: 'unknown', why: 'setup takes no words' }
-  if (word !== 'on') return { action: 'unknown', why: `unknown word ${JSON.stringify(word)}` }
-  if (rest.length > 1) return { action: 'unknown', why: `on takes one seat, got ${rest.length}: ${rest.join(', ')}` }
+  if (word === 'off') return rest.length === 0 ? { action: 'off' } : { action: 'unknown', why: 'off ne prend aucun mot' }
+  if (word === 'setup') return rest.length === 0 ? { action: 'setup' } : { action: 'unknown', why: 'setup ne prend aucun mot' }
+  if (word !== 'on') return { action: 'unknown', why: `mot inconnu ${JSON.stringify(word)}` }
+  if (rest.length > 1) return { action: 'unknown', why: `on prend un seul siège, reçu ${rest.length} : ${rest.join(', ')}` }
   const [seat] = rest
   if (seat === undefined) return { action: 'on' }
-  if (!SEAT_SHAPE.test(seat)) return { action: 'unknown', why: `seat ${JSON.stringify(seat)} is not a plain lowercase word` }
+  if (!SEAT_SHAPE.test(seat)) return { action: 'unknown', why: `le siège ${JSON.stringify(seat)} n’est pas un simple mot en minuscules` }
   return { action: 'on', seat }
 }
 
@@ -263,31 +263,31 @@ export type HeadsUpStatus = { state: string; rows: [string, string][] }
 export function headsUpStatus(config: HeadsUpConfig, rowOn: boolean, fileText: string | undefined, counts: Counts, tokens: Tokens, paused: Paused | null): HeadsUpStatus {
   const row = rowOn ? 'on' : 'off'
   const file = fileText === undefined ? undefined : fileEnabled(fileText)
-  const fileNote = fileText === undefined ? `no ${CONFIG_FILE} here` : `${CONFIG_FILE} leaves it to the row`
+  const fileNote = fileText === undefined ? `aucun ${CONFIG_FILE} ici` : `${CONFIG_FILE} laisse le choix à la ligne /config`
   const rows: [string, string][] = []
   let state: string
   if (!config.enabled && config.problem !== undefined) {
     state = 'off'
-    rows.push(['problem', config.problem])
+    rows.push(['problème', config.problem])
   } else if (config.enabled) {
-    state = file === true ? 'on for this project' : 'on for every project'
-    rows.push(['by', file === true ? `${CONFIG_FILE} (the /config row is ${row})` : `the /config row (${fileNote})`])
-    rows.push(['seat', seatLabel(config.seat, config.model)], ['every', `${config.every} requests`])
+    state = file === true ? 'activé pour ce projet' : 'activé pour tous les projets'
+    rows.push(['by', file === true ? `${CONFIG_FILE} (la ligne /config est ${row})` : `la ligne /config (${fileNote})`])
+    rows.push(['siège', seatLabel(config.seat, config.model)], ['fréquence', `${config.every} requêtes`])
   } else if (file === false) {
-    state = 'off for this project'
-    rows.push(['by', `${CONFIG_FILE} (the /config row is ${row})`], ['turn on', `/${COMMAND} on [seat] turns it on here`])
+    state = 'désactivé pour ce projet'
+    rows.push(['par', `${CONFIG_FILE} (la ligne /config est ${row})`], ['activer', `/${COMMAND} on [seat] l’active ici`])
   } else {
     state = 'off'
-    rows.push(['by', `the /config row is off, ${fileNote}`], ['turn on', `/${COMMAND} on [seat] for this project, the /config row "Heads-up side-check" for every project`])
+    rows.push(['by', `la ligne /config est désactivée, ${fileNote}`], ['turn on', `/${COMMAND} on [seat] pour ce projet, la ligne /config "Heads-up side-check" pour tous les projets`])
   }
-  if (paused !== null) rows.push(['paused', `${paused.seat}: ${paused.detail} · /${COMMAND} on resumes this session`])
-  rows.push(['checks', countsLine(counts)], ['tokens', tokensLine(tokens)], ['presses', pressesLine(counts)])
+  if (paused !== null) rows.push(['en pause', `${paused.seat} : ${paused.detail} · /${COMMAND} on reprend cette session`])
+  rows.push(['vérifications', countsLine(counts)], ['jetons', tokensLine(tokens)], ['appuis', pressesLine(counts)])
   return { state, rows }
 }
 
 export function statusText({ state, rows }: HeadsUpStatus): string {
   const width = Math.max(...rows.map(([label]) => label.length))
-  return [`Heads-up side-check: ${state}`, ...rows.map(([label, value]) => `  ${label.padEnd(width)}  ${value}`)].join('\n')
+  return [`Vérification heads-up : ${state}`, ...rows.map(([label, value]) => `  ${label.padEnd(width)}  ${value}`)].join('\n')
 }
 
 /**
@@ -297,17 +297,17 @@ export function statusText({ state, rows }: HeadsUpStatus): string {
  * ends, so the toast is what the person sees at once.
  */
 export function toastLine({ state, rows }: HeadsUpStatus): string {
-  const kept = new Set(['seat', 'every', 'paused', 'checks'])
-  const parts = rows.flatMap(([label, value]) => (kept.has(label) ? [label === 'every' ? `every ${value}` : value] : []))
-  return [`Heads-up side-check: ${state}`, ...parts].join(' \u00b7 ')
+  const kept = new Set(['siège', 'fréquence', 'en pause', 'vérifications'])
+  const parts = rows.flatMap(([label, value]) => (kept.has(label) ? [label === 'every' ? `toutes les ${value}` : value] : []))
+  return [`Vérification heads-up : ${state}`, ...parts].join(' \u00b7 ')
 }
 
 /** The /heads-up setup dialogs: scope, seat, cadence. */
-export const SCOPE = { project: 'This project', all: 'Every project', off: 'Off for this project' } as const
-export const SCOPE_QUESTION = 'Where should the heads-up side-check run?'
-export const SEAT_QUESTION = 'Which seat should reread the turn?'
-export const EVERY_QUESTION = 'How often should a long turn be checked?'
-export const EVERY_LABELS = ['Every 3 requests', 'Every 6 requests', 'Every 9 requests'] as const
+export const SCOPE = { project: 'Ce projet', all: 'Tous les projets', off: 'Désactivé pour ce projet' } as const
+export const SCOPE_QUESTION = 'Où la vérification heads-up doit-elle s’exécuter ?'
+export const SEAT_QUESTION = 'Quel siège doit relire le tour ?'
+export const EVERY_QUESTION = 'À quelle fréquence vérifier un long tour ?'
+export const EVERY_LABELS = ['Toutes les 3 requêtes', 'Toutes les 6 requêtes', 'Toutes les 9 requêtes'] as const
 
 /**
  * The seats discover_providers printed, the council's own test for what is set
@@ -329,21 +329,21 @@ export function seatOptions(available: readonly string[]): string[] {
 export function seatFromAnswer(answer: string): { seat: string } | { why: string } {
   const words = answer.toLowerCase().split(/[\s,]+/).filter(part => part !== '')
   const [seat] = words
-  if (seat === undefined) return { why: 'no seat named' }
-  if (words.length > 1) return { why: `one seat, got ${words.length}: ${words.join(', ')}` }
-  return SEAT_SHAPE.test(seat) ? { seat } : { why: `seat ${JSON.stringify(seat)} is not a plain lowercase word` }
+  if (seat === undefined) return { why: 'aucun siège indiqué' }
+  if (words.length > 1) return { why: `un seul siège, reçu ${words.length} : ${words.join(', ')}` }
+  return SEAT_SHAPE.test(seat) ? { seat } : { why: `le siège ${JSON.stringify(seat)} n’est pas un simple mot en minuscules` }
 }
 
 export function everyFromAnswer(answer: string): { every: number } | { why: string } {
   const digits = /^(?:every\s+)?(\d+)(?:\s+requests?)?$/i.exec(answer.trim())
   const every = digits === null ? NaN : Number(digits[1])
-  return Number.isInteger(every) && every >= 2 ? { every } : { why: `every must be a whole number of at least 2, got ${JSON.stringify(answer.trim())}` }
+  return Number.isInteger(every) && every >= 2 ? { every } : { why: `every doit être un nombre entier d’au moins 2, reçu ${JSON.stringify(answer.trim())}` }
 }
 
-export const MODEL_QUESTION = (seat: string) => `Which model should ${seat} use?`
-export const EFFORT_QUESTION = 'How hard should codex think?'
-const KEEP = 'Keep '
-const TYPE_ONE = 'Type a model id under Other'
+export const MODEL_QUESTION = (seat: string) => `Quel modèle ${seat} doit-il utiliser ?`
+export const EFFORT_QUESTION = 'À quel niveau codex doit-il réfléchir ?'
+const KEEP = 'Conserver '
+const TYPE_ONE = 'Saisissez un identifiant de modèle sous Autre'
 
 /** The current model first; then the catalog's others, four in all; or a prompt to type one. */
 export function modelOptions(current: string, catalog: readonly string[] | undefined): string[] {
@@ -368,12 +368,12 @@ export function effortOptions(efforts: readonly string[], defaultEffort: string)
 export function effortFromAnswer(answer: string): { effort?: string } | { why: string } {
   const text = answer.trim()
   if (text.endsWith(' (default)')) return {}
-  return EFFORT_SHAPE.test(text) ? { effort: text } : { why: `effort must be lowercase letters, got ${JSON.stringify(text)}` }
+  return EFFORT_SHAPE.test(text) ? { effort: text } : { why: `l’effort doit être en minuscules, reçu ${JSON.stringify(text)}` }
 }
 
 /** What a check that found nothing leaves on the prompt hint: "heads-up: gemini read 8.5 KB in 11 s, nothing to flag". */
 export function receiptLine(r: Extract<RunResult, { kind: 'none' }>): string {
-  return `heads-up: ${r.seats.map(seat => seat.seat).join(', ')} read ${kilobytes(r.payloadBytes)} in ${seconds(totalMs(r.seats))}, nothing to flag`
+  return `heads-up : ${r.seats.map(seat => seat.seat).join(', ')} a lu ${kilobytes(r.payloadBytes)} en ${seconds(totalMs(r.seats))}, rien à signaler`
 }
 
 /** "codex (gpt-6.1-sol, high)", "gemini (gemini-2.5-pro)", or the bare name. */
@@ -405,7 +405,7 @@ function fileEnabled(text: string): boolean | undefined {
 export function introTail(p: { shown: boolean; enabled: boolean }): { tail?: string; markShown: boolean } {
   if (p.shown) return { markShown: false }
   if (p.enabled) return { markShown: true }
-  return { tail: `Tip: /${COMMAND} on lets another model watch long turns and flag what Claude missed`, markShown: true }
+  return { tail: `Astuce : /${COMMAND} on permet à un autre modèle de surveiller les longs tours et de signaler ce que Claude a manqué`, markShown: true }
 }
 
 /** Persisted in $.store under STORE_KEY, shared across sessions (read-merge-write). */
@@ -483,7 +483,7 @@ export function acknowledgePause(s: Session): Session {
 
 /** The red row above the prompt while the pause is not dismissed. */
 export function pausedLine(p: Paused): string {
-  return `heads-up paused · ${p.seat}: ${p.detail}`
+  return `heads-up en pause · ${p.seat} : ${p.detail}`
 }
 
 /** The row above the prompt that the heads-up session and a council run contend for. */
@@ -579,7 +579,7 @@ export type RunResult =
 export function parseRunResult(checkId: string, text: string): RunResult {
   const unread: RunResult = {
     kind: 'failed', payloadBytes: 0,
-    seats: [{ seat: 'runner', outcome: 'error', elapsedMs: 0, detail: `result.json does not read as a run result: ${JSON.stringify(cut(text, UNREAD_CHARS))}` }],
+    seats: [{ seat: 'runner', outcome: 'error', elapsedMs: 0, detail: `result.json ne se lit pas comme un résultat d’exécution : ${JSON.stringify(cut(text, UNREAD_CHARS))}` }],
   }
   let raw: unknown
   try {
@@ -750,13 +750,13 @@ const totalMs = (seats: readonly SeatOutcome[]) => seats.reduce((total, seat) =>
 
 /** One line per finished check, drawn or not: "heads-up: codex · none · 12.4 KB · 27 s". */
 export function checkLine(r: RunResult): string {
-  if (r.kind === 'note') return `heads-up: ${r.note.seat} · note · ${kilobytes(r.note.payloadBytes)} · ${seconds(r.note.elapsedMs)}`
-  if (r.kind === 'none') return `heads-up: ${r.seats.map(seat => seat.seat).join(', ')} · none · ${kilobytes(r.payloadBytes)} · ${seconds(totalMs(r.seats))}`
-  if (r.kind === 'skipped') return `heads-up: skipped · ${r.detail}`
-  if (r.kind === 'quota') return `heads-up: paused · ${r.seat} after ${seconds(totalMs(r.seats))}: ${r.detail} · /${COMMAND} on resumes`
-  if (r.kind === 'refused') return `heads-up: paused · ${r.seat}: ${r.detail} · /${COMMAND} on resumes`
-  const reasons = r.seats.map(seat => `${seat.seat} ${seat.outcome} after ${seconds(seat.elapsedMs)}${seat.detail ? `: ${seat.detail}` : ''}`)
-  return `heads-up: failed · ${kilobytes(r.payloadBytes)} · ${reasons.join('; ')}`
+  if (r.kind === 'note') return `heads-up : ${r.note.seat} · note · ${kilobytes(r.note.payloadBytes)} · ${seconds(r.note.elapsedMs)}`
+  if (r.kind === 'none') return `heads-up : ${r.seats.map(seat => seat.seat).join(', ')} · rien · ${kilobytes(r.payloadBytes)} · ${seconds(totalMs(r.seats))}`
+  if (r.kind === 'skipped') return `heads-up : ignoré · ${r.detail}`
+  if (r.kind === 'quota') return `heads-up : en pause · ${r.seat} après ${seconds(totalMs(r.seats))} : ${r.detail} · /${COMMAND} on reprend`
+  if (r.kind === 'refused') return `heads-up : en pause · ${r.seat} : ${r.detail} · /${COMMAND} on reprend`
+  const reasons = r.seats.map(seat => `${seat.seat} ${seat.outcome} après ${seconds(seat.elapsedMs)}${seat.detail ? ` : ${seat.detail}` : ''}`)
+  return `heads-up : échec · ${kilobytes(r.payloadBytes)} · ${reasons.join(' ; ')}`
 }
 
 /**
@@ -767,11 +767,11 @@ export function checkLine(r: RunResult): string {
  * You should know is a fact to weigh against the plan.
  */
 export function tellClaudeDraft(n: Note): string {
-  const raised = `A side check by ${n.seat} (not you) flagged this: ${n.headline}`
+  const raised = `Une vérification parallèle par ${n.seat} (pas vous) a signalé ceci : ${n.headline}`
   const more = [n.title, ...n.points.map(point => `- ${point}`)].filter(part => part !== '').join('\n')
   const close = n.tag === 'Heads up'
-    ? `Treat this as a claim, not a conclusion. Before continuing: verify it against the evidence, report what you find, and only then act on ${n.points.length === 0 ? 'it' : 'the last bullet'}.`
-    : 'Take this into account before continuing and say whether it changes your plan.'
+    ? `Considérez ceci comme une hypothèse, pas une conclusion. Avant de continuer : vérifiez-la avec les preuves, rapportez ce que vous trouvez, puis agissez seulement dessus.`
+    : 'Tenez-en compte avant de continuer et dites si cela change votre plan.'
   return [raised, more, close].filter(part => part !== '').join('\n\n')
 }
 

@@ -23,8 +23,8 @@ export const TOOL_SCHEMA = {
 
 const VERBOSITIES = ['brief', 'standard', 'detailed']
 
-export const SEND_LABEL = 'Send to the council'
-export const KEEP_LABEL = "Don't send"
+export const SEND_LABEL = 'Envoyer au conseil'
+export const KEEP_LABEL = 'Ne pas envoyer'
 
 // The dialog shows a question of this many characters at most; the run still
 // receives the whole question.
@@ -42,8 +42,8 @@ const DRAWS_NOTHING = /\p{Cf}/gu
 // for the recipients or push them out of view.
 export function confirmQuestion(question: string, seats: string[], verbosity: string): string {
   const line = question.replace(DRAWS_NOTHING, '').replace(NOT_ONE_LINE, ' ').trim()
-  const shown = line.length > SHOWN_MAX ? `${line.slice(0, SHOWN_MAX)}… (the first ${SHOWN_MAX} of ${line.length} characters; the whole question is sent)` : line
-  return `Send to ${seats.length} ${seats.length === 1 ? 'seat' : 'seats'} at ${verbosity} verbosity: ${seats.join(', ')}\nQuestion: ${shown}`
+  const shown = line.length > SHOWN_MAX ? `${line.slice(0, SHOWN_MAX)}… (les ${SHOWN_MAX} premiers caractères sur ${line.length} ; la question complète est envoyée)` : line
+  return `Send to ${seats.length} ${seats.length === 1 ? 'siège' : 'sièges'} at ${verbosity} verbosity: ${seats.join(', ')}\nQuestion: ${shown}`
 }
 
 // Only the exact send label sends. `answer` is undefined when the dialog
@@ -61,9 +61,9 @@ export function councilResult(file: string): string {
 
 export function confirmOutcome(answer: string | undefined): { send: true } | { deny: string } | { reply: string } {
   if (answer === SEND_LABEL) return { send: true }
-  if (answer === undefined) return { deny: 'The user was not asked (dialog dismissed or no one to ask), so nothing was sent to the council.' }
-  if (answer === KEEP_LABEL) return { deny: 'The user chose not to send this to the council.' }
-  return { reply: `The user did not send this to the council and said: ${answer}` }
+  if (answer === undefined) return { deny: 'L’utilisateur n’a pas été interrogé (boîte de dialogue fermée ou personne à interroger) ; rien n’a été envoyé au conseil.' }
+  if (answer === KEEP_LABEL) return { deny: 'L’utilisateur a choisi de ne pas envoyer ceci au conseil.' }
+  return { reply: `L’utilisateur n’a pas envoyé ceci au conseil et a dit : ${answer}` }
 }
 
 export type Choice = 'seats' | 'verbosity'
@@ -91,38 +91,38 @@ const ROUTER_SEAT = /^openrouter-[1-9]\d*$/
 const seatLabel = (seat: Seat) => `${seat.name} (${seat.model})`
 
 const ASK_FIRST =
-  'Nothing was sent to the council. Ask the user first, in one AskUserQuestion call holding the questions below, ' +
-  'then call ask again with the same question, passing both providers and verbosity. ' +
-  "Skip the asking when the user's own message already named the seats or said to ask every seat: " +
-  'pass those names, and verbosity "standard" unless the user asked for brief or detailed.'
+  'Rien n’a été envoyé au conseil. Demandez d’abord à l’utilisateur, dans un seul appel AskUserQuestion contenant les questions ci-dessous, ' +
+  'puis appelez à nouveau ask avec la même question, en transmettant les sièges et la verbosité. ' +
+  "Ne posez pas la question si le message de l’utilisateur a déjà nommé les sièges ou demandé à interroger tous les sièges : " +
+  'transmettez ces noms, avec la verbosité "standard" sauf si l’utilisateur a demandé brief ou detailed.'
 
 const VERBOSITY_QUESTION = [
-  'Question "How verbose should the answers be?", header "Verbosity", multiSelect false, options:',
-  '- "Standard (Recommended)": balanced thoroughness',
-  '- "Brief": 3-5 sentences, bullets only, no code unless asked',
-  '- "Detailed": thorough analysis with code examples and trade-offs',
-  'Pass verbosity "standard", "brief" or "detailed" to match.',
+  'Question « Quelle verbosité pour les réponses ? », en-tête « Verbosité », multiSelect false, options :',
+  '- "Standard (recommandé)" : équilibre entre détail et concision',
+  '- "Brief" : 3 à 5 phrases, uniquement des puces, pas de code sauf demande',
+  '- "Detailed" : analyse approfondie avec exemples de code et compromis',
+  'Transmettez la verbosité "standard", "brief" ou "detailed" correspondante.'
 ].join('\n')
 
 // The same questions /claude-council:ask puts (commands/ask.md, Pre-Query
 // Interaction), shaped to AskUserQuestion's limit of four options a question.
 function seatQuestion(seats: Seat[]): string[] {
-  const list = ['Seats available now:', ...seats.map(seat => `- ${seatLabel(seat)}`), '']
-  const all = `- "All ${seats.length} seats (Recommended)": every seat above`
-  const pass = 'Pass the chosen seat names as providers; for All, pass every name above.'
+  const list = ['Sièges disponibles :', ...seats.map(seat => `- ${seatLabel(seat)}`), '']
+  const all = `- "Tous les ${seats.length} sièges (recommandé)" : tous les sièges ci-dessus`
+  const pass = 'Transmettez les noms de sièges choisis comme providers ; pour Tous, transmettez tous les noms ci-dessus.'
   if (seats.length <= 3) {
-    return [...list, 'Question "Which council seats should I ask?", header "Seats", multiSelect true, options:', all, ...seats.map(seat => `- "${seatLabel(seat)}"`), pass]
+    return [...list, 'Question « Quels sièges du conseil interroger ? », en-tête « Sièges », multiSelect true, options :', all, ...seats.map(seat => `- "${seatLabel(seat)}"`), pass]
   }
   const routed = seats.filter(seat => ROUTER_SEAT.test(seat.name)).map(seat => seat.name)
   const direct = seats.filter(seat => !ROUTER_SEAT.test(seat.name)).map(seat => seat.name)
-  const split = routed.length > 0 && direct.length > 0 ? [`- "Direct seats only": ${direct.join(', ')}`, `- "Routed models only": ${routed.join(', ')}`] : []
+  const split = routed.length > 0 && direct.length > 0 ? [`- "Sièges directs seulement" : ${direct.join(', ')}`, `- "Modèles routés seulement" : ${routed.join(', ')}`] : []
   return [
     ...list,
-    'Question "Which council seats should I ask?", header "Seats", multiSelect false, options:',
+    'Question « Quels sièges du conseil interroger ? », en-tête « Sièges », multiSelect false, options :',
     all,
     ...split,
-    '- "Let me pick individually": choose exact seats',
-    'On "Let me pick individually", make a second AskUserQuestion call splitting the seats above across up to 4 multiSelect questions of 2 to 4 options each, labelled as listed, and pass the union.',
+    '- "Je choisis individuellement" : choisir des sièges précis',
+    'Pour « Je choisis individuellement », faites un second appel AskUserQuestion répartissant les sièges ci-dessus sur au plus 4 questions multiSelect de 2 à 4 options chacune, libellées comme indiqué, puis transmettez l’union.',
     pass,
   ]
 }
@@ -135,9 +135,9 @@ export function choiceRequest(seats: Seat[], missing: Choice[]): string {
   const asksVerbosity = missing.includes('verbosity')
   const asksSeats = missing.includes('seats')
   if (asksSeats && isLone && !asksVerbosity) {
-    return `Nothing was sent to the council. Only one seat is available, ${seatLabel(lone)}: call ask again with the same question, passing providers ["${lone.name}"] and the same verbosity.`
+    return `Rien n’a été envoyé au conseil. Un seul siège est disponible, ${seatLabel(lone)} : appelez à nouveau ask avec la même question, en transmettant providers ["${lone.name}"] et la même verbosité.`
   }
-  const seatPart = !asksSeats ? [] : isLone ? [`Only one seat is available, ${seatLabel(lone)}: pass providers ["${lone.name}"] without asking.`, ''] : [...seatQuestion(seats), '']
+  const seatPart = !asksSeats ? [] : isLone ? [`Un seul siège est disponible, ${seatLabel(lone)} : transmettez providers ["${lone.name}"] sans demander.`, ''] : [...seatQuestion(seats), '']
   return [ASK_FIRST, '', ...seatPart, ...(asksVerbosity ? [VERBOSITY_QUESTION] : [])].join('\n').trimEnd()
 }
 
@@ -164,23 +164,23 @@ export function askableSeats(defaults: string[], discovered: string[], scripts: 
 // and the run receives.
 export function councilArgs(input: Record<string, unknown>, askable: Askable): { args: string[]; seats: string[] | undefined } | { deny: string } {
   const { question, providers, verbosity } = input
-  if (typeof question !== 'string' || question.trim() === '') return { deny: 'question must be a non-empty string' }
+  if (typeof question !== 'string' || question.trim() === '') return { deny: 'question doit être une chaîne non vide' }
   const flags: string[] = []
   let seats: string[] | undefined
   if (providers !== undefined) {
     if (!Array.isArray(providers) || providers.length === 0 || !providers.every(name => typeof name === 'string')) {
-      return { deny: 'providers must be a list of seat names, such as codex or openrouter-2' }
+      return { deny: 'providers doit être une liste de noms de sièges, comme codex ou openrouter-2' }
     }
     seats = [...new Set(providers as string[])]
     const refused = seats.filter(name => !askable.found.includes(name) && !askable.namedOnly.includes(name))
     if (refused.length > 0) {
-      const offer = askable.found.length > 0 ? `The seats found here are ${askable.found.join(', ')}.` : 'No seat was found here.'
-      return { deny: `Not seats the council can ask now: ${refused.join(', ')}. ${offer} Nothing was sent.` }
+      const offer = askable.found.length > 0 ? `Les sièges trouvés ici sont ${askable.found.join(', ')}.` : 'Aucun siège n’a été trouvé ici.'
+      return { deny: `Sièges que le conseil ne peut pas interroger maintenant : ${refused.join(', ')}. ${offer} Rien n’a été envoyé.` }
     }
     flags.push(`--providers=${seats.join(',')}`)
   }
   if (verbosity !== undefined) {
-    if (typeof verbosity !== 'string' || !VERBOSITIES.includes(verbosity)) return { deny: 'verbosity must be brief, standard or detailed' }
+    if (typeof verbosity !== 'string' || !VERBOSITIES.includes(verbosity)) return { deny: 'verbosity doit être brief, standard ou detailed' }
     flags.push(`--verbosity=${verbosity}`)
   }
   return { args: [...flags, '--', question], seats }

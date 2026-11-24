@@ -63,8 +63,8 @@ const SEAT_LOOKS: Record<string, SeatLook> = {
   querying: LIVE,
   retrying: LIVE,
   complete: { color: COLOR.success, note: '', fill: FULL },
-  cached: { color: COLOR.info, note: 'cached', fill: FULL },
-  fallback: { color: COLOR.accent, note: 'fell back', fill: FULL },
+  cached: { color: COLOR.info, note: 'en cache', fill: FULL },
+  fallback: { color: COLOR.accent, note: 'via API', fill: FULL },
   error: { color: COLOR.danger, note: '', fill: () => ({ kind: 'stub' }) },
   cancelled: SET_ASIDE,
   cancelling: SET_ASIDE,
@@ -114,11 +114,11 @@ function summaryText(providers: ProviderStatus[]): string {
   const tally = (state: string, word: string) => (count(providers, state) > 0 ? `${count(providers, state)} ${word}` : '')
   const slowest = Math.max(0, ...providers.map(provider => provider.ms ?? 0))
   return [
-    `${count(providers, ...ANSWERED_STATES)} of ${providers.length} answered`,
-    tally('error', 'error'),
-    tally('cancelled', 'cancelled'),
-    tally('fallback', 'fell back'),
-    tally('cached', 'cached'),
+    `${count(providers, ...ANSWERED_STATES)} sur ${providers.length} ont répondu`,
+    tally('error', 'erreur'),
+    tally('cancelled', 'annulé'),
+    tally('fallback', 'via API'),
+    tally('cached', 'en cache'),
     slowest > 0 ? seconds(slowest) : '',
   ].filter(Boolean).join(' \u00b7 ')
 }
@@ -135,7 +135,7 @@ export function queryingSince(since: Record<string, number>, providers: Provider
 
 // A seat row's action column: two cells of gap, then the widest a
 // bracketed Button draws, the longest verb inside its brackets.
-export const ACTION_COLUMNS = 2 + '[ cancel ]'.length
+export const ACTION_COLUMNS = 2 + '[ annuler ]'.length
 // The narrowest bar whose sweep still shows track on either side of its dash.
 const NARROW_BAR_CELLS = 5
 
@@ -194,7 +194,7 @@ export function paneSections(
   { collapsesWhenDone = true, nowMs = 0, frame = 0, fitText = (text: string) => text, closed = new Set<string>(), columns }: { collapsesWhenDone?: boolean; nowMs?: number; frame?: number; fitText?: (text: string) => string; closed?: ReadonlySet<string>; columns?: number } = {},
 ): Section[] {
   if (providers.length === 0) {
-    return [{ kind: 'note', text: isDone ? 'Council finished with no answers.' : 'Waiting for the council...' }]
+    return [{ kind: 'note', text: isDone ? 'Le conseil a terminé sans réponses.' : 'En attente du conseil…' }]
   }
   const shownState = (provider: ProviderStatus) => seatState(provider, { cancels, retries, retriable, isDone })
   // A querying provider's time runs from when the pane first saw it, in whole tenths.
@@ -220,7 +220,7 @@ export function paneSections(
       // pane's width before the budget is counted: a wide table becomes
       // records that repeat every header, which can lengthen it several times over.
       return () => [
-        ...(state === 'fallback' && error !== undefined ? [{ kind: 'reason' as const, text: noticeText(`${name} fell back: ${error}`) }] : []),
+        ...(state === 'fallback' && error !== undefined ? [{ kind: 'reason' as const, text: noticeText(`${name} a répondu via son API : ${error}`) }] : []),
         { kind: 'body', text: fitText(response) },
       ]
     }
@@ -290,7 +290,7 @@ export function paneSections(
 function footer(folds: string[], closed: ReadonlySet<string>, cancelAll: boolean): Section {
   return {
     kind: 'footer',
-    ...(folds.length > 1 ? { fold: { label: folds.some(each => !closed.has(each)) ? 'fold' : 'expand', folds } } : {}),
+    ...(folds.length > 1 ? { fold: { label: folds.some(each => !closed.has(each)) ? 'replier' : 'déplier', folds } } : {}),
     cancelAll,
   }
 }
@@ -306,7 +306,7 @@ export function seatFolds(sections: Section[]): string[] {
 // text and draws its own. The budget sits under that with room for what the
 // pane draws around the sections (the retry row, the action labels, the footer's keys).
 const PANE_TEXT_BUDGET = 80000
-const CLIPPED = (more: number) => `\n\n_\u2026 ${more} more characters; the whole answer is in the result (/claude-council:result)_`
+const CLIPPED = (more: number) => `\n\n_\u2026 ${more} caractères de plus ; la réponse complète est dans le résultat (/claude-council:result)_`
 
 // An error or a fallback reason is drawn as its opening only: a provider can
 // hand back a whole HTML error page. The section carries what is drawn, so
