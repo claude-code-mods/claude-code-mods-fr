@@ -1,43 +1,43 @@
 # Token Optimizer Desktop
 
-A status bar for the Claude desktop app. It draws above your prompt and shows session quality, context fill, cache countdown, and your 5-hour and weekly limits, with Clawd acting out what the session is doing.
+Une barre d'état pour l'application de bureau Claude. Elle s'affiche au-dessus de votre prompt et montre la qualité de la session, le remplissage du contexte, le compte à rebours du cache ainsi que vos limites sur 5 heures et hebdomadaire, avec Clawd qui mime ce que fait la session.
 
-## Install
+## Installation
 
-It ships inside the Token Optimizer plugin (`hooks/hooks.json` names this folder's `hooks/register.tsx` under `modules`), so there is nothing extra to install. This folder keeps its own manifest only so its tests run on their own with `claude plugin test`. `npm run typecheck` and `npm test` cover the pure modules (CI); `npm run typecheck:engine` checks `hooks/` and `tests/engine/` against Claude Code's plugin API declarations, which only the claude CLI writes, so it runs locally.
+Elle est fournie dans le plugin Token Optimizer (`hooks/hooks.json` nomme le `hooks/register.tsx` de ce dossier sous `modules`) : rien de supplémentaire à installer. Ce dossier ne conserve son propre manifeste que pour que ses tests s'exécutent seuls avec `claude plugin test`. `npm run typecheck` et `npm test` couvrent les modules purs (CI) ; `npm run typecheck:engine` vérifie `hooks/` et `tests/engine/` par rapport aux déclarations de l'API des plugins de Claude Code, qui ne sont écrites que par la CLI Claude ; il s'exécute donc localement.
 
-Needs Claude Code 2.1.287 or newer and Anthropic's mods feature. Anthropic can switch mods off remotely; when off, nothing breaks and the bar just does not appear. The terminal keeps its existing status line. VS Code is not supported.
+Nécessite Claude Code 2.1.287 ou une version plus récente et la fonctionnalité mods d'Anthropic. Anthropic peut désactiver les mods à distance ; dans ce cas, rien ne casse, la barre ne s'affiche simplement pas. Le terminal conserve sa ligne d'état existante. VS Code n'est pas pris en charge.
 
-To check it is active, open a Claude desktop session with the Token Optimizer plugin enabled. Look for the Token Optimizer band above the prompt, with Clawd and the cache countdown. If it is absent, check that the plugin is enabled, mods are available, and `TOKEN_OPTIMIZER_STATUS_BAR` is not `0`, then restart the session. The plugin's `hooks/hooks.json` registers `desktop/token-optimizer-desktop/hooks/register.tsx`.
+Pour vérifier qu'elle est active, ouvrez une session de bureau Claude avec le plugin Token Optimizer activé. Cherchez la bande Token Optimizer au-dessus du prompt, avec Clawd et le compte à rebours du cache. Si elle est absente, vérifiez que le plugin est activé, que les mods sont disponibles et que `TOKEN_OPTIMIZER_STATUS_BAR` n'est pas `0`, puis redémarrez la session. Le `hooks/hooks.json` du plugin enregistre `desktop/token-optimizer-desktop/hooks/register.tsx`.
 
-To check booking without using your session, run `python3 <plugin>/skills/token-optimizer/scripts/measure.py mod-action --selftest`. It prints `PASS` or `FAIL` and uses a temporary data directory. Failed action diagnostics are recorded in the Token Optimizer data directory as `mod-actions.log`.
+Pour vérifier la réservation sans utiliser votre session, exécutez `python3 <plugin>/skills/token-optimizer/scripts/measure.py mod-action --selftest`. Cela affiche `PASS` ou `FAIL` et utilise un répertoire de données temporaire. Les diagnostics des actions échouées sont enregistrés dans le répertoire de données de Token Optimizer sous le nom `mod-actions.log`.
 
-## What you get
+## Ce que vous obtenez
 
-- One sentence about the most urgent thing, with at most one button.
-- Five marks with hover cards: quality grade, context fill, cache countdown, 5-hour limit, weekly limit.
-- The **arrow beside Clawd** unfolds one more line: branch, session time, tool calls, compactions (when any), when the last checkpoint was saved (any kind, or a relevant one from an earlier session), and the tokens Token Optimizer saved you in the last 30 days, the same total the dashboard shows.
-- Buttons: **Clean up** (compacts with Token Optimizer's guidance), **Start fresh** (second click saves a checkpoint, clears, and hands it to your first message), **Keep warm** (manual one-click cache refresh, only while the cache is warm, never automatic, uses a small amount of usage).
-- **Full dashboard**: a plain text link at the end of the unfolded line, in both band sizes (the folded band does not show it). Clicking it runs `measure.py dashboard`, the same command as the `token-dashboard` skill: it regenerates the dashboard page and opens it in your default browser (`open` on macOS, `xdg-open` on Linux, the file association on Windows). While it runs the band says "Opening the dashboard."; if it fails the band says "Could not open the dashboard." for a few seconds and nothing else happens. A second click while it runs is ignored. The link is a Button drawn with the `plain` style (its prop is on the engine's Button allowlist in Claude Code 2.1.287, 2.1.294 and 2.1.296, read from each build's strings; run on 2.1.294 to 2.1.296). The click runs `measure.py dashboard --user`: `--user` marks it as a person's click so the 20-second hook budget does not cut off a heavy rebuild (about 80 seconds cold on a real, heavy history), and the band waits up to 5 minutes. Only this link waits that long: Clean up and Start fresh still give up after 2 minutes.
+- Une phrase sur la chose la plus urgente, avec au plus un bouton.
+- Cinq repères avec des cartes au survol : note de qualité, remplissage du contexte, compte à rebours du cache, limite sur 5 heures, limite hebdomadaire.
+- La **flèche à côté de Clawd** déplie une ligne supplémentaire : branche, durée de la session, appels d'outils, compactages (s'il y en a), date du dernier point de sauvegarde (de n'importe quel type, ou un point pertinent d'une session précédente), et les jetons que Token Optimizer vous a économisés ces 30 derniers jours, le même total que celui affiché par le tableau de bord.
+- Boutons : **Nettoyer** (compacte selon les conseils de Token Optimizer), **Repartir de zéro** (un second clic enregistre un point de sauvegarde, efface et transmet votre premier message), **Garder au chaud** (rafraîchissement manuel du cache en un clic, uniquement tant que le cache est chaud, jamais automatique, consomme une petite quantité d'usage).
+- **Tableau de bord complet** : un lien en texte brut à la fin de la ligne dépliée, dans les deux tailles de bande (la bande repliée ne l'affiche pas). Un clic exécute `measure.py dashboard`, la même commande que la compétence `token-dashboard` : il régénère la page du tableau de bord et l'ouvre dans votre navigateur par défaut (`open` sur macOS, `xdg-open` sur Linux, l'association de fichiers sur Windows). Pendant l'exécution, la bande affiche « Opening the dashboard. » ; en cas d'échec, elle affiche « Could not open the dashboard. » pendant quelques secondes et ne fait rien d'autre. Un second clic pendant l'exécution est ignoré. Le lien est un Button dessiné avec le style `plain` (sa propriété figure sur la liste autorisée des Button du moteur de Claude Code 2.1.287, 2.1.294 et 2.1.296, lue dans les chaînes de chaque build ; exécuter sur 2.1.294 à 2.1.296). Le clic exécute `measure.py dashboard --user` : `--user` marque le clic comme provenant d'une personne afin que le budget de hook de 20 secondes n'interrompe pas une reconstruction lourde (environ 80 secondes à froid sur un historique réellement volumineux), et la bande attend jusqu'à 5 minutes. Seul ce lien attend aussi longtemps : Nettoyer et Repartir de zéro abandonnent toujours après 2 minutes.
 
-The cache countdown is an estimate: 1 hour on Claude plans, 5 minutes on the API, measured from the session itself when possible.
+Le compte à rebours du cache est une estimation : 1 heure sur les forfaits Claude, 5 minutes sur l'API, mesurée autant que possible à partir de la session elle-même.
 
-## Settings
+## Paramètres
 
-`TOKEN_OPTIMIZER_STATUS_BAR=0` hides the bar and `TOKEN_OPTIMIZER_STATUS_BAR_ANIMATE=0` keeps Clawd still, set in the `env` block of `~/.claude/settings.json`. `TOKEN_OPTIMIZER_STATUS_BAR_TIME_FORMAT=24h` (or `12h`) forces the clock used for limit renewal times; unset, they follow your locale.
+`TOKEN_OPTIMIZER_STATUS_BAR=0` masque la barre et `TOKEN_OPTIMIZER_STATUS_BAR_ANIMATE=0` garde Clawd immobile, à définir dans le bloc `env` de `~/.claude/settings.json`. `TOKEN_OPTIMIZER_STATUS_BAR_TIME_FORMAT=24h` (ou `12h`) force l'horloge utilisée pour les heures de renouvellement des limites ; si la variable n'est pas définie, elles suivent votre locale.
 
-The `–` button beside the arrow shrinks the band to one line and `+` brings it back; the arrow still unfolds the details row under it, and the choice is remembered across sessions and restarts. `TOKEN_OPTIMIZER_STATUS_BAR_SIZE=slim` sets the starting size before a choice is stored, and the terminal status line uses the same variable to print one line.
+Le bouton `–` à côté de la flèche réduit la bande à une ligne et `+` la rétablit ; la flèche déplie toujours la ligne de détails située en dessous, et le choix est mémorisé d'une session et d'un redémarrage à l'autre. `TOKEN_OPTIMIZER_STATUS_BAR_SIZE=slim` définit la taille initiale avant qu'un choix soit enregistré, et la ligne d'état du terminal utilise la même variable pour n'afficher qu'une ligne.
 
-The context mark measures against your own compact window when you set one: `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, `/autocompact`, or the `autoCompactWindow` setting, within Claude Code's 100K-1M bounds and never above the model's window. A window given only with `--autocompact` for one launch is not visible to it.
+Le repère de contexte se mesure à votre propre fenêtre de compactage si vous en définissez une : `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, `/autocompact` ou le paramètre `autoCompactWindow`, dans les limites de 100 K à 1 M de Claude Code et jamais au-dessus de la fenêtre du modèle. Une fenêtre fournie uniquement avec `--autocompact` pour un seul lancement n'est pas visible.
 
-## Full docs
+## Documentation complète
 
-See the [Token Optimizer README](../../README.md#desktop-status-bar) and the docs site page "Claude desktop app".
+Voir [Token Optimizer README](../../README.md#desktop-status-bar) et la page du site de documentation « Claude desktop app ».
 
-To reserve a Keep warm attempt through the CLI, send a JSON receipt on standard input:
+Pour réserver une tentative de maintien au chaud via la CLI, envoyez un reçu JSON sur l'entrée standard :
 
 ```bash
 printf '%s' '{"action":"warm-prepare","action_id":"ATTEMPT_ID","session_id":"SESSION_ID","timestamp":UNIX_SECONDS,"transcript_path":"/path/to/SESSION_ID.jsonl","byte_size":FILE_SIZE,"transcript_mtime":FILE_MTIME}' | python3 <plugin>/skills/token-optimizer/scripts/measure.py mod-action
 ```
 
-Replace the placeholders with the current transcript's exact file size and modification time, a unique attempt ID, and the current Unix time. The response is JSON. This reserves the booking; the caller must perform the warm request and submit its usage as a `warm` receipt, or send `warm-cancel` if it does not run.
+Remplacez les espaces réservés par la taille de fichier exacte et la date de modification de la transcription courante, un identifiant de tentative unique et l'heure Unix actuelle. La réponse est un JSON. Cela réserve la tentative ; l'appelant doit ensuite effectuer la requête de réchauffement et soumettre son usage comme reçu `warm`, ou envoyer `warm-cancel` si la requête n'a pas lieu.

@@ -4,7 +4,7 @@
 
 <h1 align="center">Context Attachment Manager</h1>
 
-<p align="center"><b>A local plugin for image-heavy chats in Codex, Claude Code and other agents.</b><br>Earlier images stop going out with every message. The model fetches the one it needs by its ID, also after the chat is compacted.</p>
+<p align="center"><b>Un plugin local pour les discussions riches en images dans Codex, Claude Code et d'autres agents.</b><br>Les images anciennes ne sont plus renvoyées avec chaque message. Le modèle récupère celle dont il a besoin par son identifiant, même après compaction de la discussion.</p>
 
 <p align="center">
   <a href="https://github.com/chipfighter/context-attachment-manager/releases"><img src="https://img.shields.io/github/v/release/chipfighter/context-attachment-manager?include_prereleases" alt="Release"></a>
@@ -18,118 +18,118 @@
   <img src="docs/images/loop.gif" alt="The panel on a task with fifteen keyframes. With auto-select on, earlier images turn grey and the next request drops from 7.5 MB to 1.7 MB." width="100%">
 </p>
 
-## What it does
+## Ce que fait ce plugin
 
-An agent normally sends every earlier image again with each message, so a long chat with many images gets slow and can stop going through. This plugin numbers each image (`IMG-001`, `IMG-002`, …) and sends earlier ones as short placeholders instead:
+Un envoie normalement à nouveau chaque image précédente avec chaque message : une longue discussion avec beaucoup d'images devient lente et peut cesser de passer. Ce plugin numérote chaque image (`IMG-001`, `IMG-002`, …) et envoie les anciennes sous forme de courts espaces réservés :
 
-- **The model fetches what it needs**: when it has to look at an earlier image again, it gets the original back by its ID.
-- **It can tell images apart**: the model notes one line on what each image shows, plus your comments on it. These stay in the placeholders, also after the chat is compacted.
-- **The cache keeps working**: a placeholder is written once and then stays the same, so the earlier chat is still read from the model's prompt cache. See [the design](#design-keep-the-cache-working).
-- **Nothing is deleted**: your original images and chat history stay as they are.
+- **Le modèle récupère ce dont il a besoin** : quand il doit revoir une image ancienne, il récupère l'original par son identifiant.
+- **Il peut distinguer les images** : le modèle note une ligne sur le contenu de chaque image, avec vos commentaires. Ces informations restent dans les espaces réservés, même après compaction.
+- **Le cache continue de fonctionner** : un espace réservé est écrit une fois puis reste inchangé, donc la conversation précédente est toujours lue depuis le cache de prompt du modèle. Voir [the design](#design-keep-the-cache-working).
+- **Rien n'est supprimé** : vos images originales et l'historique de discussion restent tels quels.
 
-It is on by default; you do not need to open the panel. Typical uses: image and video creation, scanned documents, computer and browser use.
+Le plugin est activé par défaut ; vous n'avez pas besoin d'ouvrir le panneau. Usages typiques : création d'images et de vidéos, documents scannés, utilisation d'ordinateur et de navigateur.
 
-## Install
+## Installation
 
-Send this to your agent. It identifies its platform and installs the right setup:
+Envoyez ceci à votre agent. Il identifie sa plateforme et installe la configuration adaptée :
 
 ```text
 Install Context Attachment Manager for me, following https://github.com/chipfighter/context-attachment-manager/blob/main/INSTALL.md
 ```
 
-Then restart the agent (in Claude Desktop, start a new Code session). See [supported agents](#works-with) and [installation, updates and uninstall](INSTALL.md).
+Redémarrez ensuite l'agent (dans Claude Desktop, démarrez une nouvelle session Code). Voir [supported agents](#works-with) et [installation, updates and uninstall](INSTALL.md).
 
-## The panel, when you want control
+## Le panneau, quand vous voulez contrôler
 
 <p align="center">
   <img src="docs/images/hero.png" alt="The panel: automatically manage earlier images, search by what you remember, and preview an image." width="100%">
 </p>
 
-- **Find an image** by a detail or a comment you remember, like "rainy night" or "best face".
-- **Keep a reference in view**: open an image and check **Send every turn**.
-- **Choose images yourself**: turn off **Auto-select** and pick what goes with your next message.
+- **Trouver une image** par un détail ou un commentaire dont vous vous souvenez, comme « nuit pluvieuse » ou « meilleur visage ».
+- **Garder une référence visible** : ouvrez une image et cochez **Send every turn**.
+- **Choisir les images vous-même** : désactivez **Auto-select** et sélectionnez ce qui accompagnera votre prochain message.
 
-In **Codex**, open **Context Assets** in the task's side panel. In **Claude Desktop's Code tab**, the panel opens automatically when there are images; type `/cam` to bring it back.
+Dans **Codex**, ouvrez **Context Assets** dans le panneau latéral de la tâche. Dans l'**onglet Code de Claude Desktop**, le panneau s'ouvre automatiquement quand il y a des images ; tapez `/cam` pour le réafficher.
 
-## Privacy
+## Confidentialité
 
-The plugin runs locally. Your original images and chat history stay on your computer; requests go to the service your agent already uses.
+Le plugin s'exécute localement. Vos images originales et votre historique restent sur votre ordinateur ; les requêtes vont vers le service que votre agent utilise déjà.
 
-## How we tested
+## Comment nous avons testé
 
-In Codex, a chat with nine keyframes grew to 42.4 MB and could not be sent after a restart or a compaction; with the plugin the same requests were 0.12 MB. See the [Codex comparison](eval/README.md) and [Claude Code long-task comparison](eval/long-task/README.md) for the results and reproduction steps.
+Dans Codex, une discussion avec neuf images-clés a atteint 42,4 Mo et ne pouvait plus être envoyée après un redémarrage ou une compaction ; avec le plugin, les mêmes requêtes faisaient 0,12 Mo. Voir [Codex comparison](eval/README.md) et [Claude Code long-task comparison](eval/long-task/README.md) pour les résultats et les étapes de reproduction.
 
-## Design: keep the cache working
+## Conception : garder le cache actif
 
-Model services cache the start of a chat. When a request begins exactly like the one before, that part is read from the cache, which is faster and much cheaper. When something early in the chat changes, everything after the change is processed again.
+Les services de modèle mettent en cache le début d'une conversation. Quand une requête commence exactement comme la précédente, cette partie est lue depuis le cache, ce qui est plus rapide et bien moins cher. Quand quelque chose au début change, tout ce qui suit la modification est retraité.
 
-Any way of making a long chat smaller has to change something. The plugin makes its change as late in the chat as it can:
+Toute méthode pour réduire une longue conversation doit changer quelque chose. Le plugin effectue sa modification le plus tard possible dans la conversation :
 
 <p align="center">
   <img src="docs/images/cache-compare.svg" alt="Four ways to handle a long chat with images, each drawn as the next request. Sending everything keeps the cache but sends every image again. Shrinking the images or dropping early history makes nearly the whole chat be processed again. With the plugin's placeholders, only the rest of the previous turn is processed again." width="100%">
 </p>
 
-- **A placeholder is written once**: an image becomes a placeholder in the turn after it appeared, so only the rest of that one turn is processed again. After that the placeholder stays the same from request to request.
-- **Fetching changes nothing earlier**: the original is added at the end of the current turn, and its placeholder stays where it is. Whichever image the model picks, and however many the chat holds, everything before the current turn is still read from the cache.
-- **The model gets the original back**: not a smaller copy, and not a summary of it.
+- **L'espace réservé est écrit une fois** : une image devient un espace réservé dès le tour suivant son apparition, donc seul le reste de ce tour est retraité. Ensuite l'espace réservé reste identique de requête en requête.
+- **La récupération ne change rien d'antérieur** : l'original est ajouté à la fin du tour courant et son espace réservé reste en place. Quelle que soit l'image choisie par le modèle, et quel que soit le nombre d'images, tout ce qui précède le tour courant reste lu depuis le cache.
+- **Le modèle récupère l'original** : pas une copie réduite, ni un résumé.
 
 <p align="center">
   <img src="docs/images/cache-fetch.svg" alt="When the model fetches IMG-001, the original is attached at the end of the current turn and the placeholder in turn 1 stays as it is, so every earlier turn is read from the cache. In the next turn the fetched copy becomes a one-line note, and only what came after it is processed again." width="100%">
 </p>
 
-This is not free. After a turn with images, the rest of that turn is processed again once, and the model writes a short line for each new image. Changing an old image in the panel (unchecking it, checking it again, **Send every turn**) changes the chat at that image, so what follows it is processed again once. In our [long-task comparison in Claude Code](eval/long-task/README.md), 87% of the input was read from the cache with the plugin and 91% without it.
+Ce n'est pas gratuit. Après un tour avec des images, le reste de ce tour est retraité une fois, et le modèle écrit une courte ligne pour chaque nouvelle image. Modifier une ancienne image dans le panneau (la décocher, la recocher, **Send every turn**) modifie la conversation au niveau de cette image, donc ce qui suit est retraité une fois. Dans notre [long-task comparison in Claude Code](eval/long-task/README.md), 87 % de l'entrée était lue depuis le cache avec le plugin et 91 % sans lui.
 
-The third row of the first figure is also what an agent's own compaction does, and what clearing old tool results on the API side does (Anthropic's context editing, for example): early content is removed, and what follows is processed again.
+La troisième ligne de la première figure correspond aussi à ce que fait la compaction propre à un agent, ou à l'effacement des anciens résultats d'outils côté API (comme l'édition de contexte d'Anthropic) : le contenu ancien est retiré et ce qui suit est retraité.
 
-## Works with
+## Compatibilité
 
-Codex and Claude Code are tested, and Codex and Claude Desktop also have the panel. The other agents below are supported through adapters written from their code and docs, but we have not tested them live yet. If you use one of them, please [tell us how it went](https://github.com/chipfighter/context-attachment-manager/issues), whether it worked or not.
+Codex et Claude Code sont testés ; Codex et Claude Desktop disposent aussi du panneau. Les autres agents ci-dessous sont pris en charge via des adaptateurs écrits à partir de leur code et de leur documentation, mais nous ne les avons pas encore testés en réel. Si vous en utilisez un, merci de [tell us how it went](https://github.com/chipfighter/context-attachment-manager/issues), que cela ait fonctionné ou non.
 
-| Agent | What it is | Support |
+| Agent | Ce que c'est | Prise en charge |
 |---|---|---|
-| [Codex](https://github.com/openai/codex) | OpenAI's coding agent, desktop and CLI | Auto-select + panel, tested |
-| [Claude Code](https://github.com/anthropics/claude-code) | Anthropic's coding agent, desktop and CLI | Auto-select + panel (desktop), tested |
-| [WorkBuddy](https://www.workbuddy.cn) | Tencent's desktop AI work assistant, with CodeBuddy inside | Auto-select, not tested yet |
-| [OpenCode](https://github.com/anomalyco/opencode) | Open-source terminal coding agent for any model provider | Auto-select, not tested yet |
-| [Gemini CLI](https://github.com/google-gemini/gemini-cli) | Google's open-source terminal agent | Auto-select, not tested yet |
-| [pi](https://github.com/earendil-works/pi) | Minimal, extensible terminal coding agent | Auto-select (pi extension), not tested yet |
-| [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) | DeepSeek's agent harness where everything is a plugin | Auto-select (dsh plugin), not tested yet |
-| [Qwen Code](https://github.com/QwenLM/qwen-code) | Qwen's open-source terminal agent | Auto-select, not tested yet |
-| [Cline](https://github.com/cline/cline) | Open-source coding agent for VS Code, JetBrains and the terminal | Auto-select, not tested yet |
-| [Kilo Code](https://github.com/Kilo-Org/kilocode) | Open-source coding agent for VS Code, JetBrains and the terminal | Auto-select, not tested yet |
-| [goose](https://github.com/aaif-goose/goose) | Open-source agent for desktop and terminal, extended with MCP | Auto-select, not tested yet |
-| [Cherry Studio](https://github.com/CherryHQ/cherry-studio) | Open-source desktop chat client for many models | Auto-select, not tested yet |
+| [Codex](https://github.com/openai/codex) | Agent de programmation d'OpenAI, bureau et CLI | Auto-sélection + panneau, testé |
+| [Claude Code](https://github.com/anthropics/claude-code) | Agent de programmation d'Anthropic, bureau et CLI | Auto-sélection + panneau (bureau), testé |
+| [WorkBuddy](https://www.workbuddy.cn) | Assistant IA de travail de bureau de Tencent, avec CodeBuddy intégré | Auto-sélection, pas encore testé |
+| [OpenCode](https://github.com/anomalyco/opencode) | Agent de programmation terminal open source pour tout fournisseur de modèles | Auto-sélection, pas encore testé |
+| [Gemini CLI](https://github.com/google-gemini/gemini-cli) | Agent terminal open source de Google | Auto-sélection, pas encore testé |
+| [pi](https://github.com/earendil-works/pi) | Agent de programmation terminal minimal et extensible | Auto-sélection (extension pi), pas encore testé |
+| [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) | Harness d'agent DeepSeek où tout est plugin | Auto-sélection (plugin dsh), pas encore testé |
+| [Qwen Code](https://github.com/QwenLM/qwen-code) | Agent terminal open source de Qwen | Auto-sélection, pas encore testé |
+| [Cline](https://github.com/cline/cline) | Agent de programmation open source pour VS Code, JetBrains et le terminal | Auto-sélection, pas encore testé |
+| [Kilo Code](https://github.com/Kilo-Org/kilocode) | Agent de programmation open source pour VS Code, JetBrains et le terminal | Auto-sélection, pas encore testé |
+| [goose](https://github.com/aaif-goose/goose) | Agent open source pour bureau et terminal, étendu via MCP | Auto-sélection, pas encore testé |
+| [Cherry Studio](https://github.com/CherryHQ/cherry-studio) | Client de discussion open source pour de nombreux modèles | Auto-sélection, pas encore testé |
 
-Setup for these agents: [INSTALL.md](INSTALL.md#other-agents). To connect another agent, see [ADAPTERS.md](ADAPTERS.md).
+Configuration de ces agents : [INSTALL.md](INSTALL.md#other-agents). Pour connecter un autre agent, voir [ADAPTERS.md](ADAPTERS.md).
 
 ## FAQ
 
-### Why do Codex and Claude Code get slow in a long chat with many images?
+### Pourquoi Codex et Claude Code deviennent-ils lents dans une longue discussion avec beaucoup d'images ?
 
-The agent sends every earlier image again with each message, so a long chat with many images gets slow and can stop going through. In Codex, a chat with nine keyframes grew to 42.4 MB and could not be sent after a restart or a compaction; with Context Attachment Manager the same requests were 0.12 MB.
+L'agent renvoie chaque image précédente avec chaque message : une longue discussion avec beaucoup d'images devient lente et peut cesser de passer. Dans Codex, une discussion avec neuf images-clés a atteint 42,4 Mo et ne pouvait plus être envoyée après un redémarrage ou une compaction ; avec Context Attachment Manager, les mêmes requêtes faisaient 0,12 Mo.
 
-### Does Context Attachment Manager break the prompt cache?
+### Context Attachment Manager casse-t-il le cache de prompt ?
 
-Only a little. A placeholder is written once and then stays the same, and a fetched image is added at the end of the current turn, so earlier turns are still read from the cache. After a turn with images, the rest of that turn is processed again once. In our long-task comparison in Claude Code, 87% of the input was read from the cache with the plugin and 91% without it.
+Un peu seulement. Un espace réservé est écrit une fois puis reste inchangé, et une image récupérée est ajoutée à la fin du tour courant, donc les tours précédents restent lus depuis le cache. Après un tour avec des images, le reste de ce tour est retraité une fois. Dans notre comparaison sur une tâche longue dans Claude Code, 87 % de l'entrée était lue depuis le cache avec le plugin et 91 % sans lui.
 
-### How is it different from compaction, or from shrinking the images?
+### Quelle est la différence avec la compaction ou la réduction des images ?
 
-Compaction and dropping early history remove the early part of the chat, and shrinking the images changes it. Either way nearly the whole chat is processed again, and the model is left with a summary or a smaller copy. With Context Attachment Manager, only the rest of the previous turn is processed again, and the model gets the original image back by its ID.
+La compaction et la suppression de l'historique ancien retirent la partie ancienne de la conversation, et la réduction des images la modifie. Dans les deux cas presque toute la conversation est retraitée, et il reste au modèle un résumé ou une copie plus petite. Avec Context Attachment Manager, seul le reste du tour précédent est retraité, et le modèle récupère l'image originale par son identifiant.
 
-### Can the model still see an earlier image?
+### Le modèle peut-il encore voir une image ancienne ?
 
-Yes. Every image has an ID such as `IMG-001`, and the model fetches the original when it needs to look at it again, also after the chat is compacted.
+Oui. Chaque image possède un identifiant tel que `IMG-001`, et le modèle récupère l'original quand il doit la revoir, même après compaction de la discussion.
 
-### Are my images deleted, or sent anywhere else?
+### Mes images sont-elles supprimées ou envoyées ailleurs ?
 
-No. The plugin runs on your computer. Your original images and chat history stay as they are, and requests go to the service your agent already uses.
+Non. Le plugin s'exécute sur votre ordinateur. Vos images originales et votre historique restent tels quels, et les requêtes vont vers le service que votre agent utilise déjà.
 
-### Which agents does it work with, and is it free?
+### Avec quels agents cela fonctionne-t-il, et est-ce gratuit ?
 
-Codex and Claude Code are tested. WorkBuddy, OpenCode, Gemini CLI, pi, DeepSeek Harness, Qwen Code, Cline, Kilo Code, goose and Cherry Studio are supported through adapters that we have not tested live yet. It is free and open source under the MIT license.
+Codex et Claude Code sont testés. WorkBuddy, OpenCode, Gemini CLI, pi, DeepSeek Harness, Qwen Code, Cline, Kilo Code, goose et Cherry Studio sont pris en charge par des adaptateurs que nous n'avons pas encore testés en réel. C'est gratuit et open source sous licence MIT.
 
-### How do I install Context Attachment Manager? Do I need a terminal?
+### Comment installer Context Attachment Manager ? Ai-je besoin d'un terminal ?
 
-No. Send your agent the one sentence in [Install](#install) above: it identifies its platform and runs the setup itself, and you only restart the agent afterwards (in Claude Desktop, start a new Code session). In Codex you can also install it from the Plugins page with a few clicks. If you prefer to do it by hand, it takes one command in Codex and two `claude` commands in Claude Desktop; see [INSTALL.md](INSTALL.md).
+Non. Envoyez à votre agent la phrase unique de [Install](#install) ci-dessus : il identifie sa plateforme et effectue l'installation lui-même ; vous ne faites que redémarrer l'agent ensuite (dans Claude Desktop, démarrez une nouvelle session Code). Dans Codex vous pouvez aussi l'installer depuis la page Plugins en quelques clics. Si vous préférez le faire manuellement, cela demande une commande dans Codex et deux commandes `claude` dans Claude Desktop ; voir [INSTALL.md](INSTALL.md).
 
-<p align="center"><sub><a href="CHANGELOG.md">Changelog</a> · <a href="CONTRIBUTING.md">Contributing</a> · <a href="LICENSE">MIT License</a></sub></p>
+<p align="center"><sub><a href="CHANGELOG.md">Journal des modifications</a> · <a href="CONTRIBUTING.md">Contribuer</a> · <a href="LICENSE">Licence MIT</a></sub></p>

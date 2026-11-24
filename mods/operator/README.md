@@ -1,29 +1,29 @@
-# Operator Memory for Claude Code
+# Operator Memory pour Claude Code
 
-Operator Memory gives Claude Code durable project and user context maintained by agents as readable Markdown.
+Operator Memory fournit à Claude Code un contexte durable sur le projet et l'utilisateur, entretenu par des agents sous forme de Markdown lisible.
 
-## Install
+## Installation
 
-Requires Claude Code `v2.1.287` or newer and Operator Helper on `PATH`.
+Nécessite Claude Code `v2.1.287` ou une version plus récente, ainsi qu'Operator Helper sur `PATH`.
 
 ```sh
 operator-helper install claude-code
 ```
 
-Start a new Claude Code process after installation. Run `claude plugin list` to confirm `operator@operator-memory` is enabled, then ask the agent whether Operator Memory guidance is available.
+Démarrez un nouveau processus Claude Code après l'installation. Exécutez `claude plugin list` pour confirmer que `operator@operator-memory` est activé, puis demandez à l'agent si les instructions d'Operator Memory sont disponibles.
 
-The plugin injects the preamble into the main system prompt and subagent task prompts. It renders memory once per process; restart Claude Code to reload memory. `/clear` does not refresh the cached preamble.
+Le plugin injecte le préambule dans le prompt système principal et dans les prompts des tâches des sous-agents. La mémoire est affichée une fois par processus ; redémarrez Claude Code pour la recharger. `/clear` ne régénère pas le préambule mis en cache.
 
-## Commands
+## Commandes
 
-- `/operator:user-init` — Configure the User Partition.
-- `/operator:project-init` — Configure the Project Brain.
-- `/operator:index` — Build or refresh the Project Index.
+- `/operator:user-init` — Configure la partition utilisateur.
+- `/operator:project-init` — Configure le « cerveau du projet ».
+- `/operator:index` — Construit ou actualise l'index du projet.
 
-## Update
+## Mise à jour
 
-Helper enables auto-update for the Operator marketplace during installation, including on repeat installs. Disable it afterward in `/plugin` → Marketplaces if desired.
+Le helper active la mise à jour automatique du marketplace Operator pendant l'installation, y compris lors d'une réinstallation. Vous pouvez la désactiver ensuite dans `/plugin` → Marketplaces.
 
-Rerun `operator-helper install claude-code` or use `claude plugin update operator@operator-memory`, then restart Claude Code.
+Relancez `operator-helper install claude-code` ou utilisez `claude plugin update operator@operator-memory`, puis redémarrez Claude Code.
 
-See the [Claude Code guide](https://github.com/aerovato/operator-memory/blob/main/docs/harnesses/claude-code.md) for verification, updates, and troubleshooting. For local development, run `bun run preview:claude-code` from the workspace root.
+Consultez [Claude Code guide](https://github.com/aerovato/operator-memory/blob/main/docs/harnesses/claude-code.md) pour la vérification, les mises à jour et le dépannage. Pour le développement local, exécutez `bun run preview:claude-code` depuis la racine de l'espace de travail.

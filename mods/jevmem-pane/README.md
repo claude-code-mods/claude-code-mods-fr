@@ -1,21 +1,21 @@
 # jevmem pane
 
-A side pane for Claude Code, beside your chat, that shows what [jevmem](https://github.com/Avinash-jetwani/jevmem) did for the prompt you just sent and the turn that just ended:
+Un panneau latéral pour Claude Code, à côté de votre conversation, qui montre ce que [jevmem](https://github.com/Avinash-jetwani/jevmem) a fait pour le prompt que vous venez d'envoyer et pour le tour qui vient de se terminer :
 
-1. **Recalled for this prompt**: each memory line served to Claude (its id, kind and text) and how many were withheld.
-2. **The guard**: the last call the guard asked about or denied, with the rule and its score, matched to the call.
-3. **Saved last turn**: the line jevmem saved from the turn and its kind, or why the turn was skipped.
+1. **Rappelé pour ce prompt** : chaque ligne de mémoire servie à Claude (son identifiant, son type et son texte) et combien ont été retenues.
+2. **Le garde-fou** : le dernier appel sur lequel le garde-fou a posé une question ou qu'il a refusé, avec la règle et son score, associés à l'appel.
+3. **Enregistré lors du dernier tour** : la ligne que jevmem a sauvegardée à partir du tour, avec son type, ou la raison pour laquelle le tour a été ignoré.
 
-Each line has `why`, `wrong` and `forget` buttons. `forget` and `wrong` change `JEVMEM.md` (the line is kept as `[retired]`), so they ask first; a rule is retired in a terminal only, as `jevmem trust` works. The pane reads three local files under `.jevmem/` and runs the `jevmem` command by argument vector; it sends nothing anywhere and reads no key.
+Chaque ligne comporte des boutons `why`, `wrong` et `forget`. `forget` et `wrong` modifient `JEVMEM.md` (la ligne est conservée comme `[retired]`) : une confirmation est donc demandée au préalable ; une règle n'est retirée que dans un terminal, comme le fait `jevmem trust`. Le panneau lit trois fichiers locaux sous `.jevmem/` et exécute la commande `jevmem` avec un vecteur d'arguments ; il n'envoie rien nulle part et ne lit aucune clé.
 
-## Install
+## Installation
 
-In Claude Code, with the jevmem marketplace added (`claude plugin marketplace add Avinash-jetwani/jevmem`):
+Dans Claude Code, avec le marketplace jevmem ajouté (`claude plugin marketplace add Avinash-jetwani/jevmem`) :
 
 ```
 /plugin install jevmem-pane@jevmem
 ```
 
-It needs the jevmem command (`npm install -g jevmem`) and a project that is turned on (`jevmem setup`). The pane opens on its own in a terminal 144 columns wide or wider; `/jevmem` opens or closes it at any width (docked beside the chat from 110 columns in the fullscreen terminal, above the prompt below that). Claude Code only: Cursor has no pane.
+Il faut la commande jevmem (`npm install -g jevmem`) et un projet activé (`jevmem setup`). Le panneau s'ouvre de lui-même dans un terminal d'au moins 144 colonnes ; `/jevmem` l'ouvre ou le ferme à toute largeur (ancré à côté de la conversation à partir de 110 colonnes dans le terminal plein écran, au-dessus du prompt en dessous). Claude Code uniquement : Cursor n'a pas de panneau.
 
-The whole description, with what each state means, is in [docs/pane.md](https://avinash-jetwani.github.io/jevmem/pane/).
+La description complète, avec la signification de chaque état, se trouve dans [docs/pane.md](https://avinash-jetwani.github.io/jevmem/pane/).

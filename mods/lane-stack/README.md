@@ -1,14 +1,14 @@
-# lane-stack (Claude Code plugin)
+# lane-stack (plugin Claude Code)
 
-Claude-facing half of Claude Lane Stack: PM agents, slash commands, and playbook skills.
+La moitié « côté Claude » de Claude Lane Stack : agents PM, commandes slash et compétences de playbook.
 
-Install from the repo marketplace (not by copying into `~/.claude/agents` / `~/.claude/skills`):
+Installez à partir du marketplace du dépôt (et non en copiant dans `~/.claude/agents` / `~/.claude/skills`) :
 
 ```bash
 claude plugin marketplace add VKirill/claude-lane-stack
 claude plugin install lane-stack@claude-lane-stack -y
 ```
 
-`./install.sh` registers that GitHub marketplace with `autoUpdate: true` and still rsyncs the host runtime (`bin/`, board, writer profiles) to `~/.agents`. Host files do not auto-update — rerun `./install.sh`. Live checkout: `LANE_INSTALL_LOCAL_MARKETPLACE=1 ./install.sh`.
+`./install.sh` enregistre ce marketplace GitHub avec `autoUpdate: true` et synchronise tout de même le runtime hôte (`bin/`, le board, les profils d'écrivain) vers `~/.agents`. Les fichiers hôtes ne se mettent pas à jour automatiquement : relancez `./install.sh`. Installation depuis un checkout local : `LANE_INSTALL_LOCAL_MARKETPLACE=1 ./install.sh`.
 
-Skills are namespaced as `/lane-stack:<skill>`. Work cheat sheet: `/lane-stack:info` or `/info`. New app/service talk: `/lane-stack:app-architect`. Living docs: `/lane-stack:docs-maintain`. Fact corpus: `/lane-stack:lane-memory`. PM playbooks (`orchestrator-lanes`, `orchestrator-workflow`, `info`, `app-architect`) live only in this plugin + `~/.agents/pm-skills` — they are not copied to the shared writer catalog.
+Les compétences sont préfixées `/lane-stack:<skill>`. Aide-mémoire de travail : `/lane-stack:info` ou `/info`. Pour parler d'une nouvelle application ou d'un nouveau service : `/lane-stack:app-architect`. Documentation vivante : `/lane-stack:docs-maintain`. Corpus de faits : `/lane-stack:lane-memory`. Les playbooks PM (`orchestrator-lanes`, `orchestrator-workflow`, `info`, `app-architect`) existent uniquement dans ce plugin et dans `~/.agents/pm-skills` — ils ne sont pas copiés dans le catalogue partagé des écrivains.

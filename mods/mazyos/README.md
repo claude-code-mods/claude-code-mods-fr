@@ -1,228 +1,228 @@
-# MazyOS: o sistema operacional do seu negócio no Claude Code
+# MazyOS : le système d'exploitation de votre entreprise dans Claude Code
 
-> Plugin do Claude Code, em português. Memória da sua empresa, identidade
-> visual e 17 skills de marketing, SEO, Google Ads e prospecção de clientes.
-> Você dirige, o Claude trabalha.
+> Plugin Claude Code, en français. Mémoire de votre entreprise, identité
+> visuelle et 17 skills de marketing, SEO, Google Ads et prospection clients.
+> Vous pilotez, Claude travaille.
 
-Você instala uma vez. Depois, em qualquer pasta que seja o seu negócio, o
-Claude já começa a conversa sabendo quem você é, como você fala e o que
-importa essa semana. Pede um carrossel, ele sai na sua identidade. Pede
-leads, ele busca no Google Maps e monta o site de prévia. Pede o relatório
-dos anúncios, ele lê o CSV e te mostra onde o dinheiro tá vazando.
+Vous l'installez une fois. Ensuite, dans n'importe quel dossier qui correspond à votre entreprise,
+Claude démarre la conversation en sachant qui vous êtes, comment vous parlez et ce qui
+compte cette semaine. Demandez un carrousel, il sort avec votre identité. Demandez
+des prospects, il cherche sur Google Maps et prépare un site de prévisualisation. Demandez
+le rapport des annonces, il lit le CSV et vous montre où l'argent fuit.
 
-Bora voar.
-
----
-
-## O que é o MazyOS
-
-O Claude Code é a ferramenta da Anthropic que roda o Claude dentro do seu
-computador, numa pasta sua. O MazyOS é um plugin pra ele: um pacote de
-skills (roteiros que o Claude segue) mais um mod (um pedaço de código que
-muda o próprio Claude Code enquanto você trabalha).
-
-Juntos, eles transformam o Claude num agente de IA que conhece o seu
-negócio. Na prática:
-
-**Ele lembra.** Três arquivos de texto em `_memoria/` guardam quem é a
-empresa, o tom de voz e o foco atual. Toda sessão começa com eles no
-contexto. Quando você corrige algo ("não escreve assim", "esse cliente
-saiu"), o Claude pergunta se quer salvar, e salva no lugar certo.
-
-**Ele tem a sua cara.** `identidade/design-guide.md` guarda cores, fontes e
-logo. Carrossel, proposta, slide: tudo sai com a marca.
-
-**Ele faz o trabalho repetitivo.** 17 skills prontas, e um jeito de criar as
-suas: você conta o que repete toda semana e o Claude transforma em skill.
-
-Não precisa saber programar. Precisa saber responder perguntas sobre o seu
-negócio.
+C'est parti.
 
 ---
 
-## Como instalar o MazyOS no Claude Code
+## Qu'est-ce que MazyOS
 
-Abre o Claude Code em qualquer pasta e cola:
+Claude Code est l'outil d'Anthropic qui exécute Claude sur votre
+ordinateur, dans un de vos dossiers. MazyOS est un plugin pour lui : un ensemble de
+skills (des scénarios que Claude suit) et un mod (un morceau de code qui
+modifie Claude Code lui-même pendant que vous travaillez).
+
+Ensemble, ils transforment Claude en agent IA qui connaît votre
+entreprise. Concrètement :
+
+**Il se souvient.** Trois fichiers texte dans `_memoria/` conservent l'identité de
+l'entreprise, le ton et les priorités actuelles. Chaque session commence avec eux dans
+le contexte. Quand vous corrigez quelque chose (« n'écris pas comme ça », « ce client
+est parti »), Claude demande s'il doit enregistrer, puis le range au bon endroit.
+
+**Il a votre visage.** `identidade/design-guide.md` conserve couleurs, polices et
+logo. Carrousel, proposition, diaporama : tout sort avec la marque.
+
+**Il fait le travail répétitif.** 17 skills prêtes à l'emploi, et une façon d'en créer
+des vôtres : vous dites ce que vous répétez chaque semaine et Claude le transforme en skill.
+
+Pas besoin de savoir programmer. Il faut savoir répondre aux questions sur votre
+entreprise.
+
+---
+
+## Comment installer MazyOS dans Claude Code
+
+Ouvrez Claude Code dans n'importe quel dossier et collez :
 
 ```
 /plugin install mazyos --marketplace mazzeoia/MazyOS
 ```
 
-Ele pergunta se pode adicionar o marketplace (`y`) e em qual escopo.
-Escolhe `user`, que vale pra todas as suas pastas. Depois aparecem três
-opções (painel, linha de status, freio no git). Pode deixar tudo ligado;
-dá pra mudar no `/config` quando quiser.
+Il demande s'il peut ajouter le marketplace (`y`) et dans quel périmètre.
+Choisissez `user`, valable pour tous vos dossiers. Trois options
+apparaissent ensuite (panneau, ligne de statut, frein sur git). Vous pouvez tout laisser
+activé ; vous pourrez changer plus tard dans `/config`.
 
-Prefere o terminal? Dá no mesmo:
+Vous préférez le terminal ? C'est la même chose :
 
 ```bash
 claude plugin install mazyos --marketplace mazzeoia/MazyOS
 ```
 
-No app do Claude pra desktop, onde o `/plugin` não existe: clica no `+`
-do lado da caixa de texto, depois Plugins, Add marketplace com
-`mazzeoia/MazyOS`, e Add plugin.
+Dans l'application Claude pour bureau, où `/plugin` n'existe pas : cliquez sur le `+`
+à côté de la zone de texte, puis sur Plugins, Add marketplace avec
+`mazzeoia/MazyOS`, puis Add plugin.
 
-Ainda não tem o Claude Code? É da Anthropic, instala pelo site
-([code.claude.com](https://code.claude.com)), funciona no Mac, Windows e
-Linux, e precisa de um plano pago do Claude (Pro, Max, Team) ou de uma
-chave da API.
+Vous n'avez pas encore Claude Code ? Il vient d'Anthropic, s'installe depuis le site
+([code.claude.com](https://code.claude.com)), fonctionne sur Mac, Windows et
+Linux, et nécessite un abonnement Claude payant (Pro, Max, Team) ou une
+clé API.
 
 ---
 
-## Ligando o sistema na sua empresa
+## Mettre le système en place dans votre entreprise
 
-Cria uma pasta com o nome do seu negócio (ou usa uma que já existe), abre
-o Claude Code nela e roda:
+Créez un dossier au nom de votre entreprise (ou utilisez-en un existant), ouvrez
+Claude Code dedans et lancez :
 
 ```
 /mazyos:instalar
 ```
 
-Ele monta a estrutura (`_memoria/`, `identidade/`, `marketing/`,
-`saidas/`, `dados/`, `scripts/`) e faz uma entrevista de uns cinco
-minutos: o que você vende, pra quem, como você escreve, qual o gargalo de
-hoje, quais as cores da marca. Você só responde. No fim, a memória tá
-preenchida e o sistema te conhece.
+Il crée la structure (`_memoria/`, `identidade/`, `marketing/`,
+`saidas/`, `dados/`, `scripts/`) et mène un entretien d'environ cinq
+minutes : ce que vous vendez, à qui, comment vous écrivez, votre goulot d'étranglement
+actuel, les couleurs de la marque. Vous répondez simplement. À la fin, la mémoire est
+remplie et le système vous connaît.
 
-Roda uma vez só. Depois é abrir o Claude na pasta e pedir as coisas.
-
----
-
-## O que muda no Claude Code com o MazyOS
-
-Essa é a parte do mod. Dentro de uma pasta do MazyOS:
-
-- **A memória entra sozinha.** Empresa, preferências e estratégia vão pro
-  contexto como instruções do projeto, do lado do `CLAUDE.md`. Mudou o
-  arquivo, o Claude recebe a versão nova. Ninguém precisa pedir pra ler.
-- **As regras vêm junto.** Ler a memória antes de responder, perguntar
-  antes de salvar uma correção, avisar quando o contexto mudou, sugerir
-  skill pra tarefa que se repete. Tudo isso entra em toda sessão, direto
-  do plugin, sem depender de um arquivo que você pode apagar sem querer.
-- **Painel do lado do chat.** Mostra o negócio, o foco, o tom, quais
-  arquivos de memória estão preenchidos e quando foram atualizados, e
-  botões de atalho: abrir sessão, atualizar memória, salvar no GitHub.
-  Abre sozinho em terminal largo. `/mazyos` abre a qualquer hora.
-- **Linha de status.** `MazyOS · Acme · foco: fechar 3 clientes` fica
-  embaixo do prompt, pra você não perder o fio.
-- **Aviso quando a memória muda.** O Claude editou `estrategia.md`? O
-  painel e o status atualizam na hora, e aparece um aviso.
-- **Freio no git.** `git push --force`, `git reset --hard` e parentes só
-  rodam depois que você confirma. Se não tiver como perguntar, não roda.
-
-Fora de uma pasta do MazyOS, o plugin fica quieto. Só avisa uma vez, por
-pasta, que o `/mazyos:instalar` existe.
+À lancer une seule fois. Ensuite, ouvrez Claude dans le dossier et demandez ce dont vous avez besoin.
 
 ---
 
-## MazyOS no VS Code e no Antigravity
+## Ce qui change dans Claude Code avec MazyOS
 
-O mesmo sistema também existe como extensão de editor, na pasta [vscode/](vscode/). Ela lê a
-mesma memória, traz as mesmas 17 skills e deixa você escolher quem roda o trabalho: Claude Code
-(sua conta Claude), Codex (sua conta ChatGPT) ou Antigravity (sua conta Google). Cada um entra
-pelo login oficial do próprio CLI, e a extensão só monta o pedido e mostra o que está acontecendo
-num console ao lado do editor. Funciona no VS Code, no Antigravity IDE e no Cursor.
+C'est la partie « mod ». Dans un dossier MazyOS :
 
-Enquanto ela não está no marketplace, instala pelo arquivo `.vsix` gerado em `vscode/`:
+- **La mémoire s'injecte toute seule.** Entreprise, préférences et stratégie partent dans
+  le contexte comme instructions de projet, aux côtés de `CLAUDE.md`. Si le fichier change,
+  Claude reçoit la nouvelle version. Personne n'a besoin de demander une lecture.
+- **Les règles viennent avec.** Lire la mémoire avant de répondre, demander avant d'enregistrer
+  une correction, signaler un changement de contexte, proposer une skill pour une tâche répétée.
+  Tout cela entre dans chaque session, directement depuis le plugin, sans dépendre d'un fichier
+  que vous pourriez effacer par accident.
+- **Panneau à côté de la conversation.** Il affiche l'entreprise, les priorités, le ton, quels
+  fichiers de mémoire sont remplis et quand ils ont été mis à jour, avec des boutons raccourcis :
+  ouvrir une session, actualiser la mémoire, enregistrer sur GitHub.
+  Il s'ouvre seul dans un terminal large. `/mazyos` l'ouvre à tout moment.
+- **Ligne de statut.** `MazyOS · Acme · foco: fechar 3 clientes` s'affiche
+  sous le prompt pour ne rien perdre du fil.
+- **Alerte quand la mémoire change.** Claude a modifié `estrategia.md` ? Le
+  panneau et le statut se mettent à jour immédiatement et une notification apparaît.
+- **Frein sur git.** `git push --force`, `git reset --hard` et compagnie ne
+s'exécutent qu'après votre confirmation. S'il n'est pas possible de demander, rien ne s'exécute.
+
+En dehors d'un dossier MazyOS, le plugin reste silencieux. Il signale simplement une fois,
+par dossier, que `/mazyos:instalar` existe.
+
+---
+
+## MazyOS dans VS Code et Antigravity
+
+Le même système existe aussi comme extension d'éditeur, dans le dossier [vscode/](vscode/). Elle lit la
+même mémoire, propose les mêmes 17 skills et vous laisse choisir qui exécute le travail : Claude Code
+(votre compte Claude), Codex (votre compte ChatGPT) ou Antigravity (votre compte Google). Chacun se
+connecte via le login officiel de son propre CLI, et l'extension ne fait que préparer la demande et
+montrer ce qui se passe dans une console à côté de l'éditeur. Fonctionne dans VS Code, Antigravity IDE et Cursor.
+
+Tant qu'elle n'est pas sur le marketplace, installez-la depuis le fichier `.vsix` généré dans `vscode/` :
 
 ```
 cd vscode && npm install && npm run empacotar
 code --install-extension mazyos-0.1.0.vsix
 ```
 
-O resto está no [README da extensão](vscode/README.md).
+Le reste est dans [README da extensão](vscode/README.md).
 
-## As skills
+## Les skills
 
-São 17 skills do Claude Code, prontas pra usar. Digita `/mazyos:` e a
-lista aparece.
+Ce sont 17 skills Claude Code, prêtes à l'emploi. Tapez `/mazyos:` et la
+liste apparaît.
 
-### Pra tocar o dia a dia
+### Pour le quotidien
 
-- `/mazyos:abrir` resume o contexto em cinco linhas e pergunta o que vamos fazer.
-- `/mazyos:salvar` faz commit e push no GitHub, até pra quem nunca usou git.
-- `/mazyos:atualizar` compara a memória com o que tá na pasta e propõe o que atualizar.
-- `/mazyos:novo-projeto` cria uma pasta isolada pra cada cliente ou iniciativa, com contexto próprio.
-- `/mazyos:mapear-rotinas` pergunta o que você repete toda semana e cria uma skill pra cada coisa.
-- `/mazyos:criacao-canonica-de-skills` cria, refatora e audita skills com um método mais profundo.
+- `/mazyos:abrir` résume le contexte en cinq lignes et demande ce qu'on fait ensuite.
+- `/mazyos:salvar` fait le commit et le push sur GitHub, même pour quelqu'un qui n'a jamais utilisé git.
+- `/mazyos:atualizar` compare la mémoire avec le contenu du dossier et propose les mises à jour.
+- `/mazyos:novo-projeto` crée un dossier isolé pour chaque client ou projet, avec son propre contexte.
+- `/mazyos:mapear-rotinas` demande ce que vous répétez chaque semaine et crée une skill pour chaque tâche.
+- `/mazyos:criacao-canonica-de-skills` crée, refactorise et audite des skills avec une méthode plus approfondie.
 
-### Conteúdo e SEO
+### Contenu et SEO
 
-- `/mazyos:carrossel` cria carrossel pro Instagram (1080×1350) na identidade da marca, com ou sem foto gerada por IA, e já deixa a legenda pronta.
-- `/mazyos:publicar-tema` pega um tema e entrega artigo de blog, carrossel e três legendas (Instagram, Facebook, LinkedIn), tudo amarrado.
-- `/mazyos:seo` roda o fluxo de SEO em 8 passos: demanda, concorrência, Google Meu Negócio, on-page, conteúdo, Google Ads, monitoramento e GEO (aparecer no ChatGPT, Gemini e Perplexity).
-- `/mazyos:responder-avaliacoes` escreve respostas humanas pras avaliações do Google.
-- `/mazyos:aprovar-post` publica blog, Instagram e Facebook num comando só.
+- `/mazyos:carrossel` crée un carrousel Instagram (1080×1350) à l'identité de la marque, avec ou sans image générée par IA, et prépare déjà la légende.
+- `/mazyos:publicar-tema` prend un thème et livre un article de blog, un carrousel et trois légendes (Instagram, Facebook, LinkedIn), le tout cohérent.
+- `/mazyos:seo` exécute le parcours SEO en 8 étapes : demande, concurrence, Google My Business, on-page, contenu, Google Ads, suivi et GEO (apparaître dans ChatGPT, Gemini et Perplexity).
+- `/mazyos:responder-avaliacoes` rédige des réponses humaines aux avis Google.
+- `/mazyos:aprovar-post` publie sur le blog, Instagram et Facebook en une seule commande.
 
-### Google Ads e Meta Ads
+### Google Ads et Meta Ads
 
-- `/mazyos:anuncio-google` monta a campanha inteira num CSV pronto pra importar no Google Ads Editor.
-- `/mazyos:relatorio-ads` lê os exports do Google Ads e do Meta Ads e devolve o relatório da semana, com alertas e o que fazer.
+- `/mazyos:anuncio-google` prépare toute la campagne dans un CSV prêt à importer dans Google Ads Editor.
+- `/mazyos:relatorio-ads` lit les exports Google Ads et Meta Ads et rend le rapport de la semaine, avec alertes et actions à mener.
 
-### Prospecção de clientes
+### Prospection clients
 
-- `/mazyos:prospecta-maps` parte de um nicho e uma cidade, busca as empresas no Google Maps, confere o CNPJ na Receita, monta um site de prévia pra cada lead e deixa a primeira mensagem e os follow-ups prontos. A proposta em PDF sai quando você pedir. Sem chave de API.
+- `/mazyos:prospecta-maps` part d'une niche et d'une ville, cherche les entreprises sur Google Maps, vérifie le numéro d'entreprise auprès de l'administration fiscale, prépare un site de prévisualisation pour chaque prospect et rédige le premier message ainsi que les relances. La proposition en PDF est générée sur demande. Aucune clé API requise.
 
-### Produção
+### Production
 
-- `/mazyos:analisar-dados` lê CSV, planilha ou PDF e devolve um resumo executivo.
-- `/mazyos:email-profissional` rascunha um email a partir do que você contar.
+- `/mazyos:analisar-dados` lit un CSV, un tableur ou un PDF et restitue une note de synthèse.
+- `/mazyos:email-profissional` rédige un e-mail à partir de ce que vous racontez.
 
-As skills que você criar pro seu negócio ficam em `.claude/skills/` da sua
-pasta, fora do plugin, e você chama como `/<nome>`.
-
----
-
-## Perguntas que sempre aparecem
-
-**O MazyOS é grátis?** O plugin é aberto e gratuito. O que você paga é o
-Claude Code: plano Pro, Max ou Team do Claude, ou a API da Anthropic.
-
-**Precisa saber programar?** Não. Você conversa em português e responde
-perguntas sobre o seu negócio. Os comandos são uma barra e um nome.
-
-**Funciona no Windows?** Sim. Mac, Windows e Linux, no terminal, no VS
-Code ou no app do Claude.
-
-**Onde ficam os meus dados?** Na sua pasta, no seu computador. Memória,
-identidade e tudo que o sistema gera são arquivos de texto seus, que você
-pode abrir, editar e versionar no GitHub. O plugin é só leitura e se
-atualiza pelo `/plugin`.
-
-**O que é um plugin do Claude Code?** Um pacote que adiciona skills,
-comandos e comportamento ao Claude Code, instalado com uma linha. O MazyOS
-é um deles.
-
-**Dá pra ver o que o plugin faz no meu Claude?** Dá, é tudo código aberto
-aqui. `hooks/sistema.ts` tem as regras que entram no contexto;
-`hooks/register.tsx` tem o mod.
-
-**Eu usava o MazyOS clonando este repositório. E agora?** Instala o plugin
-e, na pasta do negócio: apaga `.claude/skills/` (as skills vêm do plugin;
-as que você criou podem ficar), tira do `CLAUDE.md` as regras gerais do
-MazyOS (o plugin já injeta todas) e troca `/abrir` por `/mazyos:abrir` no
-hábito. Memória, identidade e saídas ficam como estão.
+Les skills que vous créez pour votre entreprise se trouvent dans `.claude/skills/` de votre
+dossier, hors du plugin, et se lancent comme `/<nome>`.
 
 ---
 
-## A tese
+## Questions fréquentes
 
-IA não é uma ferramenta que a sua empresa usa. É o sistema operacional em
-que ela roda.
+**MazyOS est-il gratuit ?** Le plugin est ouvert et gratuit. Ce que vous payez, c'est
+Claude Code : un abonnement Claude Pro, Max ou Team, ou l'API d'Anthropic.
 
-A diferença não é velocidade. É capacidade nova: uma pessoa com IA constrói
-o que antes exigia um time inteiro. Cada processo que hoje roda em malha
-aberta (decide, executa, não mede, repete cego) vira malha fechada dentro
-do MazyOS (decide, executa, captura, realimenta, ajusta sozinho).
+**Faut-il savoir programmer ?** Non. Vous parlez en français et répondez
+à des questions sur votre entreprise. Les commandes sont un slash et un nom.
 
-O sistema não substitui você. Vira parte da sua empresa.
+**Fonctionne-t-il sur Windows ?** Oui. Mac, Windows et Linux, dans le terminal, dans VS
+Code ou dans l'application Claude.
+
+**Où sont mes données ?** Dans votre dossier, sur votre ordinateur. Mémoire,
+identité et tout ce que le système produit sont des fichiers texte vous appartenant, que vous
+pouvez ouvrir, modifier et versionner sur GitHub. Le plugin est en lecture seule et se
+met à jour via `/plugin`.
+
+**Qu'est-ce qu'un plugin Claude Code ?** Un paquet qui ajoute des skills,
+des commandes et des comportements à Claude Code, installé en une ligne. MazyOS
+est l'un d'eux.
+
+**Puis-je voir ce que le plugin fait dans mon Claude ?** Oui, tout est open source
+ici. `hooks/sistema.ts` contient les règles injectées dans le contexte ;
+`hooks/register.tsx` contient le mod.
+
+**J'utilisais MazyOS en clonant ce dépôt. Et maintenant ?** Installez le plugin
+puis, dans le dossier de l'entreprise : supprimez `.claude/skills/` (les skills viennent du plugin ;
+celles que vous avez créées peuvent rester), retirez de `CLAUDE.md` les règles générales de
+MazyOS (le plugin les injecte toutes) et remplacez `/abrir` par `/mazyos:abrir` dans
+vos habitudes. Mémoire, identité et productions restent telles quelles.
 
 ---
 
-## Pra quem quer mexer no código
+## La thèse
 
-Este repositório é o plugin e o marketplace ao mesmo tempo.
+L'IA n'est pas un outil que votre entreprise utilise. C'est le système d'exploitation sur
+lequel elle tourne.
+
+La différence n'est pas la vitesse. C'est une capacité nouvelle : une personne avec l'IA construit
+ce qui demandait autrefois toute une équipe. Chaque processus qui fonctionne aujourd'hui en boucle
+ouverte (décider, exécuter, ne pas mesurer, répéter à l'aveugle) devient une boucle fermée dans
+MazyOS (décider, exécuter, capturer, réinjecter, s'ajuster tout seul).
+
+Le système ne vous remplace pas. Il devient une partie de votre entreprise.
+
+---
+
+## Pour ceux qui veulent toucher au code
+
+Ce dépôt est à la fois le plugin et le marketplace.
 
 ```
 .claude-plugin/   plugin.json e marketplace.json
