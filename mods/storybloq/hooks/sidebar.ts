@@ -82,7 +82,7 @@ const PANE_TITLE = "Storybloq";
 * a placed pane docks or sits inline is the renderer's call (ISS-1247).
 */
 const DOCK_COLUMNS = 144;
-const BAND_HINT = ", board opens at your next prompt";
+const BAND_HINT = ", le tableau s’ouvrira à votre prochain message";
 const STORE_KEY = "sidebar-ledger-cache-v1";
 /** Under the store's 4 MiB, with room for whatever else the plugin keeps. */
 const STORE_BUDGET_BYTES = 3000000;
@@ -119,7 +119,7 @@ const CONFIG_PATH = ".story/config.json";
 const ROADMAP_PATH = ".story/roadmap.json";
 const STATUS_PATH = ".story/status.json";
 /** T-537: the setup hint's action, in the Claude Code profile's command. */
-export const SETUP_HINT = "Run /story to set this project up; the pane opens when it finishes.";
+export const SETUP_HINT = "Lancez /story pour configurer ce projet ; le panneau s’ouvrira une fois terminé.";
 /** T-532: tool calls read the context fill at most this often. */
 const CONTEXT_REFRESH_MS = 5000;
 function forgetEverything(dashboard: DashboardState): void {
@@ -371,7 +371,7 @@ async function loadCache(dashboard: DashboardState, $: any): Promise<void> {
 async function saveCache(dashboard: DashboardState, $: any): Promise<void> {
   const text = JSON.stringify(dashboard.cache);
   if (text.length > STORE_BUDGET_BYTES) {
-    $.ui.log(`storybloq sidebar: the ledger cache is over ${STORE_BUDGET_BYTES} bytes, so it is not kept between sessions`);
+    $.ui.log(`storybloq sidebar : le cache du registre dépasse ${STORE_BUDGET_BYTES} octets, il n’est donc pas conservé entre les sessions`);
     return;
   }
   try {
@@ -387,7 +387,7 @@ function noteFailure(dashboard: DashboardState, $: any, what: string): void {
     return;
   dashboard.saidScanFailed = true;
   try {
-    $.ui.log(`storybloq sidebar: ${what}, so the pane may be behind the ledger until a later turn`);
+    $.ui.log(`storybloq sidebar : ${what}, le panneau pourrait donc être en retard sur le registre jusqu’à un tour ultérieur`);
   }
   catch {
     // A refused log is not worth a second failure.
@@ -414,7 +414,7 @@ function startTimer(dashboard: DashboardState, $: any): void {
     // A hook beneath may refuse the registration. Marking it started before
     // it returned would mean no later attempt is ever made, and a scan begun
     // with no timer builds a queue that nothing drains.
-    noteFailure(dashboard, $, "the scan timer could not be started");
+    noteFailure(dashboard, $, "le minuteur d’analyse n’a pas pu démarrer");
     return;
   }
   dashboard.timerStarted = true;
@@ -433,7 +433,7 @@ function finalizeScan(dashboard: DashboardState, $: any, outcome: "done" | "fail
   dashboard.scanInitializing = false;
   dashboard.ticking = false;
   if (outcome === "failed")
-    noteFailure(dashboard, $, "a ledger scan did not finish");
+    noteFailure(dashboard, $, "une analyse du registre ne s’est pas terminée");
   if (!dashboard.pendingRefresh)
     return;
   dashboard.pendingRefresh = false;
@@ -825,7 +825,7 @@ async function drainChunk(dashboard: DashboardState, $: any): Promise<void> {
         if (isMissing(error))
           delete dashboard.cache[item.path];
         else
-          noteFailure(dashboard, $, "a ledger record could not be read");
+          noteFailure(dashboard, $, "une entrée du registre n’a pas pu être lue");
       }
     }
     if (dashboard.queue.length === 0) {
@@ -1079,7 +1079,7 @@ export function registerSidebar(on: On, _options: Options): void {
     if (!dashboard.uiAvailable) {
       if (!dashboard.saidNoUi) {
         dashboard.saidNoUi = true;
-        $.ui.log("storybloq sidebar: this client has no UI render events, so the pane is not drawn");
+        $.ui.log("storybloq sidebar : ce client n’émet aucun événement de rendu d’interface, le panneau n’est donc pas affiché");
       }
       return next(e);
     }
@@ -1110,7 +1110,7 @@ export function registerSidebar(on: On, _options: Options): void {
       dashboard.noLedger = true;
       if (!dashboard.saidNoLedger) {
         dashboard.saidNoLedger = true;
-        $.ui.log("storybloq sidebar: this session start carried no working directory, so the pane stays closed");
+        $.ui.log("storybloq sidebar : ce démarrage de session n’a fourni aucun répertoire de travail, le panneau reste donc fermé");
       }
       return next(e);
     }
@@ -1128,7 +1128,7 @@ export function registerSidebar(on: On, _options: Options): void {
       dashboard.noLedger = true;
       if (!dashboard.setupHintRoots.has(dashboard.initialCwd)) {
         dashboard.setupHintRoots.add(dashboard.initialCwd);
-        $.ui.log(`storybloq sidebar: no .story directory here, so the pane stays closed. ${SETUP_HINT}`);
+        $.ui.log(`storybloq sidebar : aucun répertoire .story ici, le panneau reste donc fermé. ${SETUP_HINT}`);
       }
       return next(e);
     }
@@ -1143,7 +1143,7 @@ export function registerSidebar(on: On, _options: Options): void {
       dashboard.noLedger = true;
       if (!dashboard.saidRootUnresolved) {
         dashboard.saidRootUnresolved = true;
-        $.ui.log(`storybloq sidebar: could not resolve the ledger root (${resolution.reason}), so the pane stays closed until it can be read`);
+        $.ui.log(`storybloq sidebar : racine du registre introuvable (${resolution.reason}), le panneau reste donc fermé tant qu’elle est illisible`);
       }
       return next(e);
     }

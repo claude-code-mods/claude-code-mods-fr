@@ -74,11 +74,11 @@ async function post(
       body: JSON.stringify(payload),
     })
   } catch (err) {
-    $.ui.log(`winnow: sidecar not answering at ${url}: ${String(err)}`, { to: 'debug' })
+    $.ui.log(`winnow : le service auxiliaire ne répond pas à ${url} : ${String(err)}`, { to: 'debug' })
     return undefined
   }
   if (!res.ok) {
-    $.ui.log(`winnow: sidecar answered ${res.status} at ${url}`, { to: 'debug' })
+    $.ui.log(`winnow : le service auxiliaire a répondu ${res.status} à ${url}`, { to: 'debug' })
     return undefined
   }
   let meta: Meta | undefined
@@ -94,7 +94,7 @@ async function post(
   try {
     return { output: JSON.parse(res.text) as HookOutput, meta }
   } catch {
-    $.ui.log('winnow: sidecar sent something that is not JSON', { to: 'debug' })
+    $.ui.log('winnow : le service auxiliaire a renvoyé quelque chose qui n’est pas du JSON', { to: 'debug' })
     return undefined
   }
 }

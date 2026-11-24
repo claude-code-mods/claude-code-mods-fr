@@ -84,7 +84,7 @@ export const register: Register = (on, options) => {
     })
     await $.command.register({
       name: 'tokendoctor',
-      description: 'Show and change token settings by name (no model call)',
+      description: 'Afficher et modifier les réglages des jetons par nom (sans appel au modèle)',
       argumentHint: '[window|slide|cache|effort|model|subagents|all|fix|undo] [value|reset]',
     })
     void audit($)

@@ -367,7 +367,7 @@ export async function tempoStart($: EngineInterface): Promise<void> {
   await loadConfig($)
   await $.command.register({
     name: 'work-mode',
-    description: 'Work mode: auto (no questions) | out (delegate) | wrap (converge) | off',
+    description: 'Mode de travail : auto (sans questions) | out (déléguer) | wrap (converger) | off',
     argumentHint: '[auto] [out] [wrap] | off',
     immediate: true,
   })
@@ -480,7 +480,7 @@ export function registerTempo(on: On): void {
         parsed = parseTempo(pickedArgs(answer, cfg))
       } catch (err) {
         // Dismissed, or nobody to ask: fall through to the plain status line.
-        $.ui.log(`tempo picker unavailable: ${String(err).slice(0, 300)}`, { to: 'debug' })
+        $.ui.log(`sélecteur tempo indisponible : ${String(err).slice(0, 300)}`, { to: 'debug' })
       }
     }
     const usage = 'Use /work-mode with any of auto, out, wrap (any order), or off.'

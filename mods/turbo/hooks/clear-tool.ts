@@ -100,12 +100,12 @@ async function clearThenImplement($: EngineInterface, plan: PlanContinuation) {
   try {
     await $.command.run({ command: IMPLEMENT_COMMAND, args })
   } catch (error) {
-    $.ui.toast(`${messageOf(error)}: cleared, but the plan did not start. Run ${typed}`, TOAST)
+    $.ui.toast(`${messageOf(error)} : effacement effectué, mais le plan n’a pas démarré. Lancez ${typed}`, TOAST)
   }
 }
 
 async function clearThenResume($: EngineInterface, handoff: string) {
-  const reply = `reply "Read the handoff at ${handoff} and continue"`
+  const reply = `répondez « Lis la transmission à ${handoff} et continue »`
 
   if (!(await clearOrToast($, reply))) {
     return
@@ -114,7 +114,7 @@ async function clearThenResume($: EngineInterface, handoff: string) {
   await submitOrToast(
     $,
     handoffPrompt(handoff, 'cleared'),
-    `${handoff}: cleared, but the continue prompt was not sent. Reply "Read the handoff at ${handoff} and continue".`,
+    `${handoff} : effacement effectué, mais le message de reprise n’a pas été envoyé. Répondez « Lis la transmission à ${handoff} et continue ».`,
   )
 }
 
@@ -124,7 +124,7 @@ async function clearOrToast($: EngineInterface, next: string) {
 
     return true
   } catch (error) {
-    $.ui.toast(`${messageOf(error)}: clear failed. Run /clear, then ${next}`, TOAST)
+    $.ui.toast(`${messageOf(error)} : effacement impossible. Lancez /clear, puis ${next}`, TOAST)
 
     return false
   }

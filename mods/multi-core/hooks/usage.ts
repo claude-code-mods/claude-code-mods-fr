@@ -90,7 +90,7 @@ export const register = (on: Parameters<Register>[0], _options?: Parameters<Regi
         return {};
       }
       // The pane waits undrawn (a surface that places no panes): say so, and show the numbers.
-      $.ui.toast(`Multi usage: ${opened.reason}`);
+      $.ui.toast(`Multi usage : ${opened.reason}`);
       return { text: summary };
     } catch {
       return { text: summary };

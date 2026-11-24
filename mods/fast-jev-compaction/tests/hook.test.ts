@@ -124,7 +124,7 @@ describe('compactSession', () => {
     expect(messages.map((m) => m.handle)).toEqual(['h-0', 'h-tool-2', 'r-tool-2', 'h-5', 'h-6']);
     expect(summarize(output)).toMatch(/^\d+% reduction; 1 kept, 1 call_dropped; state ~\d+ tokens \(full\) in 1 request\(s\)$/);
     expect(decisionLog(output)).toBe('t1:Read:drop_call/call=0.10/result=0.10 t2:Bash:keep/call=0.90/result=0.90');
-    expect(decisionLogLines(output)).toEqual([`decisions: ${decisionLog(output)}`]);
+    expect(decisionLogLines(output)).toEqual([`décisions : ${decisionLog(output)}`]);
   });
 
   it('splits a long decision log into ui.log lines under the host limit', async () => {
@@ -132,11 +132,11 @@ describe('compactSession', () => {
     const { result: output } = await compactSession(transcript(), config, jevFetch(() => 0.1));
     const lines = decisionLogLines(output, 60);
     expect(lines).toEqual([
-      'decisions (1/2): t1:Read:drop_call/call=0.10/result=0.10',
-      'decisions (2/2): t2:Bash:drop_call/call=0.10/result=0.10',
+      'décisions (1/2) : t1:Read:drop_call/call=0.10/result=0.10',
+      'décisions (2/2) : t2:Bash:drop_call/call=0.10/result=0.10',
     ]);
     expect(lines.every((line) => line.length <= 60)).toBe(true);
-    expect(decisionLogLines({ ...output, decisions: [] })).toEqual(['decisions: (none)']);
+    expect(decisionLogLines({ ...output, decisions: [] })).toEqual(['décisions : (aucune)']);
   });
 
   it('throws on a missing key and on failed requests so the hook falls back', async () => {
