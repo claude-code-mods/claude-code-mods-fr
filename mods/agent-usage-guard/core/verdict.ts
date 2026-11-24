@@ -58,7 +58,7 @@ export type Verdict = Allow | Deny | Drop | Ask
 export const ALLOW: Allow = { kind: 'allow' }
 
 /** The chip AskUserQuestion draws beside every question the guard asks. */
-export const HEADER = 'Usage guard'
+export const HEADER = 'Garde d’utilisation'
 
 export const SIGNATURE = 'agent-usage-guard'
 
@@ -86,22 +86,22 @@ export function refuse(
   const parts = [base]
   if (n >= 2 && state.reopened) {
     parts.push(
-      'A Stop hook reopened this turn, so ending the turn will not clear this. Tell the user that agent-usage-guard is holding it and that /agent-guard allow lifts it, then wait for their answer.',
+      'Un hook Stop a rouvert ce tour, donc le terminer ne lèvera pas ce blocage. Dites à l’utilisateur que agent-usage-guard le maintient et que /agent-guard allow le lève, puis attendez sa réponse.',
     )
   } else if (n === 2) {
-    parts.push(`This has not changed since ${clock(earlier[0]!.at)}, so the same call fails again. Do something different.`)
+    parts.push(`Rien n’a changé depuis ${clock(earlier[0]!.at)}, donc le même appel échoue encore. Faites autrement.`)
   } else if (n >= 3) {
-    parts.push('Retrying keeps failing, and every retry re-sends the whole context. End the turn and tell the user what is blocked.')
+    parts.push('Les nouvelles tentatives échouent toujours et chacune renvoie tout le contexte. Terminez le tour et dites à l’utilisateur ce qui est bloqué.')
   }
   if (agent && state.fuseUntil === undefined) {
     const agentDenials = state.denials.filter((d) => d.agent && now - d.at < config.fuseMs).length
     if (agentDenials >= config.fuseMax) {
       state.fuseUntil = now + config.fuseMs
       parts.push(
-        `That is ${agentDenials} refused agent calls in ${duration(config.fuseMs)}, so agent spawns in this session are paused until ${shortClock(state.fuseUntil)}.`,
+        `Soit ${agentDenials} appels d’agents refusés en ${duration(config.fuseMs)}, donc les lancements d’agents dans cette session sont suspendus jusqu’à ${shortClock(state.fuseUntil)}.`,
       )
     }
   }
-  parts.push(`[${SIGNATURE} · refusal ${n} at ${clock(now)}]`)
+  parts.push(`[${SIGNATURE} · refus ${n} à ${clock(now)}]`)
   return { kind: 'deny', rule, message: parts.join(' '), n }
 }

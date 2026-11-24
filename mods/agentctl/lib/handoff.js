@@ -14,7 +14,7 @@ const s = (x, n = 200) => sanitize(x, n)
 // limits disclosure (INV-005) the way truncating the finished text would.
 function assemble(head, sections, cap) {
   const fixedText = [...head, ...sections.flatMap((x) => ['', x.heading, ...x.fixed])].join('\n')
-  const omitLine = (n) => `- … ${n} more omitted (hand-over size cap)`
+  const omitLine = (n) => `- … ${n} autres omis (limite de taille de la transmission)`
   let budget = cap - fixedText.length - sections.length * omitLine(99999).length
   const out = [...head]
   for (const x of sections) {
@@ -32,58 +32,58 @@ function assemble(head, sections, cap) {
 
 export function handoff({ task, state, evidence, fingerprint, decisions, now, sessionId }) {
   // When the last tree reading was taken: the hand-over starts no process, so it never re-reads.
-  const seenAt = typeof fingerprint?.at === 'number' ? ` as of ${new Date(fingerprint.at).toISOString()}` : ''
+  const seenAt = typeof fingerprint?.at === 'number' ? ` au ${new Date(fingerprint.at).toISOString()}` : ''
   const head = [
-    `# Hand-over — ${task ? s(task.goal, 120) : 'no task bound'}`,
+    `# Transmission — ${task ? s(task.goal, 120) : 'aucune tâche liée'}`,
     '',
-    `Generated from structured records at ${new Date(now).toISOString()} (session ${s(sessionId, 60)}); no model was called.`,
+    `Générée à partir d’enregistrements structurés le ${new Date(now).toISOString()} (session ${s(sessionId, 60)}) ; aucun modèle n’a été appelé.`,
   ]
   const sec = []
-  sec.push({ heading: '## 1. Goal', items: [], fixed: [task ? s(task.goal, 500) : 'No task was declared for this session.'] })
+  sec.push({ heading: '## 1. Objectif', items: [], fixed: [task ? s(task.goal, 500) : 'Aucune tâche n’a été déclarée pour cette session.'] })
   const scope = []
   if (task) {
-    scope.push(`- Worktree: ${s(task.worktree)}`)
-    scope.push(`- Edits: ${(task.allow ?? []).includes('edit') ? `allowed in ${(task.editRoots ?? ['.']).map((r) => s(r)).join(', ')}` : 'not allowed'}`)
-    scope.push(`- Authorized executors: ${(task.executors ?? []).map((e) => s(e.argv.join(' '))).join('; ') || 'none'}`)
-    scope.push(`- Forbidden: ${(task.forbid ?? []).map((f) => s(Array.isArray(f) ? f.join(' ') : f)).join('; ') || 'none'}, plus ${[...new Set(HARD_FORBIDDEN.map((h) => h.rule))].join(', ')}`)
-    if (task.acceptance?.length) scope.push(`- Acceptance conditions: ${task.acceptance.map((a) => s(a)).join('; ')}`)
+    scope.push(`- Arbre de travail : ${s(task.worktree)}`)
+    scope.push(`- Modifications : ${(task.allow ?? []).includes('edit') ? `autorisées dans ${(task.editRoots ?? ['.']).map((r) => s(r)).join(', ')}` : 'non autorisées'}`)
+    scope.push(`- Exécuteurs autorisés : ${(task.executors ?? []).map((e) => s(e.argv.join(' '))).join('; ') || 'aucun'}`)
+    scope.push(`- Interdits : ${(task.forbid ?? []).map((f) => s(Array.isArray(f) ? f.join(' ') : f)).join('; ') || 'aucun'}, plus ${[...new Set(HARD_FORBIDDEN.map((h) => h.rule))].join(', ')}`)
+    if (task.acceptance?.length) scope.push(`- Critères d’acceptation : ${task.acceptance.map((a) => s(a)).join('; ')}`)
   }
-  sec.push({ heading: '## 2. Allowed and forbidden scope', items: scope, fixed: task ? [] : ['- No scope was declared.'] })
+  sec.push({ heading: '## 2. Périmètre autorisé et interdit', items: scope, fixed: task ? [] : ['- Aucun périmètre n’a été déclaré.'] })
   const ops = Object.entries(state.ops ?? {})
   const edits = ops.filter(([, o]) => ['Write', 'Edit', 'NotebookEdit', 'MultiEdit'].includes(o.tool) && o.outcome === 'ok')
-  sec.push({ heading: '## 3. What changed', items: [], fixed: [
-    fingerprint ? `- Tree: HEAD ${s(fingerprint.head, 60)}, ${fingerprint.changedCount ?? '?'} changed or untracked path(s) (${fingerprint.coverage})${seenAt ? `, read${seenAt}` : ''}` : '- Tree: not read for this hand-over',
+  sec.push({ heading: '## 3. Ce qui a changé', items: [], fixed: [
+    fingerprint ? `- Arbre : HEAD ${s(fingerprint.head, 60)}, ${fingerprint.changedCount ?? '?'} chemin(s) modifié(s) ou non suivi(s) (${fingerprint.coverage})${seenAt ? `, lu${seenAt}` : ''}` : '- Arbre : non lu pour cette transmission',
     // Only the edit tools are counted here; a file changed through Bash shows in the tree line above
     // (found in an uncoached run: "Edits observed: 0" beside a changed README read as "nothing changed").
-    `- Edit-tool calls this session: ${edits.length} (changes made through Bash are not counted here; the tree line is the record)`,
+    `- Appels d’outils de modification cette session : ${edits.length} (les changements faits via Bash ne sont pas comptés ici ; la ligne de l’arbre fait foi)`,
   ] })
   const ev = Object.values(evidence ?? {})
   const matches = (e) => fingerprint && e.after && e.before && e.before.value === e.after.value && e.after.value === fingerprint.value && e.outcome === 'ok'
   // Partial coverage is never "verified": what a reading did not cover may have changed — the
   // before, the after and the last reading must each be complete. The same rule `/agentctl` uses.
   const current = (e) => evidenceCurrent(e, fingerprint)
-  const verified = ev.filter(current).map((e) => `- ${s(e.requested)} — no error reported, matches the last tree reading${seenAt} (${e.coverage})`)
-  sec.push({ heading: '## 4. Verified (execution evidence on the last tree reading)', items: verified, fixed: verified.length ? [] : ['- Nothing.'] })
+  const verified = ev.filter(current).map((e) => `- ${s(e.requested)} — aucune erreur signalée, correspond à la dernière lecture de l’arbre${seenAt} (${e.coverage})`)
+  sec.push({ heading: '## 4. Vérifié (preuve d’exécution sur la dernière lecture de l’arbre)', items: verified, fixed: verified.length ? [] : ['- Rien.'] })
   const notVerified = ev.filter((e) => !current(e)).map((e) => {
-    const why = e.outcome === 'backgrounded' ? 'started, completion unobserved' : e.outcome !== 'ok' ? `outcome ${e.outcome}` : !e.after || !e.before ? 'evidence unavailable' : e.before.value !== e.after.value ? 'tree changed during the run' : matches(e) ? 'partial coverage — part of the tree was not read' : 'stale — the tree changed since'
+    const why = e.outcome === 'backgrounded' ? 'lancé, achèvement non observé' : e.outcome !== 'ok' ? `outcome ${e.outcome}` : !e.after || !e.before ? 'preuve indisponible' : e.before.value !== e.after.value ? 'arbre modifié pendant l’exécution' : matches(e) ? 'couverture partielle — une partie de l’arbre n’a pas été lue' : 'obsolète — l’arbre a changé depuis'
     return `- ${s(e.requested)} — ${why}`
   })
-  sec.push({ heading: '## 5. Not verified', items: notVerified, fixed: ['- Anything Claude stated as done, passing or fixed without an evidence record above is only its own judgement.'] })
+  sec.push({ heading: '## 5. Non vérifié', items: notVerified, fixed: ['- Tout ce que Claude a déclaré comme terminé, réussi ou corrigé sans preuve ci-dessus n’est que son propre jugement.'] })
   const open = ops.filter(([, o]) => o.endedAt === undefined && o.outcome !== 'refused')
   const bg = Object.entries(state.background ?? {}).filter(([, b]) => b.status === 'started' || b.status === 'in-flight')
   const running = [
     ...open.map(([id, o]) => `- ${s(o.requested)} (${o.tool}, ${o.outcome}) — ${id}`),
-    ...bg.map(([id, b]) => `- background ${s(id, 60)} — ${b.status}${b.asOf ? ` as of ${new Date(b.asOf).toISOString()}` : ''}`),
+    ...bg.map(([id, b]) => `- tâche en arrière-plan ${s(id, 60)} — ${b.status}${b.asOf ? ` au ${new Date(b.asOf).toISOString()}` : ''}`),
   ]
-  sec.push({ heading: '## 6. Still running or unknown', items: running, fixed: running.length ? [] : ['- Nothing observed as still running. Untracked processes cannot be confirmed either way.'] })
+  sec.push({ heading: '## 6. Encore en cours ou inconnu', items: running, fixed: running.length ? [] : ['- Rien n’a été observé comme encore en cours. Les processus non suivis ne peuvent être confirmés ni infirmés.'] })
   const iv = Object.keys(state.interventions ?? {})
-  sec.push({ heading: '## 7. Next step', items: [], fixed: [iv.length ? `- Resolve: ${iv.map((x) => s(x, 60)).join(', ')}` : '- None recorded. Decide from sections 4–6.'] })
+  sec.push({ heading: '## 7. Prochaine étape', items: [], fixed: [iv.length ? `- À résoudre : ${iv.map((x) => s(x, 60)).join(', ')}` : '- Rien de consigné. Décidez d’après les sections 4 à 6.'] })
   const refused = (decisions ?? []).filter((d) => d.outcome === 'deny' || d.outcome === 'unknown' || d.outcome === 'needs-user-refused')
-  sec.push({ heading: '## 8. Still not allowed', items: [], fixed: [
-    ...(refused.length ? refused.slice(-10).map((d) => `- ${s(d.requested)} — ${s(d.rule)}`) : ['- No call was refused this session; the forbidden scope in section 2 still applies.']),
-    '- Earlier approvals do not carry over: on resume, every call is classified again and the host asks again.',
+  sec.push({ heading: '## 8. Toujours non autorisé', items: [], fixed: [
+    ...(refused.length ? refused.slice(-10).map((d) => `- ${s(d.requested)} — ${s(d.rule)}`) : ['- Aucun appel n’a été refusé cette session ; le périmètre interdit de la section 2 s’applique toujours.']),
+    '- Les approbations précédentes ne sont pas reprises : à la reprise, chaque appel est reclassé et l’hôte demande à nouveau.',
     // INV-005: what this mod cannot refuse is disclosed here as in /agentctl policy, never silent.
-    '- Limits: if the host skips this mod\'s hook (worker crash, mod disabled) nothing here refused; another mod can change a verdict at tool.check. Hard rules belong in permissions.deny.',
+    '- Limites : si l’hôte ignore le hook de ce module (plantage du worker, module désactivé), rien ici ne refuse ; un autre module peut modifier un verdict lors de tool.check. Les règles strictes appartiennent à permissions.deny.',
   ] })
   return assemble(head, sec, CAPS.handoff)
 }

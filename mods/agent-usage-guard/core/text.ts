@@ -2,13 +2,13 @@
 
 /** `1 agent`, `4 agents`. */
 export function count(n: number, noun: string): string {
-  return `${n} ${noun}${n === 1 ? '' : 's'}`
+  return `${n} ${noun}`
 }
 
 /** Lists details as prose: "a", "a and b", "a, b and c". */
 export function join(details: readonly string[]): string {
   if (details.length <= 1) return details.join('')
-  return `${details.slice(0, -1).join(', ')} and ${details.at(-1)}`
+  return `${details.slice(0, -1).join(', ')} et ${details.at(-1)}`
 }
 
 /** Capitalises the first letter of a sentence assembled from parts. */
@@ -49,9 +49,9 @@ export function duration(ms: number): string {
 }
 
 const WINDOW_NAMES: Record<string, string> = {
-  five_hour: '5-hour',
-  seven_day: 'weekly',
-  spend_limit: 'spend',
+  five_hour: '5 h',
+  seven_day: 'hebdomadaire',
+  spend_limit: 'dépenses',
 }
 
 export function windowName(kind: string): string {

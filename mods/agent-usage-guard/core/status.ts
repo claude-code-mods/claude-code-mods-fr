@@ -12,15 +12,15 @@ export function statusLine(state: SessionState, peers: readonly PeerRecord[], co
   const parts = liftedOrPaused(state, now)
   const limit = highestLimit(state, peers, now)
   if (limit && limit.percent >= config.limitDenyPercent) {
-    parts.push(`${windowName(limit.kind)} window ${limit.percent}%: new agents refused`)
+    parts.push(`fenêtre ${windowName(limit.kind)} à ${limit.percent} % : nouveaux agents refusés`)
   } else if (limit && limit.percent >= config.limitAskPercent) {
-    parts.push(`${windowName(limit.kind)} window ${limit.percent}%: new agents need approval`)
+    parts.push(`fenêtre ${windowName(limit.kind)} à ${limit.percent} % : les nouveaux agents nécessitent une approbation`)
   }
   const context = state.loops[MAIN]?.context
   if (context !== undefined && context >= config.contextHard) {
-    parts.push(`context ${tokens(context)}: /compact recommended`)
+    parts.push(`contexte ${tokens(context)} : /compact recommandé`)
   } else if (context !== undefined && context >= config.contextWarn) {
-    parts.push(`context ${tokens(context)}`)
+    parts.push(`contexte ${tokens(context)}`)
   }
   return parts.length > 0 ? parts.join(' · ') : undefined
 }
@@ -49,18 +49,18 @@ export function bandLine(
   const refusal = state.denials.filter((d) => now - d.at < window).at(-1)
 
   const parts: string[] = []
-  if (running > 0 || starts > 0) parts.push(`${running} of ${config.agentMax} agents running`)
-  if (starts > 0) parts.push(`${starts} of ${config.rollingMax} started in the last ${duration(window)}`)
-  if (asking.agents) parts.push('asking you about starting agents')
-  if (asking.context) parts.push('asking you about the context size')
-  if (declined !== undefined) parts.push(`new agents declined until ${shortClock(declined)}`)
-  if (paused !== undefined) parts.push(`agent spawns paused until ${shortClock(paused)}`)
-  if (refusal) parts.push(`last refusal ${shortClock(refusal.at)}: ${refusal.rule}`)
+  if (running > 0 || starts > 0) parts.push(`${running} sur ${config.agentMax} agents en cours`)
+  if (starts > 0) parts.push(`${starts} sur ${config.rollingMax} lancements ces ${duration(window)}`)
+  if (asking.agents) parts.push('vous demande de lancer des agents')
+  if (asking.context) parts.push('vous demande sur la taille du contexte')
+  if (declined !== undefined) parts.push(`nouveaux agents refusés jusqu’à ${shortClock(declined)}`)
+  if (paused !== undefined) parts.push(`lancements d’agents suspendus jusqu’à ${shortClock(paused)}`)
+  if (refusal) parts.push(`dernier refus ${shortClock(refusal.at)} : ${refusal.rule}`)
   if (parts.length === 0) return undefined
 
   const holding = asking.agents || asking.context || declined !== undefined || paused !== undefined || refusal !== undefined
   const full = running >= config.agentMax || starts >= config.rollingMax
-  return { text: `Usage guard · ${parts.join(' · ')}`, alert: holding || full }
+  return { text: `Garde d’utilisation · ${parts.join(' · ')}`, alert: holding || full }
 }
 
 /** When the band changes with no event to redraw it: a start, a refusal, a decline or the pause ages out. */
@@ -84,18 +84,18 @@ export function statusLineExpiry(state: SessionState, peers: readonly PeerRecord
 function liftedOrPaused(state: SessionState, now: number): string[] {
   const parts: string[] = []
   if (state.override && now < state.override.until) {
-    parts.push(`${scopeName(state.override.scope)} lifted until ${shortClock(state.override.until)}`)
+    parts.push(`${scopeName(state.override.scope)} levées jusqu’à ${shortClock(state.override.until)}`)
   }
   if (state.fuseUntil !== undefined && now < state.fuseUntil) {
-    parts.push(`agent spawns paused until ${shortClock(state.fuseUntil)}`)
+    parts.push(`lancements d’agents suspendus jusqu’à ${shortClock(state.fuseUntil)}`)
   }
   return parts
 }
 
 export function scopeName(scope: Scope): string {
-  if (scope === 'agents') return 'agent limits'
-  if (scope === 'context') return 'context limits'
-  return 'all limits'
+  if (scope === 'agents') return 'limites des agents'
+  if (scope === 'context') return 'limites de contexte'
+  return 'toutes les limites'
 }
 
 /** The text `/agent-guard` and `/agent-guard status` print. */
@@ -109,51 +109,51 @@ export function statusReport(
   storeFailure?: string,
 ): string {
   const running = version ? ` (${version})` : ''
-  if (!config.enabled) return `Off${running}: AGENT_GUARD is set to turn it off.`
+  if (!config.enabled) return `Désactivé${running} : AGENT_GUARD est réglé pour le désactiver.`
   const window = config.windowMs
-  const lines = [`On${running}.`]
+  const lines = [`Activé${running}.`]
 
   const peerRunning = peers.reduce((sum, p) => sum + p.running, 0)
   const starts = countOnMachine(state, peers, 'starts', now, window)
   lines.push(
-    `Agents: ${runningAgents(state)} running here, ${peerRunning} in ${count(peers.length, 'other session')} (limit ${config.agentMax}); ${starts} started in the last ${duration(window)} (limit ${config.rollingMax}).`,
+    `Agents : ${runningAgents(state)} en cours ici, ${peerRunning} dans ${count(peers.length, 'autre session')} (limite ${config.agentMax}) ; ${starts} lancements ces ${duration(window)} (limite ${config.rollingMax}).`,
   )
 
   const limits = Object.values(state.limits).filter((r) => r.resetsAt === undefined || r.resetsAt > now)
   if (limits.length > 0) {
     const text = limits
-      .map((r) => `${windowName(r.kind)} ${r.percent}%${r.resetsAt === undefined ? '' : ` (resets ${shortClock(r.resetsAt)})`}`)
+      .map((r) => `${windowName(r.kind)} ${r.percent}%${r.resetsAt === undefined ? '' : ` (réinitialisation à ${shortClock(r.resetsAt)})`}`)
       .join(', ')
-    lines.push(`Plan windows: ${text}. New agents ask from ${config.limitAskPercent}% and are refused from ${config.limitDenyPercent}%.`)
+    lines.push(`Fenêtres du forfait : ${text}. Les nouveaux agents demandent confirmation à partir de ${config.limitAskPercent} % et sont refusés à partir de ${config.limitDenyPercent} %.`)
   } else {
-    lines.push('Plan windows: no reading yet (one arrives with the next response on a subscription).')
+    lines.push('Fenêtres du forfait : aucune lecture pour l’instant (une arrive avec la prochaine réponse sur un abonnement).')
   }
 
   const context = state.loops[MAIN]?.context
   lines.push(
-    `Context: ${context === undefined ? 'unknown until the next response' : `${tokens(context)} tokens`} (warn ${tokens(config.contextWarn)}, ask before a prompt from ${tokens(config.contextHard)}).`,
+    `Contexte : ${context === undefined ? 'inconnu jusqu’à la prochaine réponse' : `${tokens(context)} jetons`} (avertissement à ${tokens(config.contextWarn)}, confirmation avant un prompt à partir de ${tokens(config.contextHard)}).`,
   )
 
   const held = liftedOrPaused(state, now)
   for (const [key, until] of Object.entries(state.leases)) {
-    if (now < until) held.push(`${key} approved${until < Number.MAX_SAFE_INTEGER ? ` until ${shortClock(until)}` : ' until the context shrinks'}`)
+    if (now < until) held.push(`${key} approuvé${until < Number.MAX_SAFE_INTEGER ? ` jusqu’à ${shortClock(until)}` : ' jusqu’à la réduction du contexte'}`)
   }
-  for (const [key, until] of Object.entries(state.refusals)) if (now < until) held.push(`${key} declined until ${shortClock(until)}`)
-  if (held.length > 0) lines.push(`Now: ${held.join('; ')}.`)
-  for (const problem of problems) lines.push(`Config: ${problem}.`)
+  for (const [key, until] of Object.entries(state.refusals)) if (now < until) held.push(`${key} refusé jusqu’à ${shortClock(until)}`)
+  if (held.length > 0) lines.push(`Actuellement : ${held.join(' ; ')}.`)
+  for (const problem of problems) lines.push(`Configuration : ${problem}.`)
   if (storeFailure !== undefined) {
-    lines.push(`Store: the guard could not save its counts (${storeFailure}), so other sessions on this machine don't count this session's agents. The journal may miss rows too.`)
+    lines.push(`Stockage : la garde n’a pas pu enregistrer ses comptages (${storeFailure}), donc les autres sessions de cette machine ne comptent pas les agents de cette session. Le journal peut aussi manquer des lignes.`)
   }
   lines.push('', USAGE)
   return lines.join('\n')
 }
 
 export const USAGE = [
-  'Commands:',
-  '  /agent-guard allow [agents|context] [minutes]   lift the guard\'s limits for this session (default: all, 10 min)',
-  '  /agent-guard pause [minutes]                     same as allow, for every limit',
-  '  /agent-guard resume                              end an allow or pause early, and clear declined questions',
-  '  /agent-guard report [days]                       what the guard did on this machine (default 7 days)',
-  '  /agent-guard simulate <rule>                     show what a rule does, with nothing held or spent',
-  '  /agent-guard status                              this summary',
+  'Commandes :',
+  '  /agent-guard allow [agents|context] [minutes]   lever les limites de la garde pour cette session (par défaut : toutes, 10 min)',
+  '  /agent-guard pause [minutes]                     identique à allow, pour toutes les limites',
+  '  /agent-guard resume                              mettre fin plus tôt à allow ou pause et effacer les refus',
+  '  /agent-guard report [days]                       ce que la garde a fait sur cette machine (7 jours par défaut)',
+  '  /agent-guard simulate <rule>                     montre l’effet d’une règle, sans blocage ni consommation',
+  '  /agent-guard status                              ce résumé',
 ].join('\n')
