@@ -89,6 +89,22 @@ const WORDS = {
       failed: '接続先の切り替えに失敗したため、直接接続しています。画像の選択は反映されません',
     },
   },
+  fr: {
+    title: 'Ressources de contexte',
+    open: 'Ouvrir le panneau des ressources', copy: 'Copier le lien', copied: 'Lien copié',
+    opened: 'Le panneau est ouvert dans le navigateur de Claude.',
+    hint: 'Le panneau est une page servie par le moteur local, comme dans Codex : cases à cocher, aperçus, filtres et sélection automatique s’y trouvent. Ouvrez-le dans un navigateur avec le lien ci-dessus, ou copiez le lien pour le coller dans un navigateur.',
+    summary: (images, off) => `${images} images dans cette session${off ? `, ${off} non envoyées` : ''}`,
+    routing: {
+      on: (port) => `Les requêtes de cette session passent par le moteur local (port ${port})`,
+      waiting: 'En attente du démarrage du moteur local…',
+      'other-endpoint': 'Cette session utilise une autre adresse et n’est pas modifiée : les cases à cocher n’ont aucun effet',
+      provider: 'Cette session utilise un service de modèles tiers et n’est pas modifiée : les cases à cocher n’ont aucun effet',
+      'engine-old': 'Le moteur en cours d’exécution est trop ancien pour utiliser des routes distinctes : fermez Codex, exécutez cam install, puis démarrez une nouvelle session',
+      'no-engine': 'Le moteur local n’est pas démarré ; cette session se connecte directement : les cases à cocher n’ont aucun effet',
+      failed: 'Le changement d’adresse a échoué ; cette session se connecte directement : les cases à cocher n’ont aucun effet',
+    },
+  },
 }
 
 // What the pane shows, kept between redraws: the routing state, whether /cam opened the page in Claude's browser, and
