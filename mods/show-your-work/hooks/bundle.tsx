@@ -2608,11 +2608,11 @@ const openArgv = (target: string) => (state.isMac ? ['open', target] : ['sh', '-
 // open's error text. `what` names the kind of thing, as in "no app opens videos".
 export function openFailure(r: { exitCode: number; stderr: string }, what: string, path: string) {
   const said = r.stderr.trim().split('\n')[0]?.trim().slice(0, 100) ?? ''
-  if (r.exitCode === 127) return "Couldn't open it: xdg-open is missing. Install xdg-utils and try again."
-  if (r.exitCode === 2 || /does not exist|no such file/i.test(said)) return `Couldn't open it: nothing is at ${path} any more.`
-  if (r.exitCode === 3 || /no application knows|no application|no method available|no default/i.test(said)) return `Couldn't open it: no app on this computer is set to open ${what}.`
-  if (r.exitCode === 4) return said ? `Couldn't open it: ${said}` : `Couldn't open it: the app for ${what} failed to start.`
-  return said ? `Couldn't open it: ${said}` : `Couldn't open it (error ${r.exitCode}).`
+  if (r.exitCode === 127) return "Ouverture impossible : xdg-open est absent. Installez xdg-utils et réessayez."
+  if (r.exitCode === 2 || /does not exist|no such file/i.test(said)) return `Ouverture impossible : plus rien à l’emplacement ${path}.`
+  if (r.exitCode === 3 || /no application knows|no application|no method available|no default/i.test(said)) return `Ouverture impossible : aucune application de cet ordinateur n’est associée aux ${what}.`
+  if (r.exitCode === 4) return said ? `Ouverture impossible : ${said}` : `Ouverture impossible : l’application pour les ${what} n’a pas démarré.`
+  return said ? `Ouverture impossible : ${said}` : `Ouverture impossible (erreur ${r.exitCode}).`
 }
 
 // The narrowest the scrub and button rows get, in columns: room for the play
@@ -2885,7 +2885,7 @@ function probe($: EngineInterface, site: string, key: string, pic: Pic) {
       state.canImage = false
       state.drawCause = causeOf(state.inTmux, state.terminalName, state.isForced)
       track('cannot_draw', { cause: state.drawCause })
-      $.ui.toast("Pictures can't show here: see the notice in the chat.")
+      $.ui.toast("Les images ne peuvent pas s’afficher ici : voyez l’avis dans la conversation.")
       redraw($)
     }
   }, () => undefined)
@@ -3331,9 +3331,9 @@ function PageButtons(ui: Ui, $: EngineInterface, site: string, media: Shown) {
     redraw($, site)
   }
   return [
-    pages.count > 1 && <Button key="prev" plain dimColor={at === 0} label="‹ Prev" onPress={() => { act('page_prev'); go(at - 1) }} />,
+    pages.count > 1 && <Button key="prev" plain dimColor={at === 0} label="‹ Préc" onPress={() => { act('page_prev'); go(at - 1) }} />,
     <Text key="page-count" dimColor>{`Page ${at + 1} of ${pages.count}`}</Text>,
-    pages.count > 1 && <Button key="next" plain dimColor={at >= pages.count - 1} label="Next ›" onPress={() => { act('page_next'); go(at + 1) }} />,
+    pages.count > 1 && <Button key="next" plain dimColor={at >= pages.count - 1} label="Suiv ›" onPress={() => { act('page_next'); go(at + 1) }} />,
   ]
 }
 
@@ -3409,7 +3409,7 @@ function pickVersion($: EngineInterface, site: string, shown: Shown, to: number)
     if (!one.isCompare) flip($, site, { ...shown, compare: version }, true)
     else draw($, site, version)
     redraw($, site)
-  }).catch(() => $.ui.toast('That version is gone'))
+  }).catch(() => $.ui.toast('Cette version n’existe plus'))
 }
 
 // With history, which version is on screen, in words: "viewing v1 of 3".
@@ -3488,7 +3488,7 @@ function Tabs(ui: Ui, $: EngineInterface, site: string, shown: Shown) {
     <Box flexDirection="row" gap={1}>
       <Button key="side-before" variant={isCompare ? 'primary' : 'secondary'} label={tabLabel(shown.compare.label ?? 'Original')} onPress={() => { act('original'); tourHeard($, 'original'); restore(true) }} />
       <Button key="side-after" variant={isUpdated ? 'primary' : 'secondary'} label={tabLabel(shown.label ?? 'Updated')} onPress={() => { act('updated'); restore(false) }} />
-      {canBoth && <Button key="side-both" variant={isBoth ? 'primary' : 'secondary'} label="⧉ Compare" onPress={() => { act('compare'); tourHeard($, 'compare'); restore(false); split($, site, shown, true) }} />}
+      {canBoth && <Button key="side-both" variant={isBoth ? 'primary' : 'secondary'} label="⧉ Comparer" onPress={() => { act('compare'); tourHeard($, 'compare'); restore(false); split($, site, shown, true) }} />}
       {hasSteps && (
         <Button key="history" variant={isHistory ? 'primary' : 'secondary'} label={`History · ${shown.history!.length + 1}`}
           onPress={() => { if (isHistory) return restore(false); act('history'); one.isHistory = true; one.changesPage = 0; redraw($, site) }} />
@@ -3730,16 +3730,16 @@ function Actions(ui: Ui, $: EngineInterface, media: Shown, source: string, isNar
     for (let n = 2; await $.fs.stat(out).then(() => true, () => false); n++) out = `${state.home}/Downloads/${stem} ${n}${ext}`
     if (!state.isMac) await $.process.run(['mkdir', '-p', `${state.home}/Downloads`])
     const r = await $.process.run(['cp', source, out])
-    if (r.exitCode !== 0) return $.ui.toast(`Couldn't save it to Downloads: ${r.stderr.trim().split('\n')[0]?.slice(0, 100) || `error ${r.exitCode}`}`)
+    if (r.exitCode !== 0) return $.ui.toast(`Enregistrement impossible dans Téléchargements : ${r.stderr.trim().split('\n')[0]?.slice(0, 100) || `erreur ${r.exitCode}`}`)
     // Saved either way; the folder opening is a convenience on top.
     await $.process.run(state.isMac ? ['open', '-R', out] : openArgv(`${state.home}/Downloads`)).catch(() => undefined)
-    $.ui.toast(`Saved to Downloads/${out.split('/').pop()}`)
+    $.ui.toast(`Enregistré dans Téléchargements/${out.split('/').pop()}`)
   }
 
   return (
     <Box flexDirection="row" gap={2}>
       {!source.startsWith(`${state.home}/Downloads/`) ? (
-        <Button key="keep" plain dimColor label="Save to Downloads" onPress={() => { act('save'); void keep() }} />
+        <Button key="keep" plain dimColor label="Enregistrer dans Téléchargements" onPress={() => { act('save'); void keep() }} />
       ) : (
         <Button key="reveal" plain dimColor label={state.isMac ? 'Show in Finder' : 'Show in folder'} onPress={() => act('reveal') || void $.process.run(state.isMac ? ['open', '-R', source] : openArgv(source.slice(0, source.lastIndexOf('/')) || '/')).then(r => done(r, state.isMac ? 'Shown in Finder' : 'Opened the folder', 'folders', source))} />
       )}
@@ -3748,9 +3748,9 @@ function Actions(ui: Ui, $: EngineInterface, media: Shown, source: string, isNar
           key="copy"
           plain
           dimColor
-          label="Copy path"
+          label="Copier le chemin"
           onPress={(press: { surface: 'terminal' }) =>
-            act('copy_path') || void $.ui.copy({ text: source, surface: press.surface }).then(r => $.ui.toast(r.isCopied ? 'Path copied' : 'Could not copy the path'))
+            act('copy_path') || void $.ui.copy({ text: source, surface: press.surface }).then(r => $.ui.toast(r.isCopied ? 'Chemin copié' : 'Impossible de copier le chemin'))
           }
         />
       )}
@@ -3895,7 +3895,7 @@ export function cantDraw(cause: DrawCause, name: string, kind: 'picture' | 'vide
   if (cause === 'tmux') return {
     title: `Restart Claude Code to show ${what} in tmux`,
     text: `"${name}" is ready, but Claude Code keeps ${what} off inside tmux until it restarts. Press Copy command, type /exit, and paste it here to reopen this chat with ${what} on. New tmux panes have them on already.`,
-    command: `${FORCE}=1 claude --resume${id ? ` ${id}` : ''}`, label: 'Copy command', action: 'copy_resume_command',
+    command: `${FORCE}=1 claude --resume${id ? ` ${id}` : ''}`, label: 'Copier la commande', action: 'copy_resume_command',
     claude: `Claude Code keeps pictures off inside tmux, so the person saw a notice instead of ${name}. They can restart Claude Code with ${FORCE}=1 to see it.`,
   }
   if (cause === 'herdr') return {
@@ -3910,7 +3910,7 @@ export function cantDraw(cause: DrawCause, name: string, kind: 'picture' | 'vide
     return {
       title: `Restart Claude Code to show ${what} here`,
       text: `"${name}" is ready, but Claude Code doesn't recognise this terminal, so it keeps ${what} off. If it's built on Ghostty or kitty, press Copy command, type /exit, and paste it here to reopen this chat with ${what} on.`,
-      command: `${FORCE}=1 claude --resume${id ? ` ${id}` : ''}`, label: 'Copy command', action: 'copy_resume_command',
+      command: `${FORCE}=1 claude --resume${id ? ` ${id}` : ''}`, label: 'Copier la commande', action: 'copy_resume_command',
       claude: `Claude Code doesn't recognise this terminal, so it kept pictures off and the person saw a notice instead of ${name}. They can restart Claude Code with ${FORCE}=1 to see it.`,
     }
   }
@@ -3919,7 +3919,7 @@ export function cantDraw(cause: DrawCause, name: string, kind: 'picture' | 'vide
   if (cause === 'iterm') return {
     title: `iTerm2 shows ${what} in fullscreen view`,
     text: `"${name}" is ready. Type /tui fullscreen to switch Claude Code to its fullscreen view (it restarts and resumes this chat), then ask Claude to show it again. Needs iTerm2 3.5 or later.`,
-    command: '/tui fullscreen', label: 'Copy command', action: 'copy_tui_fullscreen',
+    command: '/tui fullscreen', label: 'Copier la commande', action: 'copy_tui_fullscreen',
     claude: `iTerm2 only draws pictures in Claude Code's fullscreen view, so the person saw a notice instead of ${name}. They can type /tui fullscreen and ask again.`,
   }
   // Rex paints Claude Code's pictures, but Claude Code only sends them there
@@ -3931,7 +3931,7 @@ export function cantDraw(cause: DrawCause, name: string, kind: 'picture' | 'vide
     return {
       title: `Turn on pictures in ${where}`,
       text: `Claude Code doesn't recognise ${where} yet, so it keeps pictures and videos off. Turn on pictures adds one line to your shell profile so they show from now on, and copies a command. Type /exit and paste it here to reopen this chat.`,
-      command: `${FORCE}=1 claude --resume${id ? ` ${id}` : ''}`, label: 'Turn on pictures', action: 'turn_on_pictures',
+      command: `${FORCE}=1 claude --resume${id ? ` ${id}` : ''}`, label: 'Activer les images', action: 'turn_on_pictures',
       claude: `Claude Code keeps pictures off in ${where} unless it starts with ${FORCE}=1, so the person saw a notice instead of ${name}. They can press Turn on pictures on it and reopen the chat to see it.`,
     }
   }
@@ -3940,7 +3940,7 @@ export function cantDraw(cause: DrawCause, name: string, kind: 'picture' | 'vide
   if (cause === 'desktop') return {
     title: `The desktop app can't show ${what} here`,
     text: `"${name}" is ready, but the Claude desktop app doesn't draw ${what} inside the chat. Press Open to see it, or run this chat in Ghostty or kitty to see ${what} inline.`,
-    command: '', label: 'Open', action: 'open_file',
+    command: '', label: 'Ouvrir', action: 'open_file',
     claude: `the Claude desktop app can't draw pictures in the chat, so the person saw a notice instead of ${name}. They can press Open on it to view the file.`,
   }
   const known = NO_PLACEHOLDERS[state.terminalName]
@@ -3950,13 +3950,13 @@ export function cantDraw(cause: DrawCause, name: string, kind: 'picture' | 'vide
       ? `"${name}" is ready, but ${known} can't draw ${what} the way Claude Code sends them yet. They show in Ghostty and kitty. See the list:`
       : `"${name}" is ready, but this terminal can't draw ${what}. show-your-work works in Ghostty and kitty. See the list:`,
     link: { href: TERMINALS, after: 'Then press Copy command and paste it in one of them to open this chat there.' },
-    command: `claude --resume${id ? ` ${id}` : ''}`, label: 'Copy command', action: 'copy_resume_command',
+    command: `claude --resume${id ? ` ${id}` : ''}`, label: 'Copier la commande', action: 'copy_resume_command',
     claude: `${known ?? 'this terminal'} can't draw Claude Code's pictures, so the person saw a notice instead of ${name}. Pictures show in Ghostty or kitty (list at ${TERMINALS}).`,
   }
   return {
     title: `Can't show ${what} in a background session`,
     text: `"${name}" is ready, but this chat is running as a background session, and those can't draw ${what} in the terminal. Press Copy command and paste it in a normal terminal tab to reopen it there.`,
-    command: resumeCommand(id), label: 'Copy command', action: 'copy_resume_command',
+    command: resumeCommand(id), label: 'Copier la commande', action: 'copy_resume_command',
     claude: `this chat runs as a background session, which can't draw pictures, so the person saw a notice instead of ${name}. They can resume the chat in a normal terminal tab to see it.`,
   }
 }
@@ -3965,13 +3965,13 @@ function Warning(ui: Ui, $: EngineInterface, site: string, shown: Shown, width: 
   const n = cantDraw(state.drawCause, shown.title, shown.frames ? 'video' : 'picture', state.sessionId)
   const file = shown.origin ?? shown.source ?? shown.path
   const onPress = state.drawCause === 'desktop'
-    ? () => act(n.action) || void $.process.run(openArgv(file)).then(r => { if (r.exitCode !== 0) $.ui.toast(openFailure(r, shown.frames ? 'videos' : 'pictures', file)) })
+    ? () => act(n.action) || void $.process.run(openArgv(file)).then(r => { if (r.exitCode !== 0) $.ui.toast(openFailure(r, shown.frames ? 'vidéos' : 'images', file)) })
     : state.drawCause === 'unrecognised'
       ? (press: { surface: 'terminal' }) => act(n.action) || void (async () => {
         const profile = await turnOnPictures($)
         const copied = await $.ui.copy({ text: n.command, surface: press.surface }).then(r => r.isCopied, () => false)
         const where = profile ? `Added to ${profile.replace(state.home, '~')}. ` : ''
-        $.ui.toast(copied ? `${where}Copied: type /exit and paste it.` : `${where}Could not copy the command.`)
+        $.ui.toast(copied ? `${where}Copié : tapez /exit puis collez-le.` : `${where}Impossible de copier la commande.`)
       })()
       : undefined
   return NoticeBox(ui, $, width, { ...n, copy: n.command, onPress })
@@ -3988,7 +3988,7 @@ function Expired(ui: Ui, $: EngineInterface, shown: Shown, width: number) {
   return NoticeBox(ui, $, width, {
     title: 'This preview has expired',
     text: `Previews are cleared after a while to save space. To see "${shown.title}" again, copy the prompt and paste it to Claude.`,
-    copy: expiredPrompt(shown), label: 'Copy prompt', action: 'copy_expired_prompt', isCalm: true,
+    copy: expiredPrompt(shown), label: 'Copier l’invite', action: 'copy_expired_prompt', isCalm: true,
   })
 }
 
@@ -4012,7 +4012,7 @@ export function NoticeBox(ui: Ui, $: EngineInterface, width: number, n: { title:
           variant="primary"
           label={n.label}
           onPress={(press: { surface: 'terminal' }) =>
-            n.onPress ? n.onPress(press) : act(n.action) || void $.ui.copy({ text: n.copy, surface: press.surface }).then(r => $.ui.toast(r.isCopied ? (n.command ? 'Copied. Paste it in your terminal.' : 'Copied. Paste it to Claude.') : 'Could not copy'))
+            n.onPress ? n.onPress(press) : act(n.action) || void $.ui.copy({ text: n.copy, surface: press.surface }).then(r => $.ui.toast(r.isCopied ? (n.command ? 'Copié. Collez-le dans votre terminal.' : 'Copié. Collez-le pour Claude.') : 'Copie impossible'))
           }
         />
       </Box>
@@ -4116,7 +4116,7 @@ export async function Viewer(
       : <Text color="suggestion">{prLabel}</Text>
     : null
   const run = (argv: string[], note: string) => () => {
-    void $.process.run(argv).then(r => $.ui.toast(r.exitCode === 0 ? note : `Could not: ${r.stderr.trim()}`))
+    void $.process.run(argv).then(r => $.ui.toast(r.exitCode === 0 ? note : `Impossible : ${r.stderr.trim()}`))
   }
   // The single view with the QA sidebar is the default; side by side is a click away.
   if (!state.canImage) {
@@ -4184,8 +4184,8 @@ export async function Viewer(
         let target = rendered ?? page
         if (rendered) {
           try { target = await documentView($, baseMedia) ?? undefined }
-          catch (error) { $.ui.toast(`Could not open document: ${String(error).slice(0, 160)}`); return }
-          if (!target) { $.ui.toast('Could not prepare the document preview.'); return }
+          catch (error) { $.ui.toast(`Ouverture du document impossible : ${String(error).slice(0, 160)}`); return }
+          if (!target) { $.ui.toast('Impossible de préparer l’aperçu du document.'); return }
         }
         // A local page opens in its own small window, the way an image opens
         // in an image viewer: the same engine that rendered the preview, as
@@ -4196,7 +4196,7 @@ export async function Viewer(
           ? ['sh', '-c', OPEN_SH, 'sh', ...htmlOpenArgv(state.chrome, target!)]
           : openArgv(target ?? source)
         void $.process.run(argv).then(r =>
-          $.ui.toast(r.exitCode === 0 ? `Opened ${(target ?? source.split('/').pop()!).slice(0, 60)}` : openFailure(r, target ? 'web pages' : media.kind === 'video' ? 'videos' : media.kind === 'audio' ? 'audio files' : 'pictures', target ?? source)),
+          $.ui.toast(r.exitCode === 0 ? `Ouvert : ${(target ?? source.split('/').pop()!).slice(0, 60)}` : openFailure(r, target ? 'pages web' : media.kind === 'video' ? 'vidéos' : media.kind === 'audio' ? 'fichiers audio' : 'images', target ?? source)),
         )
       }}
     />
@@ -4586,7 +4586,7 @@ export async function checkForUpdate($: EngineInterface, current: string, branch
   track('update_check', { result: found.kind, channel: branch, ...('latest' in found ? { latest: found.latest } : {}) })
   if (found.kind !== 'offline' && found.kind !== 'no_cli') await $.store.set('updateCheckedAt', now)
   const isReady = found.kind === 'pending' || ((found.kind === 'update' || found.kind === 'move') && (await installUpdate($, found, current)))
-  if (isReady && 'latest' in found) $.ui.status(`show-your-work ${found.latest} is ready. Restart Claude Code to use it.`)
+  if (isReady && 'latest' in found) $.ui.status(`show-your-work ${found.latest} est prêt. Redémarrez Claude Code pour l’utiliser.`)
 }
 
 // The result of checking for an update:
@@ -4804,7 +4804,7 @@ async function installFound($: EngineInterface, found: Extract<Found, { kind: 'u
 export function UpdatePane(ui: Ui, $: EngineInterface) {
   const { Box, Text, Button } = ui
   const channel = settings.stable_updates ? 'Stable releases' : 'Latest releases'
-  const close = <Button key="update-close" label="Close" onPress={() => void $.ui.close({ id: UPDATE })} />
+  const close = <Button key="update-close" label="Fermer" onPress={() => void $.ui.close({ id: UPDATE })} />
   const c = updateCheck
   const found = c.phase === 'found' ? c.found : null
   // Each outcome of the check sets a bold headline, a dim second line, and
@@ -4814,7 +4814,7 @@ export function UpdatePane(ui: Ui, $: EngineInterface) {
   let actions: Ui[] = []
   if (found?.kind === 'update' || found?.kind === 'move') {
     head = `Version ${found.latest} is available`
-    actions = [<Button key="update-install" variant="primary" label="Install" onPress={() => void installFound($, found)} />, close]
+    actions = [<Button key="update-install" variant="primary" label="Installer" onPress={() => void installFound($, found)} />, close]
   } else if (found?.kind === 'current') {
     head = "You're on the latest version"
     actions = [close]
@@ -4912,7 +4912,7 @@ export function Settings(ui: Ui, $: EngineInterface) {
     <Box flexDirection="column" paddingX={2} paddingBottom={1}>
       <Box flexDirection="row" columnGap={2} marginBottom={1}>
         <Button key="close" label="✕ Close" onPress={() => void $.ui.close({ id: WELCOME })} />
-        <Button key="tour" label="Take a tour" onPress={() => { act('tour_from_settings'); void $.ui.close({ id: WELCOME }).then(() => openTour($)) }} />
+        <Button key="tour" label="Faire la visite" onPress={() => { act('tour_from_settings'); void $.ui.close({ id: WELCOME }).then(() => openTour($)) }} />
       </Box>
       <Box marginBottom={1}><Text bold>Show Your Work Settings</Text></Box>
       {SettingRows(ui, $)}
@@ -5719,7 +5719,7 @@ export const register: Register = on => {
       const n = notices.get((props as { tool_use_id?: string }).tool_use_id ?? '') ??
         (textOf(props.output).includes(NO_FFMPEG) ? noticeOf(new Error(NO_FFMPEG), '') : undefined)
       if (!n) return next(e)
-      return NoticeBox($.ui.resolve(e) as Ui, $, (e.viewport?.columns ?? 100) - 8, { ...n, copy: n.prompt, label: 'Copy prompt', action: `copy_${n.kind}_prompt` })
+      return NoticeBox($.ui.resolve(e) as Ui, $, (e.viewport?.columns ?? 100) - 8, { ...n, copy: n.prompt, label: 'Copier l’invite', action: `copy_${n.kind}_prompt` })
     }
     // Scrolled out of view: stop playing.
     const one = player(e.requestId)

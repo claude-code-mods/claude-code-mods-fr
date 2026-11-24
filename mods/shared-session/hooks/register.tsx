@@ -557,7 +557,7 @@ async function selfUpdate($: $, latest: string) {
   )
   const got = /version=(\S+)/.exec(fetched.out)?.[1]
   const apply = Boolean(got && newerThan(got, mine))
-  if (apply) $.ui.log(`Updating Shared Sessions to ${got}. It reloads in place; nothing to restart.`)
+  if (apply) $.ui.log(`Mise à jour de Shared Sessions vers ${got}. Rechargement sur place ; rien à redémarrer.`)
   if (got) {
     await sh(
       $,
@@ -579,7 +579,7 @@ async function selfUpdate($: $, latest: string) {
     // otherwise keep this session on its version unseen.
     if (!got && !/busy/.test(fetched.out) && failedFor !== latest) {
       failedFor = latest
-      $.ui.log(`Shared Sessions ${latest} is out, but this machine couldn't download it. Run: ${UPDATE_COMMAND} — the next session picks it up.`)
+      $.ui.log(`Shared Sessions ${latest} est disponible, mais cette machine n’a pas pu le télécharger. Lancez : ${UPDATE_COMMAND} — la prochaine session le prendra.`)
     }
   }
 }
@@ -604,7 +604,7 @@ async function catchUpFromInstalled($: $) {
   }
   const version = typeof installed?.version === 'string' ? installed.version : ''
   if (!version || !newerThan(version, mine) || typeof installed?.installPath !== 'string') return
-  $.ui.log(`Updating Shared Sessions to ${version} from the installed copy. It reloads in place; nothing to restart.`)
+  $.ui.log(`Mise à jour de Shared Sessions vers ${version} depuis la copie installée. Rechargement sur place ; rien à redémarrer.`)
   await sh(
     $,
     [
@@ -725,7 +725,7 @@ async function readUpdates($: $) {
   // marketplace's autoUpdate), or the folder named for them gone: in place now.
   const missing = named && dir ? !(await $.fs.exists(`${dir}/.claude-plugin/plugin.json`).catch(() => true)) : false
   if (on && (!named || missing) && !runsLive($) && (await enableLive($))) {
-    $.ui.log('Shared Sessions now updates in place: from your next new session on, a release loads without a restart.')
+    $.ui.log('Shared Sessions se met désormais à jour sur place : dès votre prochaine nouvelle session, une version se charge sans redémarrage.')
   }
 }
 
@@ -738,7 +738,7 @@ async function writeUpdates($: $, on: boolean) {
   try {
     if (await $.fs.exists(path)) settings = JSON.parse(await $.fs.read(path))
   } catch {
-    $.ui.toast(`Couldn't read ${path}, so nothing changed`)
+    $.ui.toast(`Lecture impossible de ${path}, rien n’a changé`)
     return
   }
   const known = (settings.extraKnownMarketplaces ?? {}) as Record<string, Record<string, unknown>>
@@ -747,17 +747,17 @@ async function writeUpdates($: $, on: boolean) {
   try {
     await $.fs.write(path, `${JSON.stringify(settings, null, 2)}\n`)
   } catch {
-    $.ui.toast("Couldn't change it here: use /plugin → Marketplaces → claude-share")
+    $.ui.toast("Modification impossible ici : utilisez /plugin → Marketplaces → claude-share")
     return
   }
   await update($, updatesA, () => on)
   if (on) {
     const live = await enableLive($)
-    $.ui.toast(live ? (runsLive($) ? 'Updates: automatic, in place' : 'Updates: automatic. New sessions update in place') : 'Updates: automatic')
+    $.ui.toast(live ? (runsLive($) ? 'Mises à jour : automatiques, sur place' : 'Mises à jour : automatiques. Les nouvelles sessions se mettent à jour sur place') : 'Mises à jour : automatiques')
   } else {
     await nameLiveDir($, false)
     await update($, liveUpdatesA, () => (runsLive($) ? 'running' : null))
-    $.ui.toast(runsLive($) ? 'Updates: manual, from your next new session on' : 'Updates: manual')
+    $.ui.toast(runsLive($) ? 'Mises à jour : manuelles, dès votre prochaine nouvelle session' : 'Mises à jour : manuelles')
   }
 }
 
@@ -882,16 +882,16 @@ type RunWords = {
 }
 const SAY: Record<RunOwner, RunWords> = {
   listener: {
-    unreachable: (_host, port) => `Couldn't forward localhost:${port}. Press Open in the Room to try again.`,
-    busy: 'Preview connection or request limit reached. Close unused preview tabs or wait a minute, then retry.',
-    refused: 'Preview authorization was refused. Press Open in the Room to reconnect.',
-    connect: () => 'The last channel could not connect to the host target. Mapping retained; target unverified.',
+    unreachable: (_host, port) => `Transfert impossible de localhost:${port}. Appuyez sur Ouvrir dans le Salon pour réessayer.`,
+    busy: 'Limite de connexions ou de requêtes de l’aperçu atteinte. Fermez les onglets d’aperçu inutilisés ou attendez une minute, puis réessayez.',
+    refused: 'L’autorisation de l’aperçu a été refusée. Appuyez sur Ouvrir dans le Salon pour reconnecter.',
+    connect: () => 'Le dernier canal n’a pas pu se connecter à la cible de l’hôte. Correspondance conservée ; cible non vérifiée.',
   },
   window: {
-    unreachable: (host, port) => `Couldn't reach ${host}'s localhost:${port} for the preview window. Press Open preview to try again.`,
-    busy: 'The preview window reached its connection or request limit. Close unused tabs in it or wait a minute, then reload the page.',
-    refused: "The preview window's authorization was refused. Press Open preview to reconnect.",
-    connect: (host, port) => `The preview window couldn't connect to ${host}'s localhost:${port}. Check that it's running there, then reload the page.`,
+    unreachable: (host, port) => `Impossible d’atteindre localhost:${port} de ${host} pour la fenêtre d’aperçu. Appuyez sur Ouvrir l’aperçu pour réessayer.`,
+    busy: 'La fenêtre d’aperçu a atteint sa limite de connexions ou de requêtes. Fermez-y les onglets inutilisés ou attendez une minute, puis rechargez la page.',
+    refused: "L’autorisation de la fenêtre d’aperçu a été refusée. Appuyez sur Ouvrir l’aperçu pour reconnecter.",
+    connect: (host, port) => `La fenêtre d’aperçu n’a pas pu se connecter à localhost:${port} de ${host}. Vérifiez qu’il tourne là-bas, puis rechargez la page.`,
   },
 }
 
@@ -1271,7 +1271,7 @@ function reseat($: $, room: ShareRoom): Promise<Reseat> {
       // in flight with the old seat's token ends (`sameRoom`).
       if (s.live && s.key === roomIdentity(room)) s.token = joined.token
       await update($, roomA, r => (r && r.id === room.id && s.live ? { ...r, token: joined.token, seat: joined.seat } : r))
-      $.ui.log('Shared session: the room let this seat go; took a new one', { to: 'debug' })
+      $.ui.log('Session partagée : le salon a libéré ce siège ; un nouveau a été pris', { to: 'debug' })
       // Its answer's list isn't taken: the stream or a poll may have brought
       // a newer one meanwhile, which it would undo (a preview opened since
       // would end here for good), and the room's next page brings its list.
@@ -1656,10 +1656,10 @@ async function runStream($: $, generation: number) {
           else if (ask) answerRoomAsk($, room, ask, message[ask] as Record<string, unknown>)
           else if (message.peer && typeof message.peer === 'object')
             void takePeer($, room, host, message.peer as Record<string, unknown>).catch(error =>
-              $.ui.log(`Shared session: a message between sessions: ${String((error as Error)?.message ?? error)}`, { to: 'debug' }),
+              $.ui.log(`Session partagée : un message entre sessions : ${String((error as Error)?.message ?? error)}`, { to: 'debug' }),
             )
           else if (Array.isArray(message.events)) {
-            if (!streamUp && !delivered) $.ui.log('Shared session: listening on a stream', { to: 'debug' })
+            if (!streamUp && !delivered) $.ui.log('Session partagée : en écoute sur un flux', { to: 'debug' })
             // Connected: the Stops the room didn't hear are told again.
             if (host && !delivered) void endUnheard($, room, scope).catch(() => {})
             streamUp = true
@@ -1868,7 +1868,7 @@ async function absorb($: $, room: ShareRoom, mode: ShareMode, event: ServerEvent
       const back = (lostAt.get(who) ?? -Infinity) > event.ts - 30 * 60_000
       lostAt.delete(who)
       if (live && !mine && !back) {
-        $.ui.log(`${who} joined`)
+        $.ui.log(`${who} a rejoint`)
         void cue($, 'join', `${who} joined your session`)
       }
       break
@@ -1881,7 +1881,7 @@ async function absorb($: $, room: ShareRoom, mode: ShareMode, event: ServerEvent
       const removed = body.reason === 'removed'
       await note({ ts: event.ts, who, kind: 'leave', text: lost ? 'timeout' : removed ? 'removed' : undefined })
       if (lost) lostAt.set(who, event.ts)
-      else if (live && !mine) $.ui.log(removed ? `${who} left: no longer in the team` : `${who} left`)
+      else if (live && !mine) $.ui.log(removed ? `${who} est parti : plus dans l’équipe` : `${who} est parti`)
       break
     }
     case 'prompt':
@@ -2263,7 +2263,7 @@ async function noteMention($: $, room: ShareRoom, who: string, text: string, whe
   const me = await meIn($, room)
   if (who === me || !mentionsOf(text, [me]).length) return
   const said = text.replace(/\s+/g, ' ').trim()
-  $.ui.toast(`${who} mentioned you${where === 'chat' ? ' in the chat' : ''}: ${said.slice(0, 120)}${said.length > 120 ? '…' : ''}`)
+  $.ui.toast(`${who} vous a mentionné${where === 'chat' ? ' dans le chat' : ''} : ${said.slice(0, 120)}${said.length > 120 ? '…' : ''}`)
   void cue($, 'mention', `${who} mentioned you`)
   void $.prompt.suggest({ text: `@${who} ` }).catch(() => {})
   nudgeSidebar($)
@@ -2377,7 +2377,7 @@ async function refreshStatus($: $) {
   statusShown = true
   const here = [...new Set(v.everyone.filter(p => p.online).map(p => p.name))]
   const w = v.working
-  $.ui.status(`● Live · ${v.mode === 'host' ? 'sharing' : `${v.room.host}'s session`} · ${listNames(here)} here${w ? ` · Claude for ${w.by}` : ''}`)
+  $.ui.status(`● En direct · ${v.mode === 'host' ? 'partage' : `session de ${v.room.host}`} · ${listNames(here)} ici${w ? ` · Claude pour ${w.by}` : ''}`)
 }
 
 async function setPrefs($: $, change: Partial<SharePrefs>) {
@@ -2542,7 +2542,7 @@ async function receive($: $, mode: ShareMode, room: ShareRoom, page: EventsPage)
   if (mode === 'host') await noteBehind($, page.people)
   const hostIs = page.people.find(p => p.role === 'host')?.online
   if (mode === 'guest' && hostWas !== undefined && hostIs !== undefined && hostWas !== hostIs) {
-    $.ui.toast(hostIs ? `${room.host} is back` : `${room.host}'s Claude Code closed; the room waits for them`)
+    $.ui.toast(hostIs ? `${room.host} est de retour` : `Claude Code de ${room.host} est fermé ; le salon les attend`)
   }
   // What's shared now, before the page's events: an artifact among them
   // shows a preview the list has.
@@ -2749,7 +2749,7 @@ async function roomClosed($: $, opts: { start?: boolean; keep?: boolean } = {}):
     closing = finishClose($, closeMark)
       .catch(error => {
         try {
-          $.ui.log(`Shared session: finishing leaving the room: ${String((error as Error)?.message ?? error)}`, { to: 'debug' })
+          $.ui.log(`Session partagée : fin du départ du salon : ${String((error as Error)?.message ?? error)}`, { to: 'debug' })
         } catch {}
       })
       .finally(() => {
@@ -3097,7 +3097,7 @@ async function setPinned($: $, pinned: boolean, attempt = 0) {
 async function allowTools($: $, tools: readonly string[], said: string): Promise<boolean> {
   const found = await readSettings($)
   if (!found) {
-    $.ui.toast(`Couldn't read ${(await settingsFile($)) ?? 'your Claude Code settings'}, so nothing changed`)
+    $.ui.toast(`Lecture impossible de ${(await settingsFile($)) ?? 'vos paramètres Claude Code'}, rien n’a changé`)
     return false
   }
   const permissions = { ...((found.settings.permissions ?? {}) as Record<string, unknown>) }
@@ -3106,7 +3106,7 @@ async function allowTools($: $, tools: readonly string[], said: string): Promise
   try {
     await $.fs.write(found.path, `${JSON.stringify({ ...found.settings, permissions }, null, 2)}\n`)
   } catch {
-    $.ui.toast(`Couldn't change ${found.path}`)
+    $.ui.toast(`Modification impossible de ${found.path}`)
     return false
   }
   $.ui.toast(said)
@@ -3458,25 +3458,25 @@ async function copyText($: $, text: string, done: string, surface?: RenderSurfac
 async function pressInvite($: $, url: string, surface?: RenderSurface) {
   const t = await read($, teamsA)
   if (!t.account) {
-    $.ui.toast('Sign in to invite teammates: the Team panel shows how')
+    $.ui.toast('Connectez-vous pour inviter des coéquipiers : le panneau Team explique comment')
     return openTeam($)
   }
   const people = await read($, peopleA)
   const mates = (t.teammates ?? []).filter(m => !people.some(p => p.online && p.name === m.name))
   if (!mates.length) {
     const copied = await $.ui.copy({ text: url, surface }).catch(() => ({ isCopied: false }))
-    $.ui.toast(copied.isCopied ? 'No teammates to invite here yet · link copied' : 'No teammates to invite here yet: share the link instead')
-    if (!copied.isCopied) $.ui.log(`The share link: ${url}`)
+    $.ui.toast(copied.isCopied ? 'Aucun coéquipier à inviter ici pour l’instant · lien copié' : 'Aucun coéquipier à inviter ici pour l’instant : partagez le lien à la place')
+    if (!copied.isCopied) $.ui.log(`Le lien de partage : ${url}`)
     return
   }
   await update($, roomTabA, () => 'people')
-  $.ui.toast(`Invite ${mates.length === 1 ? (mates[0]?.name ?? 'your teammate') : `any of ${mates.length} teammates`} below`)
+  $.ui.toast(`Invitez ${mates.length === 1 ? (mates[0]?.name ?? 'votre coéquipier') : `l’un de vos ${mates.length} coéquipiers`} ci-dessous`)
 }
 
 async function copyLink($: $, url: string, surface?: RenderSurface) {
   const copied = await $.ui.copy({ text: url, surface }).catch(() => ({ isCopied: false }))
-  if (copied.isCopied) $.ui.toast('Link copied')
-  else $.ui.log(`The share link: ${url}`)
+  if (copied.isCopied) $.ui.toast('Lien copié')
+  else $.ui.log(`Le lien de partage : ${url}`)
 }
 
 // Stop sharing ends the room for everyone: the first press asks, a second
@@ -4012,7 +4012,7 @@ async function resumeJoined($: $) {
     )
     for (const exchange of caught) laterRides.push({ text: exchange.prompt, ride: { kind: 'static', rows: exchange.rows } })
     startFeed($)
-    $.ui.log(caught.length ? `Back in ${room.host}'s session. What you missed follows.` : `Back in ${room.host}'s session.`)
+    $.ui.log(caught.length ? `De retour dans la session de ${room.host}. Ce que vous avez manqué suit.` : `De retour dans la session de ${room.host}.`)
     if (caught.length || running) scheduleRides($)
   } finally {
     if (reclaiming === back) reclaiming = null
@@ -4052,7 +4052,7 @@ async function resumeHosting($: $) {
       page = await eventsSince($, saved.room, saved.room.seq)
     } catch (error) {
       if (isGone(error)) {
-        if (current()) $.ui.log('The session you shared ended while this one was closed.')
+        if (current()) $.ui.log('La session que vous partagiez s’est terminée pendant que celle-ci était fermée.')
         return
       }
       // Unreachable for now: share on, and the feed keeps trying.
@@ -4060,7 +4060,7 @@ async function resumeHosting($: $) {
     // The session ended meanwhile (its place saved again, or its room
     // ended), or the room was given up for another: nothing more of it here.
     if (!current()) return
-    if (page?.ended) return void $.ui.log('The session you shared ended while this one was closed.')
+    if (page?.ended) return void $.ui.log('La session que vous partagiez s’est terminée pendant que celle-ci était fermée.')
     const room: ShareRoom = { ...saved.room, seq: page?.seq ?? saved.room.seq }
     const shares = sharesSaved(saved)
     await update($, roomA, v => (reclaiming === back ? room : v))
@@ -4116,7 +4116,7 @@ async function resumeHosting($: $) {
     }
     if (!s.live) return
     startFeed($)
-    $.ui.log(`Still sharing this session: ${room.url}`)
+    $.ui.log(`Cette session est toujours partagée : ${room.url}`)
   } finally {
     if (reclaiming === back) reclaiming = null
     tookBack($, back)
@@ -4343,7 +4343,7 @@ async function runMailbox($: $, run: MailboxRun) {
       dir: own.slice(0, own.lastIndexOf('/')),
     }
     const late = () => {
-      $.ui.log("Shared session: the mailboxes' helper didn't start in 6 s", { to: 'debug' })
+      $.ui.log("Session partagée : l’assistant des boîtes aux lettres n’a pas démarré en 6 s", { to: 'debug' })
       return finishMailbox(run)
     }
     await runHelper(
@@ -4362,7 +4362,7 @@ async function runMailbox($: $, run: MailboxRun) {
         run.pid = pid
         // A module that replaces this one ends it by this.
         await update($, mailboxHelperA, () => ({ room: roomIdentity(run.room), pid, port: said.port as number }))
-        $.ui.log(`Shared session: the mailboxes' helper (${pid}) is ready`, { to: 'debug' })
+        $.ui.log(`Session partagée : l’assistant des boîtes aux lettres (${pid}) est prêt`, { to: 'debug' })
         // Stopped meanwhile (the room's end, or a reload): it goes now.
         if (run.stopped || run.scope.children.mailbox !== run || !run.scope.live) {
           const first = !run.stopping
@@ -4377,7 +4377,7 @@ async function runMailbox($: $, run: MailboxRun) {
     if (run.control === undefined) await finishMailbox(run)
   } catch (error) {
     // Its mailboxes go with it; the next message starts another.
-    $.ui.log(`Shared session: the mailboxes' helper: ${String((error as Error)?.message ?? error)}`, { to: 'debug' })
+    $.ui.log(`Session partagée : assistant des boîtes aux lettres : ${String((error as Error)?.message ?? error)}`, { to: 'debug' })
     await finishMailbox(run)
   }
 }
@@ -4387,7 +4387,7 @@ async function runMailbox($: $, run: MailboxRun) {
 // write, 429 full). Anything else, no answer in two seconds included, ends it.
 function mailboxControl($: $, run: MailboxRun, body: Record<string, unknown>): Promise<number> {
   const failed = () => {
-    $.ui.log(`Shared session: the mailboxes' helper didn't answer ${String(body.op)}, so it was ended`, { to: 'debug' })
+    $.ui.log(`Session partagée : l’assistant des boîtes aux lettres n’a pas répondu à ${String(body.op)}, il a donc été arrêté`, { to: 'debug' })
     void finishMailbox(run)
   }
   return helperPost(
@@ -4633,7 +4633,7 @@ function nextGuestPromptSoon($: $) {
   $.clock.after(
     250,
     () =>
-      void nextGuestPrompt($).catch(error => $.ui.log(`Shared session: a teammate's prompt: ${String((error as Error)?.message ?? error)}`, { to: 'debug' })),
+      void nextGuestPrompt($).catch(error => $.ui.log(`Session partagée : invite d’un coéquipier : ${String((error as Error)?.message ?? error)}`, { to: 'debug' })),
   )
 }
 
@@ -4677,7 +4677,7 @@ function watchGuestPrompt($: $, pid: string) {
         const old = aside.filter(p => p.aside).slice(0, -8)
         return aside.filter(p => !old.includes(p))
       })
-      $.ui.log(`Shared session: ${first.who}'s prompt hasn't started; the next goes`, { to: 'debug' })
+      $.ui.log(`Session partagée : l’invite de ${first.who} n’a pas démarré ; la suivante part`, { to: 'debug' })
       nextGuestPromptSoon($)
     })().catch(() => {})
   })
@@ -4740,7 +4740,7 @@ async function stopTurn($: $, who: string) {
   if (!working) return
   try {
     await $.turn.abort({ turnId: working.turnId })
-    $.ui.toast(`${who} stopped the turn`)
+    $.ui.toast(`${who} a arrêté le tour`)
   } catch {}
 }
 
@@ -4837,9 +4837,9 @@ function answerFor(ask: Approval, label: string) {
 function settleCloudAnswer(body: Record<string, unknown>) {
   const label = typeof body.answer === 'string' ? body.answer : ''
   const active = hostAskActive
-  if (active?.yes && active.id === body.id) return active.answer(label === active.yes ? 'yes' : label === 'Not now' ? 'no' : 'later')
+  if (active?.yes && active.id === body.id) return active.answer(label === active.yes ? 'yes' : label === 'Pas maintenant' ? 'no' : 'later')
   const ask = approvals.find(a => a.id === body.id && a.stage === 'row')
-  if (ask && ['Allow once', ask.always, 'Decline'].includes(label)) answerFor(ask, label)
+  if (ask && ['Autoriser une fois', ask.always, 'Refuser'].includes(label)) answerFor(ask, label)
 }
 
 // Approver: a question from the cloud host, drawn above the prompt and in the
@@ -4886,7 +4886,7 @@ async function takeCloudAsk($: $, event: ServerEvent, live: boolean) {
         related: local.related,
         what: cloudHostWords(local),
         always: '',
-        options: [hostAskYes(local), 'Not now'],
+        options: [hostAskYes(local), 'Pas maintenant'],
         ts: event.ts,
       }
     : {
@@ -4897,7 +4897,7 @@ async function takeCloudAsk($: $, event: ServerEvent, live: boolean) {
         ...(typeof b.extent === 'string' && b.extent ? { extent: b.extent.slice(0, 80) } : {}),
         ...(typeof b.preview === 'string' && b.preview ? { preview: b.preview.slice(0, 4000) } : {}),
         always: typeof b.always === 'string' ? b.always : '',
-        options: options.length ? options : ['Allow once', 'Decline'],
+        options: options.length ? options : ['Autoriser une fois', 'Refuser'],
         ts: event.ts,
       }
   await update($, cloudAsksA, list => (list.some(a => a.id === ask.id) ? list : [...list, ask].slice(-20)))
@@ -4905,8 +4905,8 @@ async function takeCloudAsk($: $, event: ServerEvent, live: boolean) {
   $.ui.toast(
     local
       ? ask.what.endsWith('?')
-        ? `${ask.what} Answer above the prompt`
-        : `${ask.what}: answer above the prompt`
+        ? `${ask.what} Répondez au-dessus de l’invite`
+        : `${ask.what} : répondez au-dessus de l’invite`
       : `${ask.who} wants Claude to run ${ask.what.slice(0, 80)}: answer above the prompt`,
   )
   void cue($, 'mention', local ? ask.what.slice(0, 80) : `${ask.who} wants Claude to run ${ask.what.slice(0, 60)}`)
@@ -4933,20 +4933,20 @@ function localAskOf(b: Record<string, unknown>): ShareHostAsk | null {
 
 // What the approver's yes does, said under the question in the Room.
 function cloudAskMeans(ask: ShareCloudAsk): string {
-  if (ask.kind === 'show') return 'Its Claude gave out this page. Shared, everyone in the room can open it through its link.'
-  if (ask.kind === 'mention') return "Allowed, teammates open it at that address on their own computer, forwarded from the cloud host's."
-  if (ask.kind === 'related') return 'Its page uses this beside it. Shared, it reaches teammates at the same address, for that page.'
-  return "Their preview window reached this port of the cloud host's. Shared, it reaches them at the same address."
+  if (ask.kind === 'show') return 'Son Claude a communiqué cette page. Partagée, chacun dans le salon peut l’ouvrir via son lien.'
+  if (ask.kind === 'mention') return 'Autorisé : les coéquipiers l’ouvrent à cette adresse sur leur propre ordinateur, transféré depuis l’hôte cloud.'
+  if (ask.kind === 'related') return 'Sa page l’utilise à côté. Partagé, il parvient aux coéquipiers à la même adresse, pour cette page.'
+  return 'Leur fenêtre d’aperçu a atteint ce port de l’hôte cloud. Partagé, il leur parvient à la même adresse.'
 }
 
 // The approver's words for it: the host's row's, of the cloud host's
 // localhost, every port a yes shares before what may be cut.
 function cloudHostWords(ask: ShareHostAsk): string {
-  const theirs = "the cloud host's "
+  const theirs = "de l’hôte cloud "
   if (ask.kind === 'related') return hostAskWords(ask).replace(/localhost:(\d+)$/, `${theirs}localhost:$1`)
-  if (ask.kind === 'mention') return `Let guests open ${theirs}localhost:${ask.port} at the same address?`
-  if (ask.kind === 'show') return `Share ${theirs}${serviceName({ port: ask.port, label: ask.label })} with the room?`
-  return `${ask.who ?? 'A guest'}'s preview needs ${theirs}${serviceName({ port: ask.port, label: ask.label })}`
+  if (ask.kind === 'mention') return `Autoriser les invités à ouvrir ${theirs}localhost:${ask.port} à la même adresse ?`
+  if (ask.kind === 'show') return `Partager ${theirs}${serviceName({ port: ask.port, label: ask.label })} avec le salon ?`
+  return `L’aperçu de ${ask.who ?? 'un invité'} a besoin de ${theirs}${serviceName({ port: ask.port, label: ask.label })}`
 }
 
 // Approver: an answer for the cloud host. Always allow answers that person's
@@ -5165,7 +5165,7 @@ async function bringHome($: $) {
     await resumeHosting($)
     await update($, cloudMoveA, () => null)
     if (home.changes) await applyCloudChanges($, { ...room, token: home.token }, home.changes)
-    else $.ui.log('Back home. The cloud host changed no files.')
+    else $.ui.log('Retour au bercail. L’hôte cloud n’a modifié aucun fichier.')
   } catch (error) {
     await update($, cloudMoveA, () => cloudMove('failed', String((error as Error)?.message ?? error).slice(0, 300)))
   }
@@ -5191,10 +5191,10 @@ async function applyCloudChanges($: $, room: ShareRoom, changes: ShareFileMeta) 
     120_000,
   )
   const applied = /applied=(\d+)/.exec(r.out)?.[1]
-  if (applied) $.ui.log(`Back home, with the cloud host's changes to ${applied} file${applied === '1' ? '' : 's'} in your project (also kept in ${rel}).`)
+  if (applied) $.ui.log(`Retour au bercail, avec les modifications de l’hôte cloud sur ${applied} fichier${applied === '1' ? '' : 's'} dans votre projet (aussi conservées dans ${rel}).`)
   else if (/kept/.test(r.out))
-    $.ui.log(`Back home. The cloud host's changes don't apply cleanly over your files, so they're kept in ${rel}: apply them with git apply --3way ${rel}`)
-  else $.ui.log("Back home. The cloud host's changes couldn't be downloaded; they're in the Room's files for a while.")
+    $.ui.log(`Retour au bercail. Les modifications de l’hôte cloud ne s’appliquent pas proprement sur vos fichiers, elles sont donc conservées dans ${rel} : appliquez-les avec git apply --3way ${rel}`)
+  else $.ui.log("Retour au bercail. Les modifications de l’hôte cloud n’ont pas pu être téléchargées ; elles restent un moment dans les fichiers du Salon.")
 }
 
 // Two calls put to the host are one person's: one seat, or one account.
@@ -5468,7 +5468,7 @@ async function guestPeer($: $, room: ShareRoom, value: Record<string, unknown>) 
   const route = (await update($, peerRoutesA, all => all))[handle]
   const dropped = () => void postPeer($, room, { handle, status: 'dropped', ref }).catch(() => {})
   if (route?.kind !== 'guest') {
-    $.ui.log("Shared session: a message for a session this one didn't relay went nowhere", { to: 'debug' })
+    $.ui.log("Session partagée : un message pour une session que celle-ci n’a pas relayée n’est arrivé nulle part", { to: 'debug' })
     return dropped()
   }
   $.clock.after(0, () => void sendPeer($, route.to, body.slice(0, 32_000), { handle, ref }).then(ok => (ok ? undefined : dropped())))
@@ -5484,7 +5484,7 @@ async function sendPeer($: $, to: string, text: string, reply?: { handle: string
     .send({ to, text })
     .catch((error: unknown) => ({ isDelivered: false as const, reason: String((error as Error)?.message ?? error) }))
   if (!sent.isDelivered) {
-    $.ui.log(`Shared session: a message to another session here didn't go: ${sent.reason}`, { to: 'debug' })
+    $.ui.log(`Session partagée : un message vers une autre session ici n’est pas parti : ${sent.reason}`, { to: 'debug' })
     return false
   }
   const at = await $.clock.now()
@@ -5528,7 +5528,7 @@ async function guestReceipt($: $, room: ShareRoom, value: Record<string, unknown
   let out = ''
   for await (const chunk of child) if (chunk.stream === 'stdout') out += chunk.text
   if (!out.includes('"sent"'))
-    $.ui.log(`Shared session: a receipt didn't reach the session it's for (${out.trim().slice(0, 80) || 'no Node'})`, { to: 'debug' })
+    $.ui.log(`Session partagée : un accusé de réception n’a pas atteint sa session (${out.trim().slice(0, 80) || 'pas de Node'})`, { to: 'debug' })
 }
 
 // A delivery notice Claude Code gives this session about what it sent
@@ -6113,7 +6113,7 @@ async function ensurePreview($: $, room: ShareRoom, port: number, title: string,
     // Still being told: the room would answer with the preview that Stop
     // then ends, whenever it arrives, so nothing is shared yet.
     if (s.endingPorts.has(port)) {
-      if (sameRoom(room, s)) $.ui.log(`Couldn't share localhost:${port} yet: the room is still being told it stopped. Try again in a moment.`)
+      if (sameRoom(room, s)) $.ui.log(`Partage impossible de localhost:${port} pour l’instant : le salon est en train d’apprendre l’arrêt. Réessayez dans un instant.`)
       return null
     }
     const known = (await read($, sharesA))[String(port)]
@@ -6131,7 +6131,7 @@ async function ensurePreview($: $, room: ShareRoom, port: number, title: string,
     const share = await writeShare($, s, port, old => shareOver(old, pid, said, made))
     return share && sameRoom(room, s) ? share : null
   } catch (error) {
-    if (sameRoom(room, s)) $.ui.log(`Couldn't share localhost:${port}: ${String((error as Error)?.message ?? error)}`)
+    if (sameRoom(room, s)) $.ui.log(`Partage impossible de localhost:${port} : ${String((error as Error)?.message ?? error)}`)
     return null
   } finally {
     done()
@@ -6205,7 +6205,7 @@ async function allowForwarding($: $, item: ShareShown) {
     { offerRelated: 8_000 },
   )
   if (hostHere(room))
-    $.ui.toast(forwarded && 'pid' in forwarded ? forwardedSaid([port]) : (forwarded?.refused ?? `Couldn't allow forwarding localhost:${port}`))
+    $.ui.toast(forwarded && 'pid' in forwarded ? forwardedSaid([port]) : (forwarded?.refused ?? `Autorisation impossible du transfert de localhost:${port}`))
 }
 
 async function stopPreview($: $, pid: string) {
@@ -6297,7 +6297,7 @@ async function sharePublic($: $, room: ShareRoom, page: LocalPage, opts: { title
   const title = opts.title || `localhost:${page.port}`
   // Another session's preview forwarded here: never shared on, and nothing said (Claude's mention, not the host's ask).
   if (await relayedHere($, page.port)) {
-    $.ui.log(`Not sharing localhost:${page.port}: another shared session's preview forwarded here`, { to: 'debug' })
+    $.ui.log(`Non partagé : localhost:${page.port} : l’aperçu d’une autre session partagée est transféré ici`, { to: 'debug' })
     return null
   }
   const share = await ensurePreview($, room, page.port, title, page.scheme ? { scheme: page.scheme } : {})
@@ -6359,7 +6359,7 @@ async function shareLocal($: $, pages: LocalPage[]) {
     // (through it, that session's app would answer), and a later mention
     // looks again.
     if (await relayedHere($, port)) {
-      $.ui.log(`Not sharing localhost:${port}: another shared session's preview forwarded here`, { to: 'debug' })
+      $.ui.log(`Non partagé : localhost:${port} : l’aperçu d’une autre session partagée est transféré ici`, { to: 'debug' })
       continue
     }
     mentionedPorts.add(port)
@@ -6396,7 +6396,7 @@ async function offerShow($: $, room: ShareRoom, page: LocalPage, opts: { title?:
       // Its own yes: the same-address question after it is a question of its own.
       await rememberHost($, room, m => ({ ...m, askedAt: Object.fromEntries(Object.entries(m.askedAt).filter(([p]) => Number(p) !== port)) }))
       shared = await sharePublic($, room, page, opts)
-      if (shared) $.ui.toast(`Sharing localhost:${port} with the room (stop it in the Room)`)
+      if (shared) $.ui.toast(`Partage de localhost:${port} avec le salon (arrêtez-le dans le Salon)`)
       return { shared: [], refused: [] }
     })
   } finally {
@@ -6446,7 +6446,7 @@ async function shareOpened($: $, room: ShareRoom, page: LocalPage, opts: { title
   if (!(await read($, sharesA))[String(page.port)]) {
     if ((await hostMemoryOf($, room)).stopped.includes(page.port)) return
     if (await relayedHere($, page.port))
-      return void $.ui.log(`Not sharing localhost:${page.port}: another shared session's preview forwarded here`, { to: 'debug' })
+      return void $.ui.log(`Non partagé : localhost:${page.port} : l’aperçu d’une autre session partagée est transféré ici`, { to: 'debug' })
     if ((await lookAtPage($, { ...page, opened: true })) === 'not') return
     // A new one goes once the host says so (never waited on here, in a tool's hook).
     return void offerShow($, room, page, opts).catch(() => {})
@@ -7107,7 +7107,7 @@ async function runTrouble($: $, room: ShareRoom, pid: string, run: LocalPreviewR
   const say = SAY[run.owner]
   if (what !== 'channel') {
     if (run.owner === 'listener')
-      $.ui.toast(what === 'stopped' ? `Local preview on localhost:${run.localPort} stopped. Press Open in the Room to reconnect.` : run.error)
+      $.ui.toast(what === 'stopped' ? `L’aperçu local sur localhost:${run.localPort} est arrêté. Appuyez sur Ouvrir dans le Salon pour reconnecter.` : run.error)
     return
   }
   const error = code === 'BUSY' ? say.busy : code === 'AUTH' ? say.refused : code === 'CONNECT' ? say.connect(room.host, run.port) : ''
@@ -7286,10 +7286,10 @@ async function openPublicPreview($: $, shown: ShareShown, surface?: RenderSurfac
   const live = async () => localRequestCurrent(room, s, pid, epoch)
   if (!(await live())) return
   const url = await previewTicket($, room, pid, shown.path)
-  if (!url) return void $.ui.toast('That preview has ended or is not reachable')
+  if (!url) return void $.ui.toast('Cet aperçu est terminé ou n’est pas accessible')
   await showPage($, room, url, surface, live, {
-    copied: 'Public preview link copied: open it within 10 minutes',
-    said: `Public preview link, for 10 minutes: ${url}`,
+    copied: 'Lien d’aperçu public copié : ouvrez-le dans les 10 minutes',
+    said: `Lien d’aperçu public, valable 10 minutes : ${url}`,
   })
 }
 
@@ -7317,7 +7317,7 @@ type WindowChoice =
 // browser refused, and the like. A room's own (a preview's first Open and
 // its cost, the window's welcome) are said once in that room (its scope's).
 const saidOnce = new Set<string>()
-const WINDOW_CLOSING = 'The preview window is still closing. Open the preview again in a moment.'
+const WINDOW_CLOSING = 'La fenêtre d’aperçu est en train de se fermer. Rouvrez l’aperçu dans un instant.'
 // How long each of the window's shell steps may take (sh's `within`): a look
 // at a profile, its settings, a close (which waits up to 3 s) and a profile's
 // cleanup all answer well inside it; the browser look can ask a Firefox
@@ -7325,7 +7325,7 @@ const WINDOW_CLOSING = 'The preview window is still closing. Open the preview ag
 const WINDOW_STEP_MS = 15_000,
   BROWSER_LOOK_MS = 30_000
 // This session closed its own window as its proxy ended under it (routes the proxy refused, looks that failed).
-const windowLost = (host: string) => `The preview window closed: its connection to ${host}'s previews stopped working. Press Open preview to open it again.`
+const windowLost = (host: string) => `La fenêtre d’aperçu s’est fermée : sa connexion aux aperçus de ${host} ne fonctionne plus. Appuyez sur Ouvrir l’aperçu pour la rouvrir.`
 
 // Looked for once a room (its scope's). A look that failed (the shell
 // itself, no platform line) says nothing about this computer: it isn't kept,
@@ -7849,8 +7849,8 @@ async function blockedPort($: $, proxy: BrowserProxy, port: number) {
     // Forwarded already, just now: the room's next page lists it, and the
     // routes follow it (`takeRoomList`).
     if (answer.shared) return void syncBrowserRoutes($, s)
-    const said = `Your preview tried localhost:${port}, which ${room.host} hasn't shared.`
-    $.ui.toast(answer.delivered ? `${said} The request went to ${room.host}.` : `${said} Ask ${room.host} to share it.`)
+    const said = `Votre aperçu a essayé localhost:${port}, que ${room.host} n’a pas partagé.`
+    $.ui.toast(answer.delivered ? `${said} La demande est partie à ${room.host}.` : `${said} Demandez à ${room.host} de le partager.`)
   } finally {
     s.window.needAsking.delete(port)
   }
@@ -7869,10 +7869,10 @@ async function refusedOf($: $, pid: string): Promise<Refused> {
 // `promised`: the band's Open preview opens what reconnects it (`bandEntry`);
 // otherwise the Room's own button for it is named.
 function refusedWords(host: string, port: number, r: Refused, promised: boolean): string {
-  const said = `${host}'s side refused the preview window's connection to localhost:${port}`
+  const said = `Le côté de ${host} a refusé la connexion de la fenêtre d’aperçu à localhost:${port}`
   const which = r.kind === 'dependency' ? `, which ${r.dependency === true ? 'a preview uses' : `the preview of localhost:${r.dependency} uses`}` : ''
-  if (!promised) return `${said}${which}. Press Open on localhost:${port} in Room → Shown to reconnect.`
-  return `${said}${which}. Press Open preview${r.kind === 'dependency' ? ' for that page' : ''} to reconnect.`
+  if (!promised) return `${said}${which}. Appuyez sur Ouvrir sur localhost:${port} dans Salon → Affichés pour reconnecter.`
+  return `${said}${which}. Appuyez sur Ouvrir l’aperçu${r.kind === 'dependency' ? ' pour cette page' : ''} pour reconnecter.`
 }
 
 // What the toast for a refusal says: computed when it's said, so it names
@@ -7921,7 +7921,7 @@ function sayWindowLater($: $, room: ShareRoom, pid: string, run: LocalPreviewRun
         if (![...authority.values()].some(a => a.pid === pid)) {
           if (authority.has(run.port) || s.window.stopSaid.has(pid)) return
           s.window.stopSaid.add(pid)
-          return void $.ui.toast(`${room.host} stopped sharing localhost:${run.port}.`)
+          return void $.ui.toast(`${room.host} a arrêté le partage de localhost:${run.port}.`)
         }
         await say()
       })().catch(() => {})
@@ -8169,7 +8169,7 @@ async function openLook($: $, open: WindowOpen, profile: string): Promise<Window
 // A look that still knows nothing: the open writes, starts and closes
 // nothing more, and the person presses Open preview again.
 function unknownLook($: $, why: string): WindowOutcome {
-  $.ui.toast(`Couldn't tell whether the preview window is open (${why}). Press Open preview again.`)
+  $.ui.toast(`Impossible de savoir si la fenêtre d’aperçu est ouverte (${why}). Appuyez de nouveau sur Ouvrir l’aperçu.`)
   return 'done'
 }
 
@@ -8222,7 +8222,7 @@ async function readyProxy($: $, open: WindowOpen): Promise<BrowserProxy | Window
   // Without Node nothing here opens a forwarded preview (its listeners run
   // under Node too): only the public link, which goes through the room.
   if ('error' in proxy && proxy.error === 'NODE') {
-    $.ui.toast('Preview windows need Node 22.18 or later on this computer. Install it, then press Open preview again, or choose Public link in Room → Shown.')
+    $.ui.toast('Les fenêtres d’aperçu exigent Node 22.18 ou plus récent sur cet ordinateur. Installez-le, puis appuyez de nouveau sur Ouvrir l’aperçu, ou choisissez Lien public dans Salon → Affichés.')
     return 'done'
   }
   if ('error' in proxy) return { failed: "its proxy didn't start" }
@@ -8251,7 +8251,7 @@ async function readyProxy($: $, open: WindowOpen): Promise<BrowserProxy | Window
   // started, and nothing else, may go with it (`idleProxy`).
   if (!tunnel.run) {
     await idleProxy(open, proxy)
-    $.ui.toast(reseated ? RESEATED : (tunnel.error ?? 'That preview could not be opened.'))
+    $.ui.toast(reseated ? RESEATED : (tunnel.error ?? 'Cet aperçu n’a pas pu être ouvert.'))
     return 'done'
   }
   await windowStep(open, syncBrowserRoutes($, s))
@@ -8298,8 +8298,8 @@ async function launchWindow($: $, open: WindowOpen, proxy: BrowserProxy): Promis
     const copied = await $.ui.copy({ text: url }).catch(() => ({ isCopied: false }))
     $.ui.toast(
       copied.isCopied
-        ? `${room.host}'s localhost:${page.port} is ready in the ${choice.name} preview window. Its address is copied: paste it into that window's address bar (${url}).`
-        : `${room.host}'s localhost:${page.port} is ready in the ${choice.name} preview window: type ${url} into that window's address bar.`,
+        ? `Le localhost:${page.port} de ${room.host} est prêt dans la fenêtre d’aperçu ${choice.name}. Son adresse est copiée : collez-la dans la barre d’adresse de cette fenêtre (${url}).`
+        : `Le localhost:${page.port} de ${room.host} est prêt dans la fenêtre d’aperçu ${choice.name} : saisissez ${url} dans la barre d’adresse de cette fenêtre.`,
     )
     return 'opened'
   }
@@ -8347,7 +8347,7 @@ async function launchWindow($: $, open: WindowOpen, proxy: BrowserProxy): Promis
       await windowOpened($, open, port, !pageStopped(open))
       $.ui.invalidate('ui.render')
     }
-    $.ui.toast(`${choice.name} didn't open a preview window within 10 seconds. ${await windowRemedy($, open.why, true)}`)
+    $.ui.toast(`${choice.name} n’a pas ouvert de fenêtre d’aperçu en 10 secondes. ${await windowRemedy($, open.why, true)}`)
     return 'done'
   }
   return 'seen'
@@ -8502,8 +8502,8 @@ async function restorePreviewWindow($: $) {
     if (another || (alive === undefined && !closed)) return
     $.ui.toast(
       proxy.error === 'EADDRINUSE'
-        ? `The preview window closed: its proxy's port (${w.port}) was taken while the plugin reloaded. Press Open preview to open it again.`
-        : "The preview window closed: its proxy couldn't start again. Press Open preview to open it again.",
+        ? `La fenêtre d’aperçu s’est fermée : le port de son proxy (${w.port}) a été pris pendant le rechargement du plugin. Appuyez sur Ouvrir l’aperçu pour la rouvrir.`
+        : "La fenêtre d’aperçu s’est fermée : son proxy n’a pas pu redémarrer. Appuyez sur Ouvrir l’aperçu pour la rouvrir.",
     )
     return
   }
@@ -8747,7 +8747,7 @@ const approverAsk = (ask: ShareHostAsk) => ({
   ...(ask.label ? { label: ask.label } : {}),
   who: ask.who ?? '',
   related: ask.related,
-  options: [hostAskYes(ask), 'Not now'],
+  options: [hostAskYes(ask), 'Pas maintenant'],
 })
 
 // One question to the host about ports claimed for it (`claimAsks`) and held
@@ -8881,7 +8881,7 @@ async function ownerLook($: $, port: number, web = false): Promise<string | null
 }
 
 // The host's word for a port it can't share on, as /share-preview says it.
-const relayedSaid = (port: number) => `localhost:${port} is another shared session's preview forwarded to this computer, so it can't be shared on.`
+const relayedSaid = (port: number) => `localhost:${port} est l’aperçu d’une autre session partagée transféré sur cet ordinateur, il ne peut donc pas être partagé à nouveau.`
 // A share the host asked for that isn't made, and why.
 type ShareRefused = { refused: string }
 
@@ -8891,11 +8891,11 @@ type ShareRefused = { refused: string }
 // a room; the share stays, the host's to Stop.
 async function relayedNow($: $, s: RoomScope, port: number): Promise<boolean> {
   if ((await relayedHere($, port, RELAYED_NOW_MS)) !== true) return false
-  $.ui.log(`localhost:${port} is held by a shared session's own helper: teammates' connections to it are refused`, { to: 'debug' })
+  $.ui.log(`localhost:${port} est détenu par l’assistant d’une session partagée : les connexions des coéquipiers sont refusées`, { to: 'debug' })
   noteOnce(
     $,
     `relayed-${port}`,
-    `Teammates' connections to localhost:${port} are refused: it's another shared session's preview forwarded to this computer now, so it can't be shared on. Stop it in Room → Shown.`,
+    `Les connexions des coéquipiers à localhost:${port} sont refusées : c’est maintenant l’aperçu d’une autre session partagée transféré sur cet ordinateur, il ne peut donc pas être partagé à nouveau. Arrêtez-le dans Salon → Affichés.`,
     s,
   )
   return true
@@ -8996,7 +8996,7 @@ const hostHere = (room: ShareRoom) => sameRoom(room, scope) && scope.mode === 'h
 // The host's word once ports are forwarded: which, and where to stop them.
 // Never where teammates open them: Claude's browser, their own or a
 // separate window is each teammate's own setting.
-const forwardedSaid = (ports: number[]) => `Teammates can reach ${portList(ports)} now. Stop ${ports.length > 1 ? 'them' : 'it'} in Room → Shown.`
+const forwardedSaid = (ports: number[]) => `Les coéquipiers peuvent maintenant atteindre ${portList(ports)}. Arrêtez-${ports.length > 1 ? 'les' : 'le'} dans Salon → Affichés.`
 
 // What the servers a page uses beside it came to: the questions put to the
 // host in the row above the prompt (the first there now, the rest in turn),
@@ -9118,11 +9118,11 @@ async function askRelated($: $, room: ShareRoom, port: number, related: readonly
 function relatedSaid({ asked, left }: RelatedOffer): string {
   if (!asked.length && !left.length) return ''
   const one = (count: number, it: string, them: string) => (count > 1 ? them : it)
-  const inRow = ` too from the row above the prompt${asked.length > 1 ? ', one at a time' : ''}`
+  const inRow = ` aussi depuis la ligne au-dessus de l’invite${asked.length > 1 ? ', un à la fois' : ''}`
   // A question a service: "share it", "share them"; a service asked about
   // in several, each question named.
   const split = asked.length > servicesOf(asked.flat()).length
-  if (!left.length && !split) return ` It looks like it also uses ${alsoUses(asked.flat())}: share ${one(asked.length, 'it', 'them')}${inRow}.`
+  if (!left.length && !split) return ` Il semble aussi utiliser ${alsoUses(asked.flat())} : partagez-${one(asked.length, 'le', 'les')}${inRow}.`
   const ports = (list: readonly DiscoveredService[]) => portList(list.map(s => s.port))
   const commands = (list: readonly DiscoveredService[]) => everyName(list.map(s => `/share-preview ${s.port}`))
   const declined = left.filter(l => l.declined).map(l => l.service),
@@ -9131,7 +9131,7 @@ function relatedSaid({ asked, left }: RelatedOffer): string {
   return [
     ` It looks like it also uses ${alsoUses(found)}.`,
     asked.length ? ` Share ${everyService(asked, false)}${inRow}.` : '',
-    declined.length ? ` You said Not now to ${ports(declined)} in this room; to share ${one(declined.length, 'it', 'them')}, use ${commands(declined)}.` : '',
+    declined.length ? ` Vous avez répondu Pas maintenant pour ${ports(declined)} dans ce salon; to share ${one(declined.length, 'it', 'them')}, use ${commands(declined)}.` : '',
     other.length ? ` To share ${ports(other)} too, use ${commands(other)}.` : '',
   ].join('')
 }
@@ -9159,7 +9159,7 @@ async function offerSameAddress($: $, room: ShareRoom, port: number, path: strin
       allowed = Boolean(forwarded && 'pid' in forwarded)
       return allowed
         ? { shared: [port], refused: [] }
-        : { shared: [], refused: [(forwarded && 'refused' in forwarded && forwarded.refused) || `Couldn't allow forwarding localhost:${port}`] }
+        : { shared: [], refused: [(forwarded && 'refused' in forwarded && forwarded.refused) || `Autorisation impossible du transfert de localhost:${port}`] }
     })
     if (allowed && hostHere(room)) beside = found?.related ?? []
   } finally {
@@ -9208,13 +9208,13 @@ async function hostNeed($: $, room: ShareRoom, need: Record<string, unknown>) {
 // never a port ("Share localhost:3510 and 3511 too? convex-local-backend,
 // beside localhost:3009"); or the port mentioned or needed itself. A
 // question is one service's (`askRelated`): its ports aren't regrouped.
-const hostAskYes = (ask: ShareHostAsk) => (ask.kind === 'related' ? 'Share too' : ask.kind === 'mention' ? 'Allow' : 'Share')
+const hostAskYes = (ask: ShareHostAsk) => (ask.kind === 'related' ? 'Partager aussi' : ask.kind === 'mention' ? 'Autoriser' : 'Partager')
 
 function hostAskWords(ask: ShareHostAsk): string {
   if (ask.kind === 'related') return shareTooWords(ask.port, ask.related)
-  if (ask.kind === 'mention') return `Let guests open localhost:${ask.port} at the same address?`
-  if (ask.kind === 'show') return `Share ${serviceName({ port: ask.port, label: ask.label })} with the room?`
-  return `${ask.who ?? 'A guest'}'s preview needs ${serviceName({ port: ask.port, label: ask.label })}`
+  if (ask.kind === 'mention') return `Autoriser les invités à ouvrir localhost:${ask.port} à la même adresse ?`
+  if (ask.kind === 'show') return `Partager ${serviceName({ port: ask.port, label: ask.label })} avec le salon ?`
+  return `L’aperçu de ${ask.who ?? 'un invité'} a besoin de ${serviceName({ port: ask.port, label: ask.label })}`
 }
 
 // Guest: the Room panel's Open (and Open preview above the prompt), outside
@@ -9325,8 +9325,8 @@ async function showPage(
   const copied = await $.ui.copy({ text: url, surface }).catch(() => ({ isCopied: false }))
   $.ui.toast(
     copied.isCopied
-      ? (words?.copied ?? `${room.host}'s preview is ready at ${url}: the address is copied.`)
-      : (words?.said ?? `${room.host}'s preview is ready at ${url}.`),
+      ? (words?.copied ?? `L’aperçu de ${room.host} est prêt à ${url} : l’adresse est copiée.`)
+      : (words?.said ?? `L’aperçu de ${room.host} est prêt à ${url}.`),
   )
   return copied.isCopied ? 'copied' : 'said'
 }
@@ -9360,7 +9360,7 @@ function listening(pid: string, s: RoomScope = scope): LocalPreviewRun | null {
 // as opened on its own (`own`).
 type Bound = { url: string; run: LocalPreviewRun; taken: number[]; denied: number[]; failed: string[] }
 type BindResult = Bound | RefusedPort | { inWindow: true } | { error: string }
-const RESEATED = 'The room reconnected you while the preview was opening. Press Open again.'
+const RESEATED = 'Le salon vous a reconnecté pendant l’ouverture de l’aperçu. Appuyez de nouveau sur Ouvrir.'
 async function bindForOpen(
   $: $,
   room: ShareRoom,
@@ -9445,10 +9445,10 @@ function elsewhereNote(room: ShareRoom, page: Forwarded, bound: Bound, why: Refu
 // else the Open goes on without it. `without`: why no window this time
 // (one just failed): the host's numbers, else elsewhere.
 async function openForwarded($: $, room: ShareRoom, s: RoomScope, shown: ShareShown, surface?: RenderSurface, without?: string): Promise<void> {
-  if (!isForwarded(shown)) return void $.ui.toast('That preview has ended or has no valid localhost address.')
+  if (!isForwarded(shown)) return void $.ui.toast('Cet aperçu est terminé ou n’a pas d’adresse localhost valide.')
   // The host away: nothing of theirs answers now, so nothing is bound or opened.
   if ((await read($, peopleA)).some(p => p.role === 'host' && !p.online))
-    return void $.ui.toast(`${room.host} is offline, so their previews can't open now. Press Open again once they're back.`)
+    return void $.ui.toast(`${room.host} est hors ligne, ses aperçus ne peuvent donc pas s’ouvrir. Appuyez sur Ouvrir à leur retour.`)
   const page = shown,
     pid = page.pid,
     epoch = s.epoch(pid)
@@ -9469,7 +9469,7 @@ async function openForwarded($: $, room: ShareRoom, s: RoomScope, shown: ShareSh
   const elsewhere = async (why: RefusedPort, noWindow: string) => {
     const bound = await bindForOpen($, room, s, page, uses, 'elsewhere')
     if (!(await live())) return
-    if (!('url' in bound)) return void $.ui.toast('error' in bound ? bound.error : 'That preview could not be opened.')
+    if (!('url' in bound)) return void $.ui.toast('error' in bound ? bound.error : 'Cet aperçu n’a pas pu être ouvert.')
     if (!(await showPage($, room, bound.url, surface, async () => (await live()) && (await localRunCurrent($, pid, bound.run))))) return
     const note = elsewhereNote(room, page, bound, why, noWindow)
     noteOnce($, `elsewhere ${note}`, note, s)
@@ -9488,7 +9488,7 @@ async function openForwarded($: $, room: ShareRoom, s: RoomScope, shown: ShareSh
     // A port taken here: the page elsewhere, its note saying why there's no window.
     if ('refused' in why) return elsewhere(why, outcome.failed)
     // Open in the window before (its ports may be free here): the host's numbers, else elsewhere.
-    $.ui.toast(`Couldn't open the preview window: ${outcome.failed}.`)
+    $.ui.toast(`Ouverture de la fenêtre d’aperçu impossible : ${outcome.failed}.`)
     return openForwarded($, room, s, page, surface, outcome.failed)
   }
   if (!without && (await previewOpenOf($)) === 'window') {
@@ -9568,7 +9568,7 @@ async function openShown($: $, shown: ShareShown, surface?: RenderSurface) {
   const room = await read($, roomA)
   if (!room) return
   const path = (await downloadShown($, room, shown.files ?? []))[0] ?? null
-  if (!path) return void $.ui.toast("Couldn't get that file")
+  if (!path) return void $.ui.toast("Impossible d’obtenir ce fichier")
   // A page opens in Claude's browser, where it runs (inside the project);
   // refused there (auto mode), in the Files pane as a file does.
   if (shown.kind === 'page' && (await inPane($, `file://${path}`, 'shared pages', 'in the Files pane'))) return
@@ -10605,8 +10605,8 @@ function shareChoice($: $, el: UI, asking: ShareAsking, where: 'band' | 'room', 
   const keeps = kept ? ` ${keptNote(team)}` : ''
   const go = (opts: ShareOpts, surface?: RenderSurface) =>
     void inShareTurn($, () => share($, surface, opts)).catch(error => {
-      $.ui.toast("Couldn't share")
-      $.ui.log(`Couldn't share: ${String(error?.message ?? error)}`)
+      $.ui.toast("Partage impossible")
+      $.ui.log(`Partage impossible : ${String(error?.message ?? error)}`)
     })
   const pick = (chosen: SharePolicy['prompts'], surface?: RenderSurface) =>
     prompts ? void update($, askingA, a => (a ? { ...a, teammates: chosen } : a)) : go({ watch: chosen === 'watch' }, surface)
@@ -10678,24 +10678,24 @@ function joinFailure(error: unknown, server: string): string {
       ? `This session is for **${error.data.team}**. Sign in with an account in that team in the **Team** panel (it just opened, or \`/team\`), then paste the link again.`
       : `${error.message} Once you're in, paste the link again.`
   }
-  if (isGone(error)) return 'That shared session has ended: the host stopped sharing, or the room expired. Ask them for a new link.'
-  if (error instanceof ApiError) return `Couldn't join that shared session: ${error.message}`
+  if (isGone(error)) return 'Cette session partagée est terminée : l’hôte a arrêté le partage, ou le salon a expiré. Demandez-leur un nouveau lien.'
+  if (error instanceof ApiError) return `Impossible de rejoindre cette session partagée : ${error.message}`
   // Only a request that got no answer is the network; anything else says what it was.
-  if (error instanceof NetworkError) return `Couldn't reach the share server at ${server}. Check your connection, then paste the link again.`
-  return `Couldn't join that shared session: ${String((error as Error)?.message ?? error)}. Paste the link again; if it keeps happening, the update command may help: \`${UPDATE_COMMAND}\``
+  if (error instanceof NetworkError) return `Impossible d’atteindre le serveur de partage à ${server}. Vérifiez votre connexion, puis collez le lien à nouveau.`
+  return `Impossible de rejoindre cette session partagée : ${String((error as Error)?.message ?? error)}. Collez le lien à nouveau ; si cela persiste, la commande de mise à jour peut aider : \`${UPDATE_COMMAND}\``
 }
 
 // What a guest may do here, in a line.
 // Who may do what in the room, as its host reads it: one sentence.
 function hostRules(policy: SharePolicy, team: string | null): string {
-  const who = team ?? 'Anyone with the link'
-  if (policy.prompts === 'watch') return `${who} can watch and chat. Only you prompt.`
+  const who = team ?? 'Toute personne avec le lien'
+  if (policy.prompts === 'watch') return `${who} peut regarder et discuter. Vous seul invitez Claude.`
   const asks =
     policy.approvals === 'none'
-      ? 'Nothing asks you first.'
+      ? 'Rien ne vous est demandé au préalable.'
       : policy.approvals === 'all'
-        ? 'Every tool asks you first.'
-        : 'Anything beyond reading the project asks you first.'
+        ? 'Chaque outil vous est demandé au préalable.'
+        : 'Tout ce qui va au-delà de la lecture du projet vous est demandé au préalable.'
   return `${who} can prompt Claude. ${asks}`
 }
 
@@ -10715,13 +10715,13 @@ function keptHere($: $, server: string): boolean | undefined {
 }
 
 function rulesLine(policy: SharePolicy, host: string): string {
-  if (policy.prompts === 'watch') return `You watch and chat. Only ${host} prompts Claude.`
+  if (policy.prompts === 'watch') return `Vous regardez et discutez. Seul ${host} invite Claude.`
   const asks =
     policy.approvals === 'none'
-      ? 'Nothing asks first.'
+      ? 'Rien n’est demandé au préalable.'
       : policy.approvals === 'all'
-        ? `Every tool asks ${host} first.`
-        : `Anything beyond reading the project asks ${host} first.`
+        ? `Chaque outil demande d’abord à ${host}.`
+        : `Tout ce qui va au-delà de la lecture du projet demande d’abord à ${host}.`
   return `Everyone can prompt Claude. ${asks}`
 }
 
@@ -10746,7 +10746,7 @@ async function flashCopied($: $) {
 // A teammate's name put in the prompt box, to mention them.
 async function mention($: $, name: string) {
   const filled = await $.prompt.fill({ text: `@${name} `, mode: 'insert' }).catch(() => null)
-  if (!filled?.isFilled) $.ui.toast(`Type @${name} in your prompt to mention them`)
+  if (!filled?.isFilled) $.ui.toast(`Tapez @${name} dans votre invite pour les mentionner`)
 }
 
 // ---------------------------------------------------------------------------
@@ -11113,7 +11113,7 @@ let signInRun = 0
 // sent (its first eight hex, `XXXX-XXXX`): whoever makes a sign-in link
 // picks its hash, so the page's Continue is only for a code that matches.
 const signInCode = (login: string) => `${login.slice(0, 4)}-${login.slice(4, 8)}`.toUpperCase()
-const codeSaid = (code: string) => `Your browser will show the code ${code}: continue there only if it matches.`
+const codeSaid = (code: string) => `Votre navigateur affichera le code ${code} : ne continuez que s’il correspond.`
 
 // Opens the server's sign-in in the browser with the hash of a secret kept
 // here, then asks for the sign-in with that secret every 2 s for ten minutes.
@@ -11150,7 +11150,7 @@ async function startSignIn(
       signInRun++
       await saveSignIn($, server, { token: r.token, account: r.account, ...(r.joined ? { current: r.joined } : {}) })
       await update($, teamsA, x => ({ ...x, signingIn: null, invite: null }))
-      $.ui.toast(`Signed in as ${r.account.name}`)
+      $.ui.toast(`Connecté en tant que ${r.account.name}`)
       await refreshTeams($)
       if (opts.then) await opts.then()
       return
@@ -11176,7 +11176,7 @@ async function signOut($: $, opts: { deleteAccount?: boolean } = {}) {
     await saveSignIn($, server, null)
   }
   await update($, teamsA, t => ({ ...NO_TEAMS, server, providers: t.providers }))
-  $.ui.toast(opts.deleteAccount ? 'Account deleted' : 'Signed out')
+  $.ui.toast(opts.deleteAccount ? 'Compte supprimé' : 'Déconnecté')
 }
 
 // A call to the team API as the person signed in; their sign-in ending signs them out here.
@@ -11206,7 +11206,7 @@ async function createTeam($: $, name: string): Promise<ShareTeam | null> {
   if (!trimmed) return null
   const { team } = await teamCall<{ team: ShareTeam }>($, '/api/teams', { method: 'POST', body: { name: trimmed } })
   await setCurrentTeam($, team.id)
-  $.ui.toast(`Made ${team.name}. Copy its invite link for your teammates`)
+  $.ui.toast(`${team.name} créé. Copiez son lien d’invitation pour vos coéquipiers`)
   return team
 }
 
@@ -11222,7 +11222,7 @@ async function newInvite($: $) {
   if (!t.current) return
   await teamCall($, `/api/teams/${t.current}/invite`, { method: 'POST' })
   await refreshTeams($)
-  $.ui.toast('New invite link. The old one no longer works')
+  $.ui.toast('Nouveau lien d’invitation. L’ancien ne fonctionne plus')
 }
 
 async function leaveTeam($: $) {
@@ -11363,8 +11363,8 @@ async function joinFromTeam($: $, sessions: ShareTeamSession[], surface?: Render
   if (desktop && (await openExternal($, deepLink(first.url)))) {
     $.ui.toast(
       rest.length
-        ? `Opened ${first.host}'s session: press Enter there to join. The other ${rest.length} open one after another as each joins`
-        : `Opened ${first.host}'s session: press Enter there to join`,
+        ? `Session de ${first.host} ouverte : appuyez sur Entrée là-bas pour rejoindre. Les ${rest.length} autres s’ouvrent les unes après les autres au fur et à mesure`
+        : `Session de ${first.host} ouverte : appuyez sur Entrée là-bas pour rejoindre`,
     )
     return
   }
@@ -11392,17 +11392,17 @@ async function stopFromTeam($: $, roomId: string) {
   if (!(await pressedTwice($, `stop:${roomId}`))) return
   const server = await serverOf($)
   const saved = await signInFor($, server)
-  if (!saved) return void $.ui.toast('Sign in first: /team')
+  if (!saved) return void $.ui.toast('Connectez-vous d’abord : /team')
   let over = true
   try {
     await api($, server, `/api/rooms/${roomId}/end`, { method: 'POST', account: saved.token })
-    $.ui.toast('Stopped sharing. The link no longer works.')
+    $.ui.toast('Partage arrêté. Le lien ne fonctionne plus.')
   } catch (error) {
     // Already over: it only had to leave the list.
     if (!(error instanceof ApiError && (error.status === 404 || error.status === 410))) {
       over = false
-      $.ui.toast("Couldn't stop it")
-      $.ui.log(`Couldn't stop sharing: ${error instanceof Error ? error.message : String(error)}`)
+      $.ui.toast("Arrêt impossible")
+      $.ui.log(`Arrêt du partage impossible : ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   // Off the list at once, not after the panel's refresh comes back.
@@ -11417,14 +11417,14 @@ async function leaveFromTeam($: $, roomId: string) {
   if (!(await pressedTwice($, `leave:${roomId}`))) return
   const server = await serverOf($)
   const saved = await signInFor($, server)
-  if (!saved) return void $.ui.toast('Sign in first: /team')
+  if (!saved) return void $.ui.toast('Connectez-vous d’abord : /team')
   try {
     await api($, server, `/api/rooms/${roomId}/leave`, { method: 'POST', account: saved.token })
-    $.ui.toast('You left that session.')
+    $.ui.toast('Vous avez quitté cette session.')
   } catch (error) {
     if (!(error instanceof ApiError && (error.status === 404 || error.status === 410))) {
-      $.ui.toast("Couldn't leave it")
-      $.ui.log(`Couldn't leave: ${error instanceof Error ? error.message : String(error)}`)
+      $.ui.toast("Départ impossible")
+      $.ui.log(`Départ impossible : ${error instanceof Error ? error.message : String(error)}`)
     }
   }
   await refreshTeams($)
@@ -11445,7 +11445,7 @@ async function pressedTwice($: $, key: string): Promise<boolean> {
 // The Team panel's Open: the session here that's in that room.
 async function openHere($: $, roomId: string) {
   const hold = await heldElsewhere($, roomId)
-  if (!hold) return void $.ui.toast('That session has closed')
+  if (!hold) return void $.ui.toast('Cette session est fermée')
   if (!(await openHeld($, hold))) $.ui.toast(alreadyIn(hold, false))
 }
 
@@ -11505,10 +11505,10 @@ async function setRoomTeam($: $, teamId: string | null) {
       body: { team: teamId },
     })
     await update($, roomA, rm => (rm ? { ...rm, team: r.team } : rm))
-    $.ui.toast(r.team ? `Shared with ${r.team.name}` : 'Shared by link alone now')
+    $.ui.toast(r.team ? `Partagé avec ${r.team.name}` : 'Partagé par lien seul désormais')
     void refreshTeams($).catch(() => {})
   } catch (error) {
-    $.ui.toast(`Couldn't change it: ${String((error as Error)?.message ?? error)}`)
+    $.ui.toast(`Modification impossible : ${String((error as Error)?.message ?? error)}`)
   }
 }
 
@@ -11525,7 +11525,7 @@ async function teamCommand($: $, args: string): Promise<{ text: string }> {
     switch (verb.toLowerCase()) {
       case '':
         await openTeam($)
-        return { text: 'Opened the Team panel.' }
+        return { text: 'Panneau Team ouvert.' }
       case 'signin':
       case 'login': {
         await refreshTeams($)
@@ -11550,15 +11550,15 @@ async function teamCommand($: $, args: string): Promise<{ text: string }> {
         return { text: 'Signed out.' }
       case 'delete-account':
         await signOut($, { deleteAccount: true })
-        return { text: 'Deleted your account on the share server: your sign-in, and your place in every team.' }
+        return { text: 'Compte supprimé sur le serveur de partage : votre connexion et votre place dans chaque équipe.' }
       case 'create': {
         const team = await createTeam($, arg)
-        if (!team) return { text: 'Name it: /team create <name>' }
+        if (!team) return { text: 'Nommez-le : /team create <nom>' }
         return { text: `Made ${team.name}; what you share goes to it. Invite people with this link: ${(await read($, teamsA)).server}/i/${team.invite}` }
       }
       case 'invite': {
         const team = t0.teams.find(x => x.id === t0.current)
-        if (!team) return { text: 'No team yet: /team create <name>' }
+        if (!team) return { text: 'Pas encore d’équipe : /team create <nom>' }
         await copyText($, inviteUrl(t0, team), 'Invite link copied')
         return { text: `Anyone who opens this link (and signs in) joins ${team.name}: ${inviteUrl(t0, team)}` }
       }
@@ -11567,7 +11567,7 @@ async function teamCommand($: $, args: string): Promise<{ text: string }> {
         await refreshTeams($)
         const t = await read($, teamsA)
         const team = t.teams.find(x => x.id === t.current)
-        if (!t.account) return { text: 'Sign in first: /team signin' }
+        if (!t.account) return { text: 'Connectez-vous d’abord : /team signin' }
         if (!team) return { text: 'No team yet: /team create <name>, or paste an invite link.' }
         if (!t.sessions.length) return { text: `Nothing is shared with ${team.name} right now.` }
         return {
@@ -11582,12 +11582,12 @@ async function teamCommand($: $, args: string): Promise<{ text: string }> {
       case 'invites': {
         const server = await serverOf($)
         const saved = await signInFor($, server)
-        if (!saved) return { text: 'Sign in first: /team signin' }
+        if (!saved) return { text: 'Connectez-vous d’abord : /team signin' }
         const list = (await api<{ invites: ShareInvite[] }>($, server, '/api/me/invites', { token: saved.token })).invites
         await update($, invitesA, () => list)
-        if (!list.length) return { text: 'No invites right now.' }
+        if (!list.length) return { text: 'Aucune invitation pour le moment.' }
         return {
-          text: ['Invited:', ...list.map((i, n) => `${n + 1}. ${i.room.title} (from ${i.from.name}): ${i.room.url}`), '', 'Paste a link to join.'].join('\n'),
+          text: ['Invités :', ...list.map((i, n) => `${n + 1}. ${i.room.title} (from ${i.from.name}): ${i.room.url}`), '', 'Collez un lien pour rejoindre.'].join('\n'),
         }
       }
       case 'join': {
@@ -11603,12 +11603,12 @@ async function teamCommand($: $, args: string): Promise<{ text: string }> {
         const t = await read($, teamsA)
         if (arg.toLowerCase() === 'link') {
           await setCurrentTeam($, null)
-          return { text: 'Share now goes by link alone.' }
+          return { text: 'Le partage se fait désormais par lien seul.' }
         }
         const team = t.teams.find(x => x.name.toLowerCase() === arg.toLowerCase() || x.id === arg)
         if (!team) return { text: `Your teams: ${t.teams.map(x => x.name).join(', ') || 'none'}. /team use <name> or /team use link` }
         await setCurrentTeam($, team.id)
-        return { text: `Share now goes to ${team.name}.` }
+        return { text: `Le partage va désormais à ${team.name}.` }
       }
       case 'access': {
         const access = arg.toLowerCase()
@@ -11714,14 +11714,14 @@ async function pollInvites($: $) {
   // In a room, this session's row is the room's: a new invite says so once,
   // and waits as a button in the row.
   const fresh = list.find(i => !had.some(h => inviteKey(h) === inviteKey(i))) // a new one, or one sent again
-  if (fresh && (await read($, modeA)) !== 'idle') $.ui.toast(`${fresh.from.name} invites you to ${tidyTitle(fresh.room.title)}`)
+  if (fresh && (await read($, modeA)) !== 'idle') $.ui.toast(`${fresh.from.name} vous invite à ${tidyTitle(fresh.room.title)}`)
 }
 
 // A desktop notification for an invite: the terminal's own channel where
 // there is one (iTerm2, kitty, Ghostty); else (Claude Desktop, other
 // terminals) the system's: macOS's notification centre, or notify-send.
 async function notifyInvite($: $, invite: ShareInvite) {
-  const title = `${invite.from.name} invites you`
+  const title = `${invite.from.name} vous invite`
   const body = `${invite.room.title} · Join it from Claude Code, above the prompt`
   const sent = await $.ui.notify(body, { title }).catch(() => null)
   if (sent?.isSent) return
@@ -11951,16 +11951,16 @@ export const register: Register = (on, options) => {
       name: 'share-session',
       description: 'Share this session (with your team when signed in): /share-session [all | new] [link] [watch]',
     })
-    await $.command.register({ name: 'team', description: "Your team's shared sessions, one click to join: /team [signin | create <name> | invite | signout]" })
-    await $.command.register({ name: 'invite', description: 'Invite a teammate into this shared session, in their Claude Code: /invite <name>' })
-    await $.command.register({ name: 'stop-sharing', description: 'Stop sharing this session, or leave the one you joined' })
+    await $.command.register({ name: 'team', description: "Sessions partagées de votre équipe, un clic pour rejoindre : /team [signin | create <nom> | invite | signout]" })
+    await $.command.register({ name: 'invite', description: 'Inviter un coéquipier dans cette session partagée, dans son Claude Code : /invite <nom>' })
+    await $.command.register({ name: 'stop-sharing', description: 'Arrêter le partage de cette session, ou quitter celle que vous avez rejointe' })
     await $.command.register({ name: 'room', description: 'Open the Room: who is here, activity, side chat' })
-    await $.command.register({ name: 'share-file', description: 'Show a file to everyone in the shared session: /share-file <path>' })
+    await $.command.register({ name: 'share-file', description: 'Montrer un fichier à tous dans la session partagée : /share-file <chemin>' })
     await $.command.register({
       name: 'share-preview',
       description: "Let teammates open this machine's localhost: /share-preview <port|http://localhost:port/path> [title]",
     })
-    await $.command.register({ name: 'who', description: "Who's in this shared session and what each is doing" })
+    await $.command.register({ name: 'who', description: 'Qui est dans cette session partagée et ce que chacun fait' })
     void readUpdates($)
     // Signed in: the team and what's shared with it, for Share and the Team button.
     void serverOf($)
@@ -12017,8 +12017,8 @@ export const register: Register = (on, options) => {
     }
     const reloaded = room && (await read($, modeA)) === 'guest'
     if (reloaded) await readyReplay($)
-    if (!room) await resumeHosting($).catch(error => $.ui.log(`Couldn't pick the shared session back up: ${String(error?.message ?? error)}`))
-    if (!(await read($, roomA))) await resumeJoined($).catch(error => $.ui.log(`Couldn't get back into the shared session: ${String(error?.message ?? error)}`))
+    if (!room) await resumeHosting($).catch(error => $.ui.log(`Reprise impossible de la session partagée : ${String(error?.message ?? error)}`))
+    if (!(await read($, roomA))) await resumeJoined($).catch(error => $.ui.log(`Retour impossible dans la session partagée : ${String(error?.message ?? error)}`))
     // A room that doesn't answer holds a reload's listeners back only so long.
     void (async () => {
       if (reloaded) await Promise.race([listed, new Promise<void>(done => $.clock.after(3_000, done))])
@@ -12073,7 +12073,7 @@ export const register: Register = (on, options) => {
   on('command.run', { command: 'shared-session:team' }, ($, e) => teamCommand($, e.args ?? ''))
 
   on('command.run', { command: 'room' }, async $ => {
-    if ((await read($, modeA)) === 'idle') return { text: 'This session is not shared. Press Share above the prompt, or type /share-session.' }
+    if ((await read($, modeA)) === 'idle') return { text: 'Cette session n’est pas partagée. Appuyez sur Partager au-dessus de l’invite, ou tapez /share-session.' }
     await openRoom($)
     return { text: 'Opened the Room.' }
   })
@@ -12082,7 +12082,7 @@ export const register: Register = (on, options) => {
   // card (the CommandOutput hook below).
   on('command.run', { command: 'who' }, async $ => {
     const v = await view($)
-    if (v.mode === 'idle' || !v.room) return { text: 'This session is not shared. Press Share above the prompt, or type /share-session.' }
+    if (v.mode === 'idle' || !v.room) return { text: 'Cette session n’est pas partagée. Appuyez sur Partager au-dessus de l’invite, ou tapez /share-session.' }
     const people = faces(v)
     const here = people.filter(p => p.online).map(p => p.name)
     const away = people.filter(p => !p.online).map(p => p.name)
@@ -12107,32 +12107,32 @@ export const register: Register = (on, options) => {
 
   on('command.run', { command: 'share-file' }, async ($, e) => {
     const room = await read($, roomA)
-    if ((await read($, modeA)) !== 'host' || !room) return { text: 'Share this session first: press Share or type /share-session.' }
+    if ((await read($, modeA)) !== 'host' || !room) return { text: 'Partagez d’abord cette session : appuyez sur Partager ou tapez /share-session.' }
     const arg = e.args.trim().replace(/^["']|["']$/g, '')
-    if (!arg) return { text: 'Which file? /share-file <path>' }
+    if (!arg) return { text: 'Quel fichier ? /share-file <chemin>' }
     const cwd = await $.session.cwd()
     const path = arg.startsWith('/') ? arg : `${cwd}/${arg}`
     const file = await uploadFile($, room, path)
-    if (!file) return { text: `Couldn't share ${arg}: no such file, or over 10 MB.` }
+    if (!file) return { text: `Partage impossible de ${arg} : fichier introuvable ou de plus de 10 Mo.` }
     send($, 'artifact', { kind: 'send', files: [file], display: 'render', caption: '' })
-    return { text: `Shared ${file.name} with everyone here.` }
+    return { text: `${file.name} partagé avec tous les présents.` }
   })
 
   on('command.run', { command: 'share-preview' }, async ($, e) => {
     const room = await read($, roomA)
-    if ((await read($, modeA)) !== 'host' || !room) return { text: 'Share this session first: press Share or type /share-session.' }
+    if ((await read($, modeA)) !== 'host' || !room) return { text: 'Partagez d’abord cette session : appuyez sur Partager ou tapez /share-session.' }
     const [first, ...rest] = e.args.trim().split(/\s+/)
     const url = LOCAL_URL.exec(first ?? '')
     const port = Number(url?.[1] ?? first)
     if (!Number.isInteger(port) || port < 1 || port > 65535)
-      return { text: 'Which port? /share-preview <port|http://localhost:port/path> [title], e.g. /share-preview 3000' }
+      return { text: 'Quel port ? /share-preview <port|http://localhost:port/chemin> [titre], par ex. /share-preview 3000' }
     const title = rest.join(' ') || `localhost:${port}`
     // What the page uses beside it, in the same project: asked about above
     // the prompt, a service a question, and named here, with how to share
     // one that isn't asked about (`relatedSaid`).
     const page = url ? localPageOf(url) : null
     const forwarded = await hostForwards($, room, { port, title, path: page?.path ?? '/', host: page?.host, scheme: page?.scheme }, { offerRelated: 4_000 })
-    if (!forwarded) return { text: `Couldn't share localhost:${port}.` }
+    if (!forwarded) return { text: `Partage impossible de localhost:${port}.` }
     if ('refused' in forwarded) return { text: forwarded.refused }
     return { text: `${forwardedSaid([port])}${relatedSaid(await forwarded.related)}` }
   })
@@ -12299,7 +12299,7 @@ export const register: Register = (on, options) => {
         0,
         () =>
           void relayQueued($, room, s, pid, sent).catch(error =>
-            $.ui.log(`Shared session: relaying a message: ${String((error as Error)?.message ?? error)}`, { to: 'debug' }),
+            $.ui.log(`Session partagée : relais d’un message : ${String((error as Error)?.message ?? error)}`, { to: 'debug' }),
           ),
       )
       lastActivity = await $.clock.now()
@@ -12667,7 +12667,7 @@ export const register: Register = (on, options) => {
       current.claimed = false
     }
     if (ride?.kind === 'own') ownPending.delete(ride.pid)
-    $.ui.log(`Shared session: a riding step failed (${next.error.kind}${next.error.message ? `: ${next.error.message}` : ''})`, { to: 'debug' })
+    $.ui.log(`Session partagée : une étape en relais a échoué (${next.error.kind}${next.error.message ? ` : ${next.error.message}` : ''})`, { to: 'debug' })
     const room = await read($, roomA)
     const note = e.index === 0 || current ? `\n\n_Lost the thread of ${room?.host ?? 'the host'}'s reply here; it plays again below._` : ''
     if (note) yield { kind: 'text', index: 0, text: note } satisfies TurnStepChunk
@@ -12928,13 +12928,13 @@ export const register: Register = (on, options) => {
       what,
       extent,
       always,
-      question: `${who} wants Claude to run ${what.slice(0, 200)}${extent ? ` (${extent})` : ''}. Allow it?`,
+      question: `${who} veut que Claude exécute ${what.slice(0, 200)}${extent ? ` (${extent})` : ''}. Autoriser ?`,
       preview: approvalPreview(e.tool, e.input, cwd),
       whole: approvalPreview(e.tool, e.input, cwd, WHOLE_CALL_LINES),
       descriptions: {
-        'Allow once': `Run this one ${e.tool} call for ${who}.`,
-        [always]: `Don't ask again for ${who}'s requests while this session is shared.`,
-        Decline: `Claude is told you declined and carries on without it.`,
+        'Autoriser une fois': `Exécuter cet appel ${e.tool} pour ${who}.`,
+        [always]: `Ne plus demander pour les requêtes de ${who} pendant le partage de cette session.`,
+        Refuser: `Claude est informé de votre refus et continue sans.`,
       },
       room: room ? roomIdentity(room) : '',
       stage: 'waiting',
@@ -12977,7 +12977,7 @@ export const register: Register = (on, options) => {
           ...(extent ? { extent } : {}),
           preview: ask.whole.slice(0, 4000),
           always,
-          options: ['Allow once', always, 'Decline'],
+          options: ['Autoriser une fois', always, 'Refuser'],
         })
         await approvalWait($, ask, answered, () => over)
       } else if (!over) {
@@ -13012,7 +13012,7 @@ export const register: Register = (on, options) => {
             ask.stage = 'row'
             timer = $.clock.after(10 * 60_000, giveUp)
             await showBandAsk($)
-            $.ui.toast(`${who} wants Claude to run ${what.slice(0, 80)}: answer above the prompt`)
+            $.ui.toast(`${who} veut que Claude exécute ${what.slice(0, 80)} : répondez au-dessus de l’invite`)
             nudgeSidebar($)
             await approvalWait($, ask, answered, () => over)
           }
@@ -13044,7 +13044,7 @@ export const register: Register = (on, options) => {
     // The room it was asked in is over (Stop sharing, its end) by its answer:
     // no, as the row's calls are. Its teammate may be gone too.
     if (!(await askedRoomOpen($, ask.room))) answer = 'Decline'
-    const allowed = answer === 'Allow once' || (always !== '' && answer === always)
+    const allowed = answer === 'Autoriser une fois' || (always !== '' && answer === always)
     if (allowed && answer === always) {
       if (owner.seat)
         await update($, trustedA, list => [
@@ -13396,7 +13396,7 @@ export const register: Register = (on, options) => {
     const now = await $.clock.now()
     const room = await read($, roomA)
     const mode = await read($, modeA)
-    const fail = (what: string) => (error: unknown) => $.ui.toast(`Couldn't ${what}: ${String((error as Error)?.message ?? error)}`)
+    const fail = (what: string) => (error: unknown) => $.ui.toast(`Impossible de ${what} : ${String((error as Error)?.message ?? error)}`)
     const providerName = (id: string) => t.providers.find(p => p.id === id)?.label ?? (id === 'github' ? 'GitHub' : id === 'google' ? 'Google' : id)
 
     if (!t.account) {
@@ -13426,7 +13426,7 @@ export const register: Register = (on, options) => {
               {t.providers.map((p, i) => (
                 <Button
                   key={`signin-${p.id}`}
-                  label={`Sign in with ${p.label}`}
+                  label={`Connectez-vous avec ${p.label}`}
                   variant={i === 0 ? 'primary' : undefined}
                   onPress={() => void startSignIn($, p.id).catch(fail('sign in'))}
                 />
@@ -13459,8 +13459,8 @@ export const register: Register = (on, options) => {
             </Box>
           </Box>
           <Box flexDirection="row" gap={1} flexShrink={0}>
-            <Button key={`inv-join-${invite.room.id}`} label="Join" variant="primary" onPress={press => void joinInvited($, invite, press.surface)} />
-            <Button key={`inv-dismiss-${invite.room.id}`} label="Dismiss" plain dimColor onPress={() => void dropInvite($, invite.room.id)} />
+            <Button key={`inv-join-${invite.room.id}`} label="Rejoindre" variant="primary" onPress={press => void joinInvited($, invite, press.surface)} />
+            <Button key={`inv-dismiss-${invite.room.id}`} label="Ignorer" plain dimColor onPress={() => void dropInvite($, invite.room.id)} />
           </Box>
         </Box>
       )
@@ -13563,9 +13563,9 @@ export const register: Register = (on, options) => {
               [
                 here[s.id] ? <Button key={`open-${s.id}`} label="Open" plain onPress={() => void openHere($, s.id)} /> : null,
                 stopping === `stop:${s.id}` ? (
-                  <Button key={`stop-${s.id}`} label="Stop for everyone?" variant="primary" onPress={() => void stopFromTeam($, s.id)} />
+                  <Button key={`stop-${s.id}`} label="Arrêter pour tous ?" variant="primary" onPress={() => void stopFromTeam($, s.id)} />
                 ) : (
-                  <Button key={`stop-${s.id}`} label="Stop" plain onPress={() => void stopFromTeam($, s.id)} />
+                  <Button key={`stop-${s.id}`} label="Arrêter" plain onPress={() => void stopFromTeam($, s.id)} />
                 ),
               ]
             ) : inElsewhere ? (
@@ -13575,7 +13575,7 @@ export const register: Register = (on, options) => {
                 here[s.id] ? (
                   <Button key={`open-${s.id}`} label="Open" plain onPress={() => void openHere($, s.id)} />
                 ) : (
-                  <Button key={`join-${s.id}`} label="Join" plain dimColor onPress={press => void joinFromTeam($, [s], press.surface)} />
+                  <Button key={`join-${s.id}`} label="Rejoindre" plain dimColor onPress={press => void joinFromTeam($, [s], press.surface)} />
                 ),
                 stopping === `leave:${s.id}` ? (
                   <Button key={`leave-${s.id}`} label="Leave everywhere?" variant="primary" onPress={() => void leaveFromTeam($, s.id)} />
@@ -13588,12 +13588,12 @@ export const register: Register = (on, options) => {
             ) : canJoin ? (
               <Button
                 key={`join-${s.id}`}
-                label="Join"
+                label="Rejoindre"
                 variant={joinable.length === 1 ? 'primary' : undefined}
                 onPress={press => void joinFromTeam($, [s], press.surface)}
               />
             ) : (
-              <Button key={`join-${s.id}`} label="Join" plain dimColor onPress={press => void joinFromTeam($, [s], press.surface)} />
+              <Button key={`join-${s.id}`} label="Rejoindre" plain dimColor onPress={press => void joinFromTeam($, [s], press.surface)} />
             )}
           </Box>
         </Box>
@@ -13721,7 +13721,7 @@ export const register: Register = (on, options) => {
           ))}
         </Box>
         <Box flexDirection="column" gap={1}>
-          {headingOf(el, 'Invite to the team', 'they paste it, or open it')}
+          {headingOf(el, 'Inviter dans l’équipe', 'ils collent le lien ou l’ouvrent')}
           <Box flexDirection="row" alignItems="center" gap={1} borderStyle="round" borderDimColor paddingX={1}>
             <Box flexGrow={1} flexShrink={1} minWidth={0}>
               <Text dimColor wrap="truncate-middle">
@@ -13753,8 +13753,8 @@ export const register: Register = (on, options) => {
                     key="team-access"
                     value={team.access}
                     options={[
-                      { value: 'members', label: 'Only people in the team' },
-                      { value: 'link', label: 'Anyone with the link' },
+                      { value: 'members', label: 'Les membres de l’équipe seulement' },
+                      { value: 'link', label: 'Toute personne avec le lien' },
                     ]}
                     onSelect={(value: string) => void changeTeam($, { access: value === 'link' ? 'link' : 'members' }).catch(fail('change it'))}
                   />,
@@ -13763,7 +13763,7 @@ export const register: Register = (on, options) => {
             {Input
               ? settingOf(
                   el,
-                  'Join by email domain',
+                  'Rejoindre par domaine e-mail',
                   <Input
                     key={`team-domains-${(team.domains ?? []).join(',')}`}
                     value={(team.domains ?? []).join(', ')}
@@ -13776,7 +13776,7 @@ export const register: Register = (on, options) => {
             {Input
               ? settingOf(
                   el,
-                  'Join by GitHub org',
+                  'Rejoindre par organisation GitHub',
                   <Input
                     key={`team-orgs-${(team.githubOrgs ?? []).join(',')}`}
                     value={(team.githubOrgs ?? []).join(', ')}
@@ -13797,7 +13797,7 @@ export const register: Register = (on, options) => {
           {Select
             ? settingOf(
                 el,
-                'Invites to a session',
+                'Invitations à une session',
                 <Select
                   key="invite-notify"
                   value={(await $.store.get(NOTIFY_KEY).catch(() => undefined)) === false ? 'quiet' : 'notify'}
@@ -13859,7 +13859,7 @@ export const register: Register = (on, options) => {
                 key="room-share"
                 label="Share this session"
                 variant="primary"
-                onPress={press => void requestShare($, press.surface).catch(error => $.ui.log(`Couldn't share: ${String(error?.message ?? error)}`))}
+                onPress={press => void requestShare($, press.surface).catch(error => $.ui.log(`Partage impossible : ${String(error?.message ?? error)}`))}
               />
             </Box>
           )}
@@ -13890,14 +13890,14 @@ export const register: Register = (on, options) => {
           <Text bold color={colorOf(approving.who)}>
             {approving.who}
           </Text>
-          <Text>{' wants Claude to run '}</Text>
+          <Text>{' veut que Claude exécute '}</Text>
           <Text bold>{approving.what}</Text>
         </Text>
         {waiting ? <Markdown key="approval-whole" text={waiting.whole} /> : null}
         <Box flexDirection="row" gap={1}>
-          <Button key="room-approve-once" label="Allow once" variant="primary" onPress={() => answerBandAsk(approving.id, 'Allow once')} />
+          <Button key="room-approve-once" label="Autoriser une fois" variant="primary" onPress={() => answerBandAsk(approving.id, 'Allow once')} />
           <Button key="room-approve-always" label={approving.always} plain onPress={() => answerBandAsk(approving.id, approving.always)} />
-          <Button key="room-approve-no" label="Decline" plain dimColor onPress={() => answerBandAsk(approving.id, 'Decline')} />
+          <Button key="room-approve-no" label="Refuser" plain dimColor onPress={() => answerBandAsk(approving.id, 'Decline')} />
         </Box>
       </Box>
     ) : null
@@ -13936,7 +13936,7 @@ export const register: Register = (on, options) => {
                     variant="primary"
                     onPress={() => void answerCloudAsk($, ask.id, ask.options[0] ?? 'Share')}
                   />
-                  <Button key={`cloud-ask-not-now-${ask.id}`} label="Not now" plain dimColor onPress={() => void answerCloudAsk($, ask.id, 'Not now')} />
+                  <Button key={`cloud-ask-not-now-${ask.id}`} label="Pas maintenant" plain dimColor onPress={() => void answerCloudAsk($, ask.id, 'Pas maintenant')} />
                 </Box>
               </Box>
             ) : (
@@ -13945,16 +13945,16 @@ export const register: Register = (on, options) => {
                   <Text bold color={colorOf(ask.who)}>
                     {ask.who}
                   </Text>
-                  <Text>{' wants the cloud host to run '}</Text>
+                  <Text>{' veut que l’hôte cloud exécute '}</Text>
                   <Text bold>{ask.what}</Text>
                 </Text>
                 {ask.preview ? <Markdown key={`cloud-ask-whole-${ask.id}`} text={ask.preview} /> : null}
                 <Box flexDirection="row" gap={1}>
-                  <Button key={`cloud-ask-once-${ask.id}`} label="Allow once" variant="primary" onPress={() => void answerCloudAsk($, ask.id, 'Allow once')} />
+                  <Button key={`cloud-ask-once-${ask.id}`} label="Autoriser une fois" variant="primary" onPress={() => void answerCloudAsk($, ask.id, 'Allow once')} />
                   {ask.always ? (
                     <Button key={`cloud-ask-always-${ask.id}`} label={ask.always} plain onPress={() => void answerCloudAsk($, ask.id, ask.always)} />
                   ) : null}
-                  <Button key={`cloud-ask-no-${ask.id}`} label="Decline" plain dimColor onPress={() => void answerCloudAsk($, ask.id, 'Decline')} />
+                  <Button key={`cloud-ask-no-${ask.id}`} label="Refuser" plain dimColor onPress={() => void answerCloudAsk($, ask.id, 'Decline')} />
                 </Box>
               </Box>
             ),
@@ -13986,14 +13986,14 @@ export const register: Register = (on, options) => {
             </Box>
             <Button
               key="cloud-copy-command"
-              label="Copy command"
+              label="Copier la commande"
               plain
               onPress={press => void copyText($, 'claude setup-token', 'Command copied: run it in a terminal', press.surface)}
             />
           </Box>
           <Text>2. Copy the token it prints, then press Use copied token.</Text>
           <Text dimColor>
-            The token stays on this computer and goes to the cloud host when you move; it's never shown. Teammates' prompts there use your Claude plan, and
+            Le jeton reste sur cet ordinateur et part sur l’hôte cloud lors du transfert ; it's never shown. Teammates' prompts there use your Claude plan, and
             every call of theirs asks you first. Revoke it any time at claude.ai.
           </Text>
           {cloudMove.note ? <Text color="error">{cloudMove.note}</Text> : null}
@@ -14132,7 +14132,7 @@ export const register: Register = (on, options) => {
             {isHost ? (
               <Button
                 key="room-invite"
-                label={signedIn ? 'Invite' : 'Sign in to invite'}
+                label={signedIn ? 'Inviter' : 'Connectez-vous pour inviter'}
                 variant="primary"
                 onPress={press => void pressInvite($, room.url, press.surface)}
               />
@@ -14279,7 +14279,7 @@ export const register: Register = (on, options) => {
     const inviteBlock =
       !isHost || !teamsNow?.account ? null : mates.length ? (
         <Box flexDirection="column" gap={1}>
-          {headingOf(el, 'Invite teammates', 'it shows in their Claude Code')}
+          {headingOf(el, 'Inviter des coéquipiers', 'cela s’affiche dans leur Claude Code')}
           {mates.slice(0, 8).map(m => (
             <Box key={`mate-${m.id}`} flexDirection="row" gap={1} alignItems="center" justifyContent="space-between">
               <Box flexDirection="row" gap={1} alignItems="center" flexShrink={1} minWidth={0}>
@@ -14292,13 +14292,13 @@ export const register: Register = (on, options) => {
                 {invited[m.id] ? <Text color="success">{`Invited ${ago(invited[m.id] ?? now, now)}`}</Text> : null}
                 <Button
                   key={`invite-${m.id}`}
-                  label={invited[m.id] ? 'Invite again' : 'Invite'}
+                  label={invited[m.id] ? 'Inviter à nouveau' : 'Inviter'}
                   plain
                   dimColor={Boolean(invited[m.id])}
                   onPress={() =>
                     void inviteToRoom($, [m.id])
                       .then(text => $.ui.toast(text))
-                      .catch(error => $.ui.toast(`Couldn't invite: ${String(error?.message ?? error)}`))
+                      .catch(error => $.ui.toast(`Invitation impossible : ${String(error?.message ?? error)}`))
                   }
                 />
               </Box>
@@ -14318,7 +14318,7 @@ export const register: Register = (on, options) => {
             {shownTeam && teamsNow ? (
               <Button
                 key="room-team-invite"
-                label="Copy team invite link"
+                label="Copier le lien d’invitation de l’équipe"
                 variant="secondary"
                 onPress={press => void copyText($, inviteUrl(teamsNow, shownTeam), 'Team invite link copied', press.surface)}
               />
@@ -14516,7 +14516,7 @@ export const register: Register = (on, options) => {
         {Input ? (
           <Input
             key={`chat-input-${chat.length}`}
-            placeholder="Message everyone (Claude doesn't read this)"
+            placeholder="Écrivez à tout le monde (Claude ne lit pas ceci)"
             submitLabel="Send"
             onSubmit={(value: string) => void postChat($, value)}
           />
@@ -14572,7 +14572,7 @@ export const register: Register = (on, options) => {
                       <Button key={`forward-${item.key}`} label="Allow forwarding" plain dimColor onPress={() => void allowForwarding($, item)} />
                     ) : null}
                     {isHost && item.kind === 'preview' && item.pid && !item.closed ? (
-                      <Button key={`stop-${item.key}`} label="Stop" plain onPress={() => void stopPreview($, item.pid as string)} />
+                      <Button key={`stop-${item.key}`} label="Arrêter" plain onPress={() => void stopPreview($, item.pid as string)} />
                     ) : null}
                   </Box>
                 </Box>
@@ -14599,7 +14599,7 @@ export const register: Register = (on, options) => {
                       >{`${mapped ? '' : 'Last: '}localhost:${local.localPort} here → ${room.host}'s localhost:${item.port}`}</Text>
                     </Box>
                     <Box flexDirection="row" flexShrink={0}>
-                      <Button key={`close-${item.key}`} label="Close" plain onPress={() => void closeLocalPreview($, item.pid as string)} />
+                      <Button key={`close-${item.key}`} label="Fermer" plain onPress={() => void closeLocalPreview($, item.pid as string)} />
                     </Box>
                   </Box>
                 ) : null}
@@ -14624,8 +14624,8 @@ export const register: Register = (on, options) => {
             key="updates"
             value={updates ? 'auto' : 'manual'}
             options={[
-              { value: 'auto', label: 'Install by themselves' },
-              { value: 'manual', label: 'Only when I update' },
+              { value: 'auto', label: 'S’installer seules' },
+              { value: 'manual', label: 'Uniquement quand je mets à jour' },
             ]}
             onSelect={(value: string) => void writeUpdates($, value === 'auto')}
           />,
@@ -14649,7 +14649,7 @@ export const register: Register = (on, options) => {
             <Box flexShrink={1} minWidth={0}>
               <Text dimColor>Auto mode won't let shared sessions pin themselves in the sidebar.</Text>
             </Box>
-            <Button key="allow-pin" label="Allow pinning" plain onPress={() => void allowDeskTools($)} />
+            <Button key="allow-pin" label="Autoriser l’épinglage" plain onPress={() => void allowDeskTools($)} />
           </Box>
         ) : null}
         {isHost || cloudSettings ? (
@@ -14663,8 +14663,8 @@ export const register: Register = (on, options) => {
                     key="policy-prompts"
                     value={v.policy.prompts}
                     options={[
-                      { value: 'everyone', label: 'Prompt Claude' },
-                      { value: 'watch', label: 'Only watch and chat' },
+                      { value: 'everyone', label: 'Inviter Claude' },
+                      { value: 'watch', label: 'Regarder et discuter seulement' },
                     ]}
                     onSelect={(value: string) => void setPolicyHere($, { prompts: value === 'watch' ? 'watch' : 'everyone' })}
                   />,
@@ -14679,8 +14679,8 @@ export const register: Register = (on, options) => {
                     // A cloud host asks about every call when told nothing: it holds your Claude sign-in.
                     value={cloudSettings && v.policy.approvals === 'none' ? 'all' : v.policy.approvals}
                     options={[
-                      { value: 'edits', label: 'Anything but reading this project' },
-                      { value: 'all', label: 'Every tool, reads too' },
+                      { value: 'edits', label: 'Tout sauf la lecture de ce projet' },
+                      { value: 'all', label: 'Tous les outils, lectures comprises' },
                       ...(cloudSettings ? [] : [{ value: 'none', label: 'Nothing' }]),
                     ]}
                     onSelect={(value: string) => void setPolicyHere($, { approvals: value === 'all' || value === 'none' ? value : 'edits' })}
@@ -14695,8 +14695,8 @@ export const register: Register = (on, options) => {
                     key="policy-files"
                     value={v.policy.files ?? 'on'}
                     options={[
-                      { value: 'on', label: 'Goes to everyone' },
-                      { value: 'off', label: cloudSettings ? 'Stays in the cloud host' : 'Stays with me' },
+                      { value: 'on', label: 'Va à tout le monde' },
+                      { value: 'off', label: cloudSettings ? 'Reste sur l’hôte cloud' : 'Reste avec moi' },
                     ]}
                     onSelect={(value: string) => void setPolicyHere($, { files: value === 'off' ? 'off' : 'on' })}
                   />,
@@ -14707,7 +14707,7 @@ export const register: Register = (on, options) => {
                 <Text dimColor wrap="truncate-end">{`Always allowed: ${listNames(cloudSettings ? cloudTrusted : [...new Set(trusted.map(t => t.who))])}`}</Text>
                 <Button
                   key="untrust"
-                  label="Ask again"
+                  label="Redemander"
                   plain
                   onPress={() => void (cloudSettings ? setCloudPolicy($, { untrust: true }) : update($, trustedA, () => []))}
                 />
@@ -14725,8 +14725,8 @@ export const register: Register = (on, options) => {
                   key="auto-open"
                   value={(await read($, autoOpenA)) ? 'auto' : 'ask'}
                   options={[
-                    { value: 'auto', label: 'Open it here' },
-                    { value: 'ask', label: 'Ask me first' },
+                    { value: 'auto', label: 'Ouvrir ici' },
+                    { value: 'ask', label: 'Me demander d’abord' },
                   ]}
                   onSelect={(value: string) => void update($, autoOpenA, () => value !== 'ask')}
                 />,
@@ -14740,9 +14740,9 @@ export const register: Register = (on, options) => {
                   key="preview-open"
                   value={previewOpen}
                   options={[
-                    ...(desktop ? [{ value: 'pane', label: "Claude's browser, or a separate window when ports are taken" }] : []),
-                    { value: 'browser', label: 'Your browser, or a separate window when ports are taken' },
-                    { value: 'window', label: 'Always a separate window' },
+                    ...(desktop ? [{ value: 'pane', label: "Le navigateur de Claude, ou une fenêtre séparée si les ports sont pris" }] : []),
+                    { value: 'browser', label: 'Votre navigateur, ou une fenêtre séparée si les ports sont pris' },
+                    { value: 'window', label: 'Toujours une fenêtre séparée' },
                   ]}
                   onSelect={(value: string) => void setPreviewOpen($, value)}
                 />,
@@ -14758,7 +14758,7 @@ export const register: Register = (on, options) => {
                 </Text>
               </Box>
               <Box flexShrink={0}>
-                <Button key="allow-pane" label="Allow previews in Claude" plain onPress={() => void allowPane($)} />
+                <Button key="allow-pane" label="Autoriser les aperçus dans Claude" plain onPress={() => void allowPane($)} />
               </Box>
             </Box>
           ) : null}
@@ -14770,8 +14770,8 @@ export const register: Register = (on, options) => {
                   key="tool-rows"
                   value={await read($, toolRowsA)}
                   options={[
-                    { value: 'grouped', label: 'Grouped, as the terminal folds its own' },
-                    { value: 'each', label: 'Each shown, with its result' },
+                    { value: 'grouped', label: 'Regroupés, comme le terminal le fait' },
+                    { value: 'each', label: 'Chacun affiché, avec son résultat' },
                   ]}
                   onSelect={(value: string) => void update($, toolRowsA, () => (value === 'each' ? 'each' : 'grouped'))}
                 />,
@@ -14785,8 +14785,8 @@ export const register: Register = (on, options) => {
                   key="pref-relay"
                   value={prefs.relayPeers ? 'relay' : 'keep'}
                   options={[
-                    { value: 'relay', label: `Go to ${room.host}’s Claude` },
-                    { value: 'keep', label: 'Stay here' },
+                    { value: 'relay', label: `Aller au Claude de ${room.host}` },
+                    { value: 'keep', label: 'Rester ici' },
                   ]}
                   onSelect={(value: string) => void setPrefs($, { relayPeers: value !== 'keep' })}
                 />,
@@ -14800,8 +14800,8 @@ export const register: Register = (on, options) => {
                   key="pref-sounds"
                   value={prefs.sounds}
                   options={[
-                    { value: 'mentions', label: 'Mentions and my turns' },
-                    { value: 'all', label: 'Those and joins' },
+                    { value: 'mentions', label: 'Mentions et mes tours' },
+                    { value: 'all', label: 'Ceux-là et les arrivées' },
                     { value: 'off', label: 'None' },
                   ]}
                   onSelect={(value: string) => void setPrefs($, { sounds: value === 'all' || value === 'off' ? value : 'mentions' })}
@@ -14817,7 +14817,7 @@ export const register: Register = (on, options) => {
                   value={prefs.voice ? 'on' : 'off'}
                   options={[
                     { value: 'off', label: 'Nothing' },
-                    { value: 'on', label: 'Joins and mentions' },
+                    { value: 'on', label: 'Arrivées et mentions' },
                   ]}
                   onSelect={(value: string) => void setPrefs($, { voice: value === 'on' })}
                 />,
@@ -14832,7 +14832,7 @@ export const register: Register = (on, options) => {
                   value={prefs.statusLine ? 'on' : 'off'}
                   options={[
                     { value: 'off', label: 'Off' },
-                    { value: 'on', label: 'Who’s here' },
+                    { value: 'on', label: 'Présents' },
                   ]}
                   onSelect={(value: string) => void setPrefs($, { statusLine: value === 'on' })}
                 />,
@@ -14849,7 +14849,7 @@ export const register: Register = (on, options) => {
               </Box>
               <Button
                 key="copy-switch"
-                label="Copy command"
+                label="Copier la commande"
                 plain
                 onPress={press => void copyText($, switchTo, 'Command copied: run it in a terminal, then quit and reopen Claude', press.surface)}
               />
@@ -14863,7 +14863,7 @@ export const register: Register = (on, options) => {
           <Box flexDirection="row" gap={1} alignItems="center">
             <Button
               key="room-stop"
-              label={v.confirming === 'stop' ? 'Stop for everyone' : 'Stop sharing'}
+              label={v.confirming === 'stop' ? 'Arrêter pour tous' : 'Arrêter le partage'}
               variant={v.confirming === 'stop' ? 'primary' : 'secondary'}
               onPress={() => void confirmStop($)}
             />
@@ -14871,7 +14871,7 @@ export const register: Register = (on, options) => {
           </Box>
         ) : (
           <Box flexDirection="row">
-            <Button key="room-leave" label={`Leave ${room.host}'s session`} variant="secondary" onPress={() => void closeRoom($, 'leave')} />
+            <Button key="room-leave" label={`Quitter la session de ${room.host}`} variant="secondary" onPress={() => void closeRoom($, 'leave')} />
           </Box>
         )}
       </Box>
@@ -14948,12 +14948,12 @@ export const register: Register = (on, options) => {
             takingBackNow() ? null : (
               <Button
                 key="invite-join"
-                label="Join"
+                label="Rejoindre"
                 variant="primary"
-                onPress={press => void joinInvited($, invite, press.surface).catch(error => $.ui.toast(`Couldn't join: ${String(error?.message ?? error)}`))}
+                onPress={press => void joinInvited($, invite, press.surface).catch(error => $.ui.toast(`Adhésion impossible : ${String(error?.message ?? error)}`))}
               />
             ),
-            <Button key="invite-dismiss" label="Dismiss" plain dimColor onPress={() => void dropInvite($, invite.room.id)} />,
+            <Button key="invite-dismiss" label="Ignorer" plain dimColor onPress={() => void dropInvite($, invite.room.id)} />,
           ],
         )
       }
@@ -14972,12 +14972,12 @@ export const register: Register = (on, options) => {
           {leaving ? null : (
             <Button
               key="share"
-              label={teamName ? `Share with ${teamName.length > 24 ? `${teamName.slice(0, 23)}…` : teamName}` : 'Share'}
+              label={teamName ? `Partager avec ${teamName.length > 24 ? `${teamName.slice(0, 23)}…` : teamName}` : 'Partager'}
               plain
               onPress={press => {
                 void requestShare($, press.surface).catch(error => {
-                  $.ui.toast("Couldn't share")
-                  $.ui.log(`Couldn't share: ${String(error?.message ?? error)}`)
+                  $.ui.toast("Partage impossible")
+                  $.ui.log(`Partage impossible : ${String(error?.message ?? error)}`)
                 })
               }}
             />
@@ -15018,16 +15018,16 @@ export const register: Register = (on, options) => {
             <Text bold color={color}>
               {approving.who}
             </Text>
-            <Text>{' wants Claude to run '}</Text>
+            <Text>{' veut que Claude exécute '}</Text>
             <Text bold>{approving.what}</Text>
             {approving.more ? <Text dimColor>{` · ${approving.more} more waiting`}</Text> : null}
           </Text>,
         ],
         [
           ...(approving.extent ? [<Button key="approve-whole" label={approving.extent} plain dimColor onPress={() => void openRoom($)} />] : []),
-          <Button key="approve-once" label="Allow once" variant="primary" onPress={() => answerBandAsk(approving.id, 'Allow once')} />,
+          <Button key="approve-once" label="Autoriser une fois" variant="primary" onPress={() => answerBandAsk(approving.id, 'Allow once')} />,
           <Button key="approve-always" label={approving.always} plain onPress={() => answerBandAsk(approving.id, approving.always)} />,
-          <Button key="approve-no" label="Decline" plain dimColor onPress={() => answerBandAsk(approving.id, 'Decline')} />,
+          <Button key="approve-no" label="Refuser" plain dimColor onPress={() => answerBandAsk(approving.id, 'Decline')} />,
         ],
       )
     }
@@ -15059,7 +15059,7 @@ export const register: Register = (on, options) => {
         ],
         [
           <Button key="cloud-yes" label={yes} variant="primary" onPress={() => void answerCloudAsk($, cloudAsk.id, yes)} />,
-          <Button key="cloud-not-now" label="Not now" plain dimColor onPress={() => void answerCloudAsk($, cloudAsk.id, 'Not now')} />,
+          <Button key="cloud-not-now" label="Pas maintenant" plain dimColor onPress={() => void answerCloudAsk($, cloudAsk.id, 'Pas maintenant')} />,
         ],
       )
     }
@@ -15072,18 +15072,18 @@ export const register: Register = (on, options) => {
             <Text bold color={color}>
               {cloudAsk.who}
             </Text>
-            <Text>{' wants the cloud host to run '}</Text>
+            <Text>{' veut que l’hôte cloud exécute '}</Text>
             <Text bold>{cloudAsk.what}</Text>
             {cloudAsks.length > 1 ? <Text dimColor>{` · ${cloudAsks.length - 1} more waiting`}</Text> : null}
           </Text>,
         ],
         [
           ...(cloudAsk.extent ? [<Button key="cloud-whole" label={cloudAsk.extent} plain dimColor onPress={() => void openRoom($)} />] : []),
-          <Button key="cloud-once" label="Allow once" variant="primary" onPress={() => void answerCloudAsk($, cloudAsk.id, 'Allow once')} />,
+          <Button key="cloud-once" label="Autoriser une fois" variant="primary" onPress={() => void answerCloudAsk($, cloudAsk.id, 'Allow once')} />,
           ...(cloudAsk.always
             ? [<Button key="cloud-always" label={cloudAsk.always} plain onPress={() => void answerCloudAsk($, cloudAsk.id, cloudAsk.always)} />]
             : []),
-          <Button key="cloud-no" label="Decline" plain dimColor onPress={() => void answerCloudAsk($, cloudAsk.id, 'Decline')} />,
+          <Button key="cloud-no" label="Refuser" plain dimColor onPress={() => void answerCloudAsk($, cloudAsk.id, 'Decline')} />,
         ],
       )
     }
@@ -15120,7 +15120,7 @@ export const register: Register = (on, options) => {
         ],
         [
           <Button key="host-ask-yes" label={hostAskYes(hostAsk)} variant="primary" onPress={() => answerHostAsk(hostAsk.id, 'yes')} />,
-          <Button key="host-ask-no" label="Not now" plain dimColor onPress={() => answerHostAsk(hostAsk.id, 'no')} />,
+          <Button key="host-ask-no" label="Pas maintenant" plain dimColor onPress={() => answerHostAsk(hostAsk.id, 'no')} />,
         ],
       )
     }
@@ -15207,19 +15207,19 @@ export const register: Register = (on, options) => {
               ]}
             </Button>
           ) : null,
-          pin ? <Button key="band-allow-pin" label="Pin" plain onPress={() => void allowDeskTools($)} /> : null,
-          openable ? <Button key="open-preview" label="Open preview" plain onPress={press => void openShown($, openable, press.surface)} /> : null,
+          pin ? <Button key="band-allow-pin" label="Épingler" plain onPress={() => void allowDeskTools($)} /> : null,
+          openable ? <Button key="open-preview" label="Ouvrir l’aperçu" plain onPress={press => void openShown($, openable, press.surface)} /> : null,
           <Button key="room" label={roomLabel} plain onPress={() => void openRoom($)}>
             {v.unread ? [<Text key="name">Room </Text>, <Text key="count" bold color="claude">{`· ${v.unread} new`}</Text>] : null}
           </Button>,
           isHost && !stopping && !invite ? (
-            <Button key="copy" label="Copy link" plain onPress={press => void (v.room ? copyLink($, v.room.url, press.surface) : undefined)} />
+            <Button key="copy" label="Copier le lien" plain onPress={press => void (v.room ? copyLink($, v.room.url, press.surface) : undefined)} />
           ) : null,
           isHost ? (
             stopping ? (
-              <Button key="stop-sharing" label="Stop for everyone?" variant="primary" onPress={() => void confirmStop($)} />
+              <Button key="stop-sharing" label="Arrêter pour tous ?" variant="primary" onPress={() => void confirmStop($)} />
             ) : (
-              <Button key="stop-sharing" label="Stop" plain onPress={() => void confirmStop($)} />
+              <Button key="stop-sharing" label="Arrêter" plain onPress={() => void confirmStop($)} />
             )
           ) : (
             <Button key="leave" label="Leave" plain onPress={() => void closeRoom($, 'leave')} />

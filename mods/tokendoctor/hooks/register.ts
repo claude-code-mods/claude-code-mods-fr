@@ -92,7 +92,7 @@ export const register: Register = (on, options) => {
         // Where Claude Code's guard sends compaction past the mods a person installs, the slide would
         // be on and never run: say so once, with the way out (lib/guard.mjs).
         const blocked = slideOn && found.find(f => f.id === 'slide-blocked-by-guard')
-        if (blocked) $.ui.toast('tokendoctor: the slide cannot run under this login, Claude Code will summarize. /tokendoctor slide says why.', { timeoutMs: 12_000 })
+        if (blocked) $.ui.toast('tokendoctor : le slide ne peut pas fonctionner avec cette connexion, Claude Code va résumer. /tokendoctor slide explique pourquoi.', { timeoutMs: 12_000 })
       })
       .catch(() => {})
     return result
@@ -174,14 +174,14 @@ export const register: Register = (on, options) => {
     const least = Math.max(1, Math.round(now - dropped - window * 0.6))
     const s = slide(messages, now + added - target - dropped, perChar, least)
     if (!s) {
-      $.ui.toast('tokendoctor: nothing left to elide, so the conversation is summarized')
+      $.ui.toast('tokendoctor : plus rien à omettre, la conversation est donc résumée')
       return summarize()
     }
     const after = Math.min(Math.round(window * 0.9), now - s.freed - dropped + added)
     $.ui.toast(
-      `tokendoctor slid the window: ${k(now)} → ${k(after)}, ${s.elided} old tool outputs elided` +
-        `${s.turns ? `, the ${s.turns} oldest turns removed` : ''}` +
-        `${dropped >= 1000 ? `, images and thinking dropped (${k(dropped)})` : ''}, no summary`,
+      `tokendoctor a fait glisser la fenêtre : ${k(now)} → ${k(after)}, ${s.elided} anciennes sorties d’outils omises` +
+        `${s.turns ? `, ${s.turns} des plus anciens tours retirés` : ''}` +
+        `${dropped >= 1000 ? `, images et réflexions abandonnées (${k(dropped)})` : ''}, aucun résumé`,
     )
     afterSlide = s.messages.length
     measure = now - s.freed - dropped

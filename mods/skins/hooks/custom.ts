@@ -117,7 +117,7 @@ function palette(value: unknown, fallback: CustomSkin['palette']): CustomSkin['p
   )
 
   if (bad.length > 0) {
-    return `bad palette entries: ${bad.map(([slot]) => slot).join(', ')}. Slots: ${SLOTS.join(', ')}; values #rrggbb`
+    return `entrées de palette invalides : ${bad.map(([slot]) => slot).join(', ')}. Slots: ${SLOTS.join(', ')}; values #rrggbb`
   }
 
   return { ...fallback, ...Object.fromEntries(entries.map(([slot, hex]) => [slot, (hex as string).toLowerCase()])) }
@@ -132,13 +132,13 @@ export function buildCustom(draft: Draft, existing: CustomSkin | undefined): Cus
   }
 
   if (builtIn(name) !== undefined || name === 'off') {
-    return `"${name}" is taken by a built-in skin; pick another name`
+    return `« ${name} » est déjà utilisé par un thème intégré ; choisissez un autre nom`
   }
 
   const base = typeof draft.base === 'string' ? draft.base : (existing?.base ?? SKINS[0]?.name ?? '')
 
   if (builtIn(base) === undefined) {
-    return `base must be one of ${SKINS.map(skin => skin.name).join(', ')}`
+    return `la base doit être l’un de ${SKINS.map(skin => skin.name).join(', ')}`
   }
 
   const label = typeof draft.label === 'string' && draft.label.trim() !== '' ? draft.label.trim().slice(0, 32) : (existing?.label ?? name)

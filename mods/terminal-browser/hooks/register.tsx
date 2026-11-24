@@ -188,7 +188,7 @@ async function watchBridge($: EngineInterface): Promise<void> {
       continue
     }
     denials += 1
-    if (denials === DENIALS_BEFORE_LOGGING) $.ui.log(`terminal-browser: frame blit refused: ${result.deny}`)
+    if (denials === DENIALS_BEFORE_LOGGING) $.ui.log(`terminal-browser : blit d’image refusé : ${result.deny}`)
     const now = Date.now()
     if (now - lastDeniedRedraw >= DENIED_REDRAW_MS) {
       lastDeniedRedraw = now
@@ -279,14 +279,14 @@ export const register: Register = (on, options) => {
       description: 'Open a browser to the right',
       argumentHint: '[url]',
       immediate: true,
-    }).catch(err => $.ui.log(`terminal-browser: /browser not registered: ${err}`))
+    }).catch(err => $.ui.log(`terminal-browser : /browser non enregistré : ${err}`))
     if (agentToolEnabled) {
       await $.tool.register({
         name: 'open',
         description: 'Open terminal-browser directly inside claude code. Control the open page with the terminal-browser action CLI.',
         inputSchema: { type: 'object', properties: { url: { type: 'string', description: 'The page to open, as a full url or a host name' } } },
-      }).catch(err => $.ui.log(`terminal-browser: open tool not registered: ${err}`))
-      await $.tool.register({ name: 'close', description: 'Close the terminal-browser pane.' }).catch(err => $.ui.log(`terminal-browser: close tool not registered: ${err}`))
+      }).catch(err => $.ui.log(`terminal-browser : outil open non enregistré : ${err}`))
+      await $.tool.register({ name: 'close', description: 'Close the terminal-browser pane.' }).catch(err => $.ui.log(`terminal-browser : outil close non enregistré : ${err}`))
     }
     return r
   })

@@ -129,7 +129,7 @@ async function drawnBySkinCode($: EngineInterface, text: unknown): Promise<boole
   try {
     return (await answer) === true
   } catch (error) {
-    $.ui.log(`skin-code did not answer, so skins draws the reply: ${error instanceof Error ? error.message : String(error)}`, { to: 'debug' })
+    $.ui.log(`skin-code n’a pas répondu, skins dessine donc la réponse : ${error instanceof Error ? error.message : String(error)}`, { to: 'debug' })
 
     return false
   }
@@ -397,7 +397,7 @@ async function load($: EngineInterface): Promise<void> {
   await update($, pinnedAtom, () => Object.hasOwn(folders, folder))
   // Links stay text if the environment cannot be read; the look loads either way.
   await readHyperlinks($).catch((error: unknown) => {
-    $.ui.log(`hyperlink check: ${error instanceof Error ? error.message : String(error)}`, { to: 'debug' })
+    $.ui.log(`vérification des liens : ${error instanceof Error ? error.message : String(error)}`, { to: 'debug' })
   })
 }
 
@@ -424,7 +424,7 @@ async function retryTheme($: EngineInterface): Promise<void> {
 
   await followTheme($).catch((error: unknown) => {
     themePending = true
-    $.ui.log(`theme not read yet: ${error instanceof Error ? error.message : String(error)}`, { to: 'debug' })
+    $.ui.log(`thème pas encore lu : ${error instanceof Error ? error.message : String(error)}`, { to: 'debug' })
   })
 }
 
@@ -446,7 +446,7 @@ async function reloadIfNewSession($: EngineInterface, known?: string): Promise<v
     if (loadedFor === id) {
       loadedFor = undefined
     }
-    $.ui.log(`not loaded yet: ${error instanceof Error ? error.message : String(error)}`, { to: 'debug' })
+    $.ui.log(`pas encore chargé : ${error instanceof Error ? error.message : String(error)}`, { to: 'debug' })
 
     return
   }
@@ -661,7 +661,7 @@ export const register: Register = on => {
         inputSchema: DESIGN_TOOL.inputSchema,
       })
       .catch((error: unknown) => {
-        $.ui.log(`design tool: ${error instanceof Error ? error.message : String(error)}`, { to: 'debug' })
+        $.ui.log(`outil de design : ${error instanceof Error ? error.message : String(error)}`, { to: 'debug' })
       })
     await new Promise<void>(resolve => {
       const cap = $.clock.after(DESIGN_TOOL_WAIT_MS, resolve)
@@ -700,7 +700,7 @@ export const register: Register = on => {
     countdownTicker?.cancel()
     countdownTicker = $.clock.every(COUNTDOWN_MS, () => {
       void tickCountdowns($).catch((error: unknown) => {
-        $.ui.log(`countdown tick: ${error instanceof Error ? error.message : String(error)}`, { to: 'debug' })
+        $.ui.log(`tic du compte à rebours : ${error instanceof Error ? error.message : String(error)}`, { to: 'debug' })
       })
     })
 
@@ -848,7 +848,7 @@ export const register: Register = on => {
     }
 
     if (e.args.trim().toLowerCase() === 'gallery') {
-      await $.ui.open({ id: GALLERY, title: 'Skin gallery', focus: true, closeOnEscape: true })
+      await $.ui.open({ id: GALLERY, title: 'Galerie de thèmes', focus: true, closeOnEscape: true })
 
       return {}
     }
@@ -862,7 +862,7 @@ export const register: Register = on => {
         $.ui.toast(copied.message)
       } else {
         const result = await $.ui.copy({ text: copied.text })
-        $.ui.toast(result.isCopied ? (word === 'copy' ? 'Copied the reply' : 'Copied the code') : 'Could not copy here')
+        $.ui.toast(result.isCopied ? (word === 'copy' ? 'Réponse copiée' : 'Code copié') : 'Copie impossible ici')
       }
 
       return {}
@@ -912,7 +912,7 @@ export const register: Register = on => {
     const ui = $.ui.resolve(e)
 
     if (skin === undefined || e.surface === 'mobile' || !('Input' in ui)) {
-      return <ui.Text>Open the skin settings in the terminal or the desktop app.</ui.Text>
+      return <ui.Text>Ouvrez les paramètres du thème dans le terminal ou l’application Desktop.</ui.Text>
     }
 
     const look = lookOf(ui, { prefs, custom, skin }, e.surface)
@@ -974,7 +974,7 @@ export const register: Register = on => {
       ...(diff === null ? {} : diff),
     }
     const copy = (text: string) => {
-      void $.ui.copy({ text, surface: e.surface }).then(result => $.ui.toast(result.isCopied ? 'Copied' : 'Could not copy here'))
+      void $.ui.copy({ text, surface: e.surface }).then(result => $.ui.toast(result.isCopied ? 'Copié' : 'Copie impossible ici'))
     }
     const fields = (e.props.input ?? {}) as { file_path?: unknown; notebook_path?: unknown }
     const path = fields.file_path ?? fields.notebook_path
@@ -1048,7 +1048,7 @@ export const register: Register = on => {
     const active = await activeSkin($)
     const output = e.props.output as { stdout?: unknown } | null
     const copy = (text: string) => {
-      void $.ui.copy({ text, surface: e.surface }).then(result => $.ui.toast(result.isCopied ? 'Copied' : 'Could not copy here'))
+      void $.ui.copy({ text, surface: e.surface }).then(result => $.ui.toast(result.isCopied ? 'Copié' : 'Copie impossible ici'))
     }
     // Only the terminal's shell card has a fold control here.
     const needs = { folds: e.surface === 'terminal' && SHELLS.has(e.props.tool) }
@@ -1179,7 +1179,7 @@ export const register: Register = on => {
     const svg = e.surface !== 'terminal' && active.prefs.tables === 'on' && 'Svg' in ui ? ui.Svg : undefined
     lastColumns = e.viewport?.columns
     const copy = (copied: string) => {
-      void $.ui.copy({ text: copied, surface: e.surface }).then(result => $.ui.toast(result.isCopied ? 'Copied' : 'Could not copy here'))
+      void $.ui.copy({ text: copied, surface: e.surface }).then(result => $.ui.toast(result.isCopied ? 'Copié' : 'Copie impossible ici'))
     }
 
     const base = await sessionLook($, e, lookOf(ui, active, e.surface, copy), replyNeeds(text, segments))
@@ -1208,7 +1208,7 @@ export const register: Register = on => {
     const ui = $.ui.resolve(e)
     const svg = e.surface !== 'terminal' && active.prefs.tables === 'on' && 'Svg' in ui ? ui.Svg : undefined
     const copy = (copied: string) => {
-      void $.ui.copy({ text: copied, surface: e.surface }).then(result => $.ui.toast(result.isCopied ? 'Copied' : 'Could not copy here'))
+      void $.ui.copy({ text: copied, surface: e.surface }).then(result => $.ui.toast(result.isCopied ? 'Copié' : 'Copie impossible ici'))
     }
 
     const base = await sessionLook($, e, lookOf(ui, active, e.surface, copy), replyNeeds(e.props.text, segments))
@@ -1291,7 +1291,7 @@ export const register: Register = on => {
       $.clock.after(1, () =>
         $.command
           .run({ command: 'compact' })
-          .catch((error: unknown) => $.ui.toast(`Compacting failed: ${error instanceof Error ? error.message : String(error)}`))
+          .catch((error: unknown) => $.ui.toast(`Échec de la compaction : ${error instanceof Error ? error.message : String(error)}`))
           .finally(() => update($, compactingAtom, () => false)),
       )
     }

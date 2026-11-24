@@ -405,7 +405,7 @@ function cardWithCopy(look: Look, Svg: SvgElement, built: { source: string; alt:
         ''
       ) : (
         <Box position="absolute" top={1} right={3}>
-          <Button key={key} label="Copy" plain dimColor onPress={() => copy(text)} />
+          <Button key={key} label="Copier" plain dimColor onPress={() => copy(text)} />
         </Box>
       )}
     </Box>
@@ -420,7 +420,7 @@ function tableCard(look: Look, table: Table, Svg: SvgElement, columns: number, k
   return (
     <Box flexDirection="column">
       {cardWithCopy(look, Svg, card, key, tableMarkdown(table))}
-      {copyRow(look, `${key}-art`, tableArt(table), 'Copy as text')}
+      {copyRow(look, `${key}-art`, tableArt(table), 'Copier en texte')}
     </Box>
   )
 }
@@ -429,7 +429,7 @@ function tableCard(look: Look, table: Table, Svg: SvgElement, columns: number, k
 function tableControls(look: Look, key: string, table: Table) {
   const { Box } = look.ui
   const markdown = copyButton(look, key, tableMarkdown(table))
-  const art = copyButton(look, `${key}-art`, tableArt(table), ' as text ')
+  const art = copyButton(look, `${key}-art`, tableArt(table), ' en texte ')
 
   return markdown === undefined || art === undefined ? undefined : (
     <Box flexDirection="row">
@@ -501,7 +501,7 @@ export function onBorder(
 }
 
 // A Copy button padded to sit on a border line; nothing where nothing can copy.
-export function copyButton(look: Look, key: string, text: string, label = ' Copy ') {
+export function copyButton(look: Look, key: string, text: string, label = ' Copier ') {
   const { Button } = look.ui
   const copy = look.copy
 
@@ -509,7 +509,7 @@ export function copyButton(look: Look, key: string, text: string, label = ' Copy
 }
 
 // A small Copy button under a card or block, flush right; nothing where nothing can copy.
-export function copyRow(look: Look, key: string, text: string, label = 'Copy') {
+export function copyRow(look: Look, key: string, text: string, label = 'Copier') {
   const { Box, Button } = look.ui
   const copy = look.copy
 
@@ -633,7 +633,7 @@ function drawingOf(look: Look, segment: Segment & { kind: 'code' }, maxWidth: nu
 function diffFence(look: Look, diff: DiffInput, code: string, maxWidth: number, i: number, Svg?: SvgElement, fenceLang?: string) {
   const { Box } = look.ui
   const whole = copyButton(look, `copy-${i}`, code)
-  const fresh = copyButton(look, `copy-${i}-new`, newOnly(diff), ' new only ')
+  const fresh = copyButton(look, `copy-${i}-new`, newOnly(diff), ' nouveau seulement ')
 
   if (Svg !== undefined) {
     return (
@@ -770,7 +770,7 @@ export function replyRows(look: Look, segments: readonly Segment[], maxWidth: nu
           </Box>
         ),
       )}
-      {whole === undefined ? '' : copyRow(look, 'copy-reply', whole, 'copy reply')}
+      {whole === undefined ? '' : copyRow(look, 'copy-reply', whole, 'copier la réponse')}
     </Box>
   )
 }
@@ -946,7 +946,7 @@ export function usageBand(look: Look, meters: readonly Meter[], canCompact: bool
         // is the only way in where the terminal reports no clicks. `plain` shows it: `0: Compact`.
         <Button
           key="compact"
-          label={isNudge ? 'Compact now' : 'Compact'}
+          label={isNudge ? 'Compacter maintenant' : 'Compacter'}
           hotkey={COMPACT_HOTKEY}
           plain
           {...(isNudge ? { variant: 'primary' as const } : { dimColor: true })}

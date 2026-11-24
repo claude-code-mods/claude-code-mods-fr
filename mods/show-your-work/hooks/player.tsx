@@ -98,11 +98,11 @@ const openArgv = (target: string) => (state.isMac ? ['open', target] : ['sh', '-
 // open's error text. `what` names the kind of thing, as in "no app opens videos".
 export function openFailure(r: { exitCode: number; stderr: string }, what: string, path: string) {
   const said = r.stderr.trim().split('\n')[0]?.trim().slice(0, 100) ?? ''
-  if (r.exitCode === 127) return "Couldn't open it: xdg-open is missing. Install xdg-utils and try again."
-  if (r.exitCode === 2 || /does not exist|no such file/i.test(said)) return `Couldn't open it: nothing is at ${path} any more.`
-  if (r.exitCode === 3 || /no application knows|no application|no method available|no default/i.test(said)) return `Couldn't open it: no app on this computer is set to open ${what}.`
-  if (r.exitCode === 4) return said ? `Couldn't open it: ${said}` : `Couldn't open it: the app for ${what} failed to start.`
-  return said ? `Couldn't open it: ${said}` : `Couldn't open it (error ${r.exitCode}).`
+  if (r.exitCode === 127) return "Ouverture impossible : xdg-open est absent. Installez xdg-utils et réessayez."
+  if (r.exitCode === 2 || /does not exist|no such file/i.test(said)) return `Ouverture impossible : plus rien à l’emplacement ${path}.`
+  if (r.exitCode === 3 || /no application knows|no application|no method available|no default/i.test(said)) return `Ouverture impossible : aucune application de cet ordinateur n’est associée aux ${what}.`
+  if (r.exitCode === 4) return said ? `Ouverture impossible : ${said}` : `Ouverture impossible : l’application pour les ${what} n’a pas démarré.`
+  return said ? `Ouverture impossible : ${said}` : `Ouverture impossible (erreur ${r.exitCode}).`
 }
 
 // The narrowest the scrub and button rows get, in columns: room for the play
@@ -375,7 +375,7 @@ function probe($: EngineInterface, site: string, key: string, pic: Pic) {
       state.canImage = false
       state.drawCause = causeOf(state.inTmux, state.terminalName, state.isForced)
       track('cannot_draw', { cause: state.drawCause })
-      $.ui.toast("Pictures can't show here: see the notice in the chat.")
+      $.ui.toast("Les images ne peuvent pas s’afficher ici : voyez l’avis dans la conversation.")
       redraw($)
     }
   }, () => undefined)
@@ -899,7 +899,7 @@ function pickVersion($: EngineInterface, site: string, shown: Shown, to: number)
     if (!one.isCompare) flip($, site, { ...shown, compare: version }, true)
     else draw($, site, version)
     redraw($, site)
-  }).catch(() => $.ui.toast('That version is gone'))
+  }).catch(() => $.ui.toast('Cette version n’existe plus'))
 }
 
 // With history, which version is on screen, in words: "viewing v1 of 3".
@@ -1220,10 +1220,10 @@ function Actions(ui: Ui, $: EngineInterface, media: Shown, source: string, isNar
     for (let n = 2; await $.fs.stat(out).then(() => true, () => false); n++) out = `${state.home}/Downloads/${stem} ${n}${ext}`
     if (!state.isMac) await $.process.run(['mkdir', '-p', `${state.home}/Downloads`])
     const r = await $.process.run(['cp', source, out])
-    if (r.exitCode !== 0) return $.ui.toast(`Couldn't save it to Downloads: ${r.stderr.trim().split('\n')[0]?.slice(0, 100) || `error ${r.exitCode}`}`)
+    if (r.exitCode !== 0) return $.ui.toast(`Enregistrement impossible dans Téléchargements : ${r.stderr.trim().split('\n')[0]?.slice(0, 100) || `erreur ${r.exitCode}`}`)
     // Saved either way; the folder opening is a convenience on top.
     await $.process.run(state.isMac ? ['open', '-R', out] : openArgv(`${state.home}/Downloads`)).catch(() => undefined)
-    $.ui.toast(`Saved to Downloads/${out.split('/').pop()}`)
+    $.ui.toast(`Enregistré dans Téléchargements/${out.split('/').pop()}`)
   }
 
   return (
@@ -1240,7 +1240,7 @@ function Actions(ui: Ui, $: EngineInterface, media: Shown, source: string, isNar
           dimColor
           label="Copy path"
           onPress={(press: { surface: 'terminal' }) =>
-            act('copy_path') || void $.ui.copy({ text: source, surface: press.surface }).then(r => $.ui.toast(r.isCopied ? 'Path copied' : 'Could not copy the path'))
+            act('copy_path') || void $.ui.copy({ text: source, surface: press.surface }).then(r => $.ui.toast(r.isCopied ? 'Chemin copié' : 'Impossible de copier le chemin'))
           }
         />
       )}
@@ -1455,13 +1455,13 @@ function Warning(ui: Ui, $: EngineInterface, site: string, shown: Shown, width: 
   const n = cantDraw(state.drawCause, shown.title, shown.frames ? 'video' : 'picture', state.sessionId)
   const file = shown.origin ?? shown.source ?? shown.path
   const onPress = state.drawCause === 'desktop'
-    ? () => act(n.action) || void $.process.run(openArgv(file)).then(r => { if (r.exitCode !== 0) $.ui.toast(openFailure(r, shown.frames ? 'videos' : 'pictures', file)) })
+    ? () => act(n.action) || void $.process.run(openArgv(file)).then(r => { if (r.exitCode !== 0) $.ui.toast(openFailure(r, shown.frames ? 'vidéos' : 'images', file)) })
     : state.drawCause === 'unrecognised'
       ? (press: { surface: 'terminal' }) => act(n.action) || void (async () => {
         const profile = await turnOnPictures($)
         const copied = await $.ui.copy({ text: n.command, surface: press.surface }).then(r => r.isCopied, () => false)
         const where = profile ? `Added to ${profile.replace(state.home, '~')}. ` : ''
-        $.ui.toast(copied ? `${where}Copied: type /exit and paste it.` : `${where}Could not copy the command.`)
+        $.ui.toast(copied ? `${where}Copié : tapez /exit puis collez-le.` : `${where}Impossible de copier la commande.`)
       })()
       : undefined
   return NoticeBox(ui, $, width, { ...n, copy: n.command, onPress })
@@ -1502,7 +1502,7 @@ export function NoticeBox(ui: Ui, $: EngineInterface, width: number, n: { title:
           variant="primary"
           label={n.label}
           onPress={(press: { surface: 'terminal' }) =>
-            n.onPress ? n.onPress(press) : act(n.action) || void $.ui.copy({ text: n.copy, surface: press.surface }).then(r => $.ui.toast(r.isCopied ? (n.command ? 'Copied. Paste it in your terminal.' : 'Copied. Paste it to Claude.') : 'Could not copy'))
+            n.onPress ? n.onPress(press) : act(n.action) || void $.ui.copy({ text: n.copy, surface: press.surface }).then(r => $.ui.toast(r.isCopied ? (n.command ? 'Copié. Collez-le dans votre terminal.' : 'Copié. Collez-le pour Claude.') : 'Copie impossible'))
           }
         />
       </Box>
@@ -1606,7 +1606,7 @@ export async function Viewer(
       : <Text color="suggestion">{prLabel}</Text>
     : null
   const run = (argv: string[], note: string) => () => {
-    void $.process.run(argv).then(r => $.ui.toast(r.exitCode === 0 ? note : `Could not: ${r.stderr.trim()}`))
+    void $.process.run(argv).then(r => $.ui.toast(r.exitCode === 0 ? note : `Impossible : ${r.stderr.trim()}`))
   }
   // The single view with the QA sidebar is the default; side by side is a click away.
   if (!state.canImage) {
@@ -1674,8 +1674,8 @@ export async function Viewer(
         let target = rendered ?? page
         if (rendered) {
           try { target = await documentView($, baseMedia) ?? undefined }
-          catch (error) { $.ui.toast(`Could not open document: ${String(error).slice(0, 160)}`); return }
-          if (!target) { $.ui.toast('Could not prepare the document preview.'); return }
+          catch (error) { $.ui.toast(`Ouverture du document impossible : ${String(error).slice(0, 160)}`); return }
+          if (!target) { $.ui.toast('Impossible de préparer l’aperçu du document.'); return }
         }
         // A local page opens in its own small window, the way an image opens
         // in an image viewer: the same engine that rendered the preview, as
@@ -1686,7 +1686,7 @@ export async function Viewer(
           ? ['sh', '-c', OPEN_SH, 'sh', ...htmlOpenArgv(state.chrome, target!)]
           : openArgv(target ?? source)
         void $.process.run(argv).then(r =>
-          $.ui.toast(r.exitCode === 0 ? `Opened ${(target ?? source.split('/').pop()!).slice(0, 60)}` : openFailure(r, target ? 'web pages' : media.kind === 'video' ? 'videos' : media.kind === 'audio' ? 'audio files' : 'pictures', target ?? source)),
+          $.ui.toast(r.exitCode === 0 ? `Ouvert : ${(target ?? source.split('/').pop()!).slice(0, 60)}` : openFailure(r, target ? 'pages web' : media.kind === 'video' ? 'vidéos' : media.kind === 'audio' ? 'fichiers audio' : 'images', target ?? source)),
         )
       }}
     />

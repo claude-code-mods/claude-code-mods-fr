@@ -8,10 +8,10 @@ type Glyphs = { mark: string; done: string; open: string }
 
 const ALERTS: Record<AlertType, { title: string; slot: keyof Palette; unicode: string; ascii: string }> = {
   note: { title: 'Note', slot: 'web', unicode: 'ℹ', ascii: 'i' },
-  tip: { title: 'Tip', slot: 'ok', unicode: '✦', ascii: '*' },
+  tip: { title: 'Astuce', slot: 'ok', unicode: '✦', ascii: '*' },
   important: { title: 'Important', slot: 'mcp', unicode: '❖', ascii: '!' },
-  warning: { title: 'Warning', slot: 'warn', unicode: '▲', ascii: '!' },
-  caution: { title: 'Caution', slot: 'err', unicode: '✖', ascii: 'x' },
+  warning: { title: 'Avertissement', slot: 'warn', unicode: '▲', ascii: '!' },
+  caution: { title: 'Attention', slot: 'err', unicode: '✖', ascii: 'x' },
 }
 
 const glyphs = (look: Look): Glyphs =>
