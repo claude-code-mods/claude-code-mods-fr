@@ -1231,3 +1231,4 @@ const fr: Messages = {
   },
 }
 
+const MSG: Record<Lang, Messages> = { 'zh-TW': zh, en, fr }
