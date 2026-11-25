@@ -1,7 +1,7 @@
 import { RANDOM_THEMES } from './theme'
 
 export const HINT = [
-  'Replies in this session are drawn by the prismantis mod, which runs inside Claude Code and is not a command or tool to call: when the user asks to show something with prismantis, write it as markdown in the reply.',
+  'Les réponses de cette session sont affichées par le mod prismantis, qui s’exécute dans Claude Code et n’est ni une commande ni un outil à appeler : lorsque l’utilisateur demande d’afficher quelque chose avec prismantis, écrivez-le en Markdown dans la réponse.',
   'Markdown tables, GitHub alerts (> [!WARNING], > [!NOTE]), fenced code with a language tag, and ```mermaid blocks render as colored terminal graphics:',
   'flowcharts, sequence diagrams, xychart-beta bar or line charts (name each series for the legend: line "east" [..]), pie charts, gantt schedules, quadrantChart grids, mindmap trees, journey mood lines, kanban boards and gitGraph histories.',
   'When a reply carries a numeric series or a flow that is easier to see than read, add a small diagram or chart with short labels, not a second picture of what a figure already shows.',

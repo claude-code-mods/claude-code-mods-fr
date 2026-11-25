@@ -488,10 +488,10 @@ const lastCopy = (run: () => Promise<string>): Promise<string | null> => {
 const copyNow = async ($: EngineInterface, style: Style, content: string, surface: RenderSurface, rich?: (() => string) | 'png', hues?: Hues): Promise<string> => {
   const backend = style.htmlCopy
   const failure = rich && backend ? await runHelper($, backend, richCommand(style, backend, content, rich, hues)) : undefined
-  if (failure === null) return rich === 'png' ? 'Copied as image' : 'Copied formatted table'
+  if (failure === null) return rich === 'png' ? 'Copié comme image' : 'Tableau formaté copié'
   const result = await $.ui.copy({ text: content, surface })
-  if (!result.isCopied) return `Copy failed: ${result.reason}`
-  return failure ? `Copied as plain text (${failure})` : 'Copied'
+  if (!result.isCopied) return `Échec de la copie : ${result.reason}`
+  return failure ? `Copié en texte brut (${failure})` : 'Copié'
 }
 
 const drawMarkdown = ($: EngineInterface, el: ReturnType<EngineInterface['ui']['resolve']>, style: Style, blocks: ReturnType<typeof parse>, columns: number, math: Map<number, Typeset> = new Map(), pictures: Map<number, Picture> = new Map(), reply?: string, open?: string[], notes?: { id: string; press: boolean }): RenderElement[] => {
@@ -571,9 +571,9 @@ const clearDesktop = async ($: EngineInterface): Promise<void> => {
 
 const setTheme = async ($: EngineInterface, picked: Picked, name: string): Promise<string> => {
   const deny = await saveOption($, 'theme', name)
-  if (deny) return `Could not switch theme: ${deny}`
+  if (deny) return `Impossible de changer de thème : ${deny}`
   if (name !== 'random') await paintDesktop($, picked.options, name)
-  if (name !== 'random' || picked.options.theme !== 'random') return `Theme set to ${name}.`
+  if (name !== 'random' || picked.options.theme !== 'random') return `Thème défini sur ${name}.`
   const others = RANDOM_THEMES.filter(t => t !== picked.theme)
   picked.theme = others[Math.floor(Math.random() * others.length)]!
   const style = picked.latex.style
@@ -919,7 +919,7 @@ export const register: Register = (on, options) => {
     const started = await next(e)
     await paintDesktop($, options, picked.theme)
     await $.command
-      .register({ name: 'prismantis', description: 'Switch the prismantis theme, pick styles from samples, copy the last reply, or show the demo', argumentHint: '[theme [<name> | random] | setup [<step> [<pick>]] | copy [code] | demo]' })
+      .register({ name: 'prismantis', description: 'Changer le thème prismantis, choisir un style parmi les exemples, copier la dernière réponse ou afficher la démo', argumentHint: '[theme [<name> | random] | setup [<step> [<pick>]] | copy [code] | demo]' })
       .catch(() => undefined)
     return started
   })
@@ -936,17 +936,17 @@ export const register: Register = (on, options) => {
     if (sub === 'demo') return { text: showcaseText(PRESET_NAMES) + languageShowcase(await localeOf($, name)) }
     if (sub === 'setup') return { text: await setup($, picked, e.origin, name, third) }
     if (sub === 'copy') {
-      if (name && name !== 'code') return { text: `Unknown copy target "${name}". Use /prismantis copy, or /prismantis copy code for the last code block.` }
+      if (name && name !== 'code') return { text: `Cible de copie inconnue « ${name} ». Utilisez /prismantis copy, ou /prismantis copy code pour copier le dernier bloc de code.` }
       const reply = (await $.session.messages()).findLast(m => m.role === 'assistant' && m.text.trim())
-      if (!reply) return { text: 'Nothing to copy yet.' }
+      if (!reply) return { text: 'Rien à copier pour le moment.' }
       const code = name === 'code' ? nestedBlocks(parseCached(reply.text)).findLast(b => b.kind === 'code' && !/^(mermaid|figure)$/i.test(b.lang)) : undefined
-      if (name === 'code' && code?.kind !== 'code') return { text: 'The last reply has no code block.' }
+      if (name === 'code' && code?.kind !== 'code') return { text: 'La dernière réponse ne contient pas de bloc de code.' }
       const text = code?.kind === 'code' ? code.lines.join('\n') : reply.text
       const said = await lastCopy(async () => {
         const result = await $.ui.copy({ text })
-        return result.isCopied ? `Copied the last ${code ? 'code block' : 'reply'}.` : `Copy failed: ${result.reason}`
+        return result.isCopied ? `Dernier ${code ? 'bloc de code' : 'message'} copié.` : `Échec de la copie : ${result.reason}`
       })
-      return { text: said ?? 'A newer copy replaced this one.' }
+      return { text: said ?? 'Une copie plus récente l’a remplacée.' }
     }
     if (sub === 'demo-rtl') {
       await probe($, style, probes)

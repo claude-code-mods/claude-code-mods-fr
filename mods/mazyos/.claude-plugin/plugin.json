@@ -34,19 +34,19 @@
     "abrirPainel": {
       "type": "boolean",
       "title": "Ouvrir le volet au démarrage",
-      "description": "Abre o painel do MazyOS (memória, foco e atalhos) quando a sessão começa numa pasta do MazyOS e o terminal é largo o bastante. /mazyos abre a qualquer hora.",
+      "description": "Ouvre le volet MazyOS (mémoire, concentration et raccourcis) au démarrage de la session dans un dossier MazyOS, si le terminal est assez large. /mazyos ouvre le volet à tout moment.",
       "default": true
     },
     "linhaDeStatus": {
       "type": "boolean",
       "title": "Ligne d'état",
-      "description": "Mostra 'MazyOS · negócio · foco' embaixo do prompt enquanto você trabalha numa pasta do MazyOS.",
+      "description": "Affiche « MazyOS · entreprise · concentration » sous l'invite pendant que vous travaillez dans un dossier MazyOS.",
       "default": true
     },
     "protegerGit": {
       "type": "boolean",
       "title": "Frein sur git",
-      "description": "Pede confirmação antes de git push --force, git reset --hard e outros comandos git que apagam trabalho, dentro de uma pasta do MazyOS.",
+      "description": "Demande confirmation avant git push --force, git reset --hard et les autres commandes git qui détruisent du travail, dans un dossier MazyOS.",
       "default": true
     }
   }

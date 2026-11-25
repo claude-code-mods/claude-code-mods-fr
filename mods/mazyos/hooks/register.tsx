@@ -124,8 +124,8 @@ async function aposEditar(
   $.ui.invalidate('prompt.context')
   $.ui.toast(
     novo.instalado
-      ? `MazyOS: ${relativo} atualizado. Memória recarregada.`
-      : `MazyOS: ${relativo} atualizado.`,
+      ? `MazyOS : ${relativo} mis à jour. Mémoire rechargée.`
+      : `MazyOS : ${relativo} mis à jour.`,
   )
 }
 
@@ -137,7 +137,7 @@ export const register: Register = (on, options) => {
   on('session.start', async ($, e, next) => {
     await $.command.register({
       name: COMANDO,
-      description: 'Abre o painel do MazyOS: memória do negócio, foco atual e atalhos das skills.',
+      description: 'Ouvre le volet MazyOS : mémoire de l’entreprise, concentration actuelle et raccourcis des skills.',
     })
     const ws = await recarregar($, comLinha, e.cwd)
 
@@ -149,7 +149,7 @@ export const register: Register = (on, options) => {
       const chave = `avisado:${ws.raiz}`
       if ((await $.store.get(chave)) === undefined) {
         await $.store.set(chave, true)
-        $.ui.toast('MazyOS instalado. Pra ligar o sistema nessa pasta, rode /mazyos:instalar.')
+        $.ui.toast('MazyOS installé. Pour activer le système dans ce dossier, lancez /mazyos:instalar.')
       }
     }
 

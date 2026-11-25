@@ -3049,7 +3049,7 @@ const CHAT_SHARE = 0.75
 
 const headDot = (style: Pick<Style, 'smallDot'>): string => (style.smallDot ? '●' : '⬤')
 
-const youHead = (style: Style): string => style.bubbleLabels === 'small' ? 'You ● ' : `You  ${headDot(style)} `
+const youHead = (style: Style): string => style.bubbleLabels === 'small' ? 'Vous ● ' : `Vous  ${headDot(style)} `
 
 const claudeHead = (style: Style): string => style.bubbleLabels === 'small' ? '● Claude' : `${headDot(style)}  Claude`
 
